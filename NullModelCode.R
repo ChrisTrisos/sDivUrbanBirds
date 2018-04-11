@@ -1,1 +1,0 @@
-#Null model for birds
