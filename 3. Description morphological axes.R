@@ -14,14 +14,12 @@
 ################
 
 library(ade4)
-source("/Users/d.sol/Documents/Science/Research/Urbanisation/Functional diversity and urbanization/Data and analyses/Hypervolumes/utils.R")
-
 
 ###########
 ### Data                              
 ##########
 
-setwd("~/Documents/Science/Research/Urbanisation/Functional diversity and urbanization/Data and analyses")
+setwd(workingData)
 
 morph0 <- read.table("Morphological traits urban birds 24 Feb 2018 for R.txt", h=TRUE)
 # morph0<- subset(morph0, animal!="Struthio_camelus")
