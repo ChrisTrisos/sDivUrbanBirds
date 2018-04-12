@@ -24,14 +24,14 @@ if(Sys.info()['user']=='ctrisos') {
 }
 
 # Alienor
-if(Sys.info()['user']=='ctrisos') {
-  wd <-'/Users/ctrisos/Google Drive/sDivUrbBirds/'
-  workingData <-'/Users/ctrisos/Google Drive/sDivUrbBirds/Data/DataForAnalysis'
-  rawData<-'/Users/ctrisos/Google Drive/sDivUrbBirds/Data/OriginalData'
+if(Sys.info()['user']=='aj76nydo') {
+  wd <-'C:/Users/aj76nydo/Google Drive/sDivUrbBirds' ## tbc
+  workingData <-'C:/Users/aj76nydo/Google Drive/sDivUrbBirds/Data/DataForAnalysis'
+  rawData<-'C:/Users/aj76nydo/Google Drive/sDivUrbBirds/Data/OriginalData'
   #registerDoParallel(2) # choose how many cores it can use
   # for output to google drive
-  GoogleOut<-'/Users/ctrisos/Google Drive/sDivUrbBirds/AnalysisOutputs'
-  GoogleFigs<-'/Users/ctrisos/Google Drive/sDivUrbBirds/Figures'
+  GoogleOut<-'C:/Users/aj76nydo/Google Drive/sDivUrbBirds/AnalysisOutputs'
+  GoogleFigs<-'C:/Users/aj76nydo/Google Drive/sDivUrbBirds/Figures'
 }
 
 #Sandrine
