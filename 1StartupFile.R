@@ -47,13 +47,13 @@ if(Sys.info()['user']=='ctrisos') {
 
 #Daniel
 if(Sys.info()['user']=='ctrisos') {
-  wd <-'/Users/ctrisos/Google Drive/sDivUrbBirds/'
-  workingData <-'/Users/ctrisos/Google Drive/sDivUrbBirds/Data/DataForAnalysis'
-  rawData<-'/Users/ctrisos/Google Drive/sDivUrbBirds/Data/OriginalData'
+  wd <-'/Users/d.sol/Google Drive/sDivUrbBirds'
+  workingData <-'/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis'
+  rawData<-'/Users/d.sol/Google Drive/sDivUrbBirds/Data/OriginalData'
   #registerDoParallel(2) # choose how many cores it can use
   # for output to google drive
-  GoogleOut<-'/Users/ctrisos/Google Drive/sDivUrbBirds/AnalysisOutputs'
-  GoogleFigs<-'/Users/ctrisos/Google Drive/sDivUrbBirds/Figures'
+  GoogleOut<-'/Users/d.sol/Google Drive/sDivUrbBirds/AnalysisOutputs'
+  GoogleFigs<-'/Users/d.sol/Google Drive/sDivUrbBirds/Figures'
 }
 
 ## Any user independent file paths can be here
