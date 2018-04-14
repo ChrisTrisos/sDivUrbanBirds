@@ -11,6 +11,13 @@
 #load libraries
 library(picante)
 library(adiv)
+library(vegan)
+library(reshape2)
+library(ecodist)
+library(ape)
+library(picante)
+library(FD)
+library(plyr)
 
 
 # set wd path for each user
@@ -68,3 +75,9 @@ if(Sys.info()['user']=='d.sol') {
 ## Any user independent file paths can be here
 
 #### Any custom functions we all want can be loaded here
+
+source("/Users/d.sol/Google Drive/sDivUrbBirds/Data/Sources/utils.R")  # function to draw figures in PCAs
+source("/Users/d.sol/Google Drive/sDivUrbBirds/Data/Sources/QEpart.R")  # function to draw figures in PCAs
+
+
+
