@@ -9,22 +9,14 @@
 # OUTPUT: A file for subsequent analyses ("morphological.axes.txt"), which contains the 9 traits (including the hand-wing index) plus PCA components describing body size, beak (shape and size) and locomotor system (shape and size)
 
 
-################
-### Libraries
-################
 
-library(ade4)
-library(geometry)
-source("/Users/d.sol/ownCloud2/Science/R sources/Functions/Functional hypervolumes/utils.R")
 
 ###########
 ### Data                              
 ##########
 
-setwd("~/Documents/Science/Research/Urbanisation/Functional diversity and urbanization/Data and analyses")
-
-morph0 <- read.table("Morphological traits urban birds 24 Feb 2018 for R.txt", h=TRUE)
-# morph0<- subset(morph0, animal!="Struthio_camelus")
+morph0 <- read.table("/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/Morphological traits urban birds 24 Feb 2018 for R.txt", h=TRUE)
+# read.table(paste0(workingData,"Morphological traits urban birds 24 Feb 2018 for R.txt"))
 
 morph <- morph0[,c(8,10,12:18)] # we exclude redundant traits
 names(morph) <- c("mass", "bill_length", "bill_width", "bill_depth", "tarsus", "second","wing","hand_wing","tail")
@@ -107,4 +99,4 @@ morphological.axes <- data.frame(morph0$OrigNam, morph0$animal, beak.size, beak.
 
 colnames(morphological.axes) <- c("animal", "species", "beak.size", "beak.shape", "locom.size", "locom.shape", "body.size", "mass", "bill_length", "bill_width", "bill_depth", "tarsus", "second", "wing", "hand_wing", "tail" )
 
-write.table(morphological.axes,"morphological.axes.txt")
+write.table(morphological.axes,"/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/morphological.axes.txt")
