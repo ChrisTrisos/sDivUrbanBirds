@@ -18,7 +18,10 @@ library(ape)
 library(picante)
 library(FD)
 library(plyr)
-
+library(nlme)
+library(phia)
+library(effects)
+library(ggplot2)
 
 # set wd path for each user
 # wd is the file path to the google drive
