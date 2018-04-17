@@ -22,6 +22,7 @@ library(nlme)
 library(phia)
 library(effects)
 library(ggplot2)
+library(easyGgplot2)
 
 # set wd path for each user
 # wd is the file path to the google drive
