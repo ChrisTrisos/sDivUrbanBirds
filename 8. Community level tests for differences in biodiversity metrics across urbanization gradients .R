@@ -44,8 +44,14 @@
 
 {## Import biodiversity metrics for communities
 
+<<<<<<< HEAD
 x <- read.table("/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/Morphological diversity metrics for communities.txt") # metrics estimated including all species
 # x <- read.table("/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/Morphological diversity metrics for communities natives.txt")  # metrics estimated excluding exotics
+=======
+#x <- read.table("/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/Morphological diversity metrics for communities.txt") # metrics estimated including all species
+x<-read.table(paste0(workingData,"/Morphological diversity metrics for communities.txt"))
+# x <- read.table("Morphological diversity metrics for communities natives.txt")  # metrics estimated excluding exotics
+>>>>>>> 1483dfcd4dc55a894b3bfccc615633c05db0fe09
 
 
 # Three ways to code habitats
@@ -108,7 +114,8 @@ b <- ggplot(QE.taxonomy.I, aes(x= habitat.ordered, y=QE.taxonomy.I[,2])) +
   labs(x = "", y = "Simpson's index", cex=16) +
   geom_text(aes(label= c("a","a","ab","b","c")))
 
-tiff("/Users/d.sol/Google Drive/sDivUrbBirds/Figures/plot_taxonomic_diversity.tiff", width = 11, height = 8, units = 'in', res = 200)
+#tiff("/Users/d.sol/Google Drive/sDivUrbBirds/Figures/plot_taxonomic_diversity.tiff", width = 11, height = 8, units = 'in', res = 200)
+tiff(paste0(GoogleFigs,"/plot_taxonomic_diversity.tiff"), width = 11, height = 8, units = 'in', res = 200)
 ggplot2.multiplot(a,b)
 dev.off()
 
@@ -181,7 +188,8 @@ d <- ggplot(Balance.all.morph.I, aes(x= habitat.ordered, y=Balance.all.morph.I[,
   labs(x = "", y = "Balance all traits", cex=16) +
   geom_text(aes(label= c("a","a","a","a","a")))
 
-tiff("/Users/d.sol/Google Drive/sDivUrbBirds/Figures/plot_FD_all_traits.tiff", width = 11, height = 8, units = 'in', res = 200)
+#tiff("/Users/d.sol/Google Drive/sDivUrbBirds/Figures/plot_FD_all_traits.tiff", width = 11, height = 8, units = 'in', res = 200)
+tiff(paste0(GoogleFigs,"plot_FD_all_traits.tiff"), width = 11, height = 8, units = 'in', res = 200)
 ggplot2.multiplot(a,b,c,d)
 dev.off()
 
@@ -251,7 +259,8 @@ d <- ggplot(Balance.PCA3.I, aes(x= habitat.ordered, y=Balance.PCA3.I[,2])) +
   labs(x = "", y = "Balance PCA3", cex=16) +
   geom_text(aes(label= c("a","a","a","a","a")))
 
-tiff("/Users/d.sol/Google Drive/sDivUrbBirds/Figures/plot_FD_PCA3.tiff", width = 11, height = 8, units = 'in', res = 200)
+#tiff("/Users/d.sol/Google Drive/sDivUrbBirds/Figures/plot_FD_PCA3.tiff", width = 11, height = 8, units = 'in', res = 200)
+tiff(paste0(GoogleFigs,"plot_FD_PCA3.tiff"), width = 11, height = 8, units = 'in', res = 200)
 ggplot2.multiplot(a,b,c,d)
 dev.off()
 
