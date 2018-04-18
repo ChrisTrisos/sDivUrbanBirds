@@ -48,9 +48,18 @@
 
 dat <- read.table("/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/Urban global data April 6 2018 for R.txt", header=TRUE)
 # dat0 <- subset(dat,status=="native")  # if we want to exclude exotics
-dat0 <- subset(dat,urban.analyses=="yes") # if we focus on communities within urbanisation gradients
-dat0 <- dat0[dat0$relative.abundance>0,] # we exclude species absent
-comm <- acast(na.omit(dat0[,c(5,8,17)]), community~animal, value.var="relative.abundance", fun.aggregate=mean)   # we transform it to a matrix species*community    # fun.aggregate=mean is used as otherwise it gives the length
+# dat0[] <- lapply(dat0, function(x) if(is.factor(x)) factor(x) else x)
+
+dat01 <- subset(dat, urban.analyses=="yes") # if we focus on communities within urbanisation gradients
+dat01[] <- lapply(dat01, function(x) if(is.factor(x)) factor(x) else x)
+
+# dat01 <- subset(dat0,urban.analyses=="yes") # if we focus on communities within urbanisation gradients
+# dat01[] <- lapply(dat01, function(x) if(is.factor(x)) factor(x) else x)
+
+dat02 <- dat01[dat01$relative.abundance>0,] # we exclude species absent
+dat02[] <- lapply(dat02, function(x) if(is.factor(x)) factor(x) else x)
+
+comm <- acast(na.omit(dat02[,c(5,8,17)]), community~animal, value.var="relative.abundance", fun.aggregate=mean)   # we transform it to a matrix species*community    # fun.aggregate=mean is used as otherwise it gives the length
 comm[comm=="NaN"] <- 0
 
 
@@ -188,7 +197,7 @@ write.table(tmp2, "/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/M
 
 
 
-
+## Not yet finished, waiting for Joe's data
 
 ################ Analyses for diet  ######################
 ##########################################################
