@@ -34,7 +34,7 @@ library(easyGgplot2)
 
 # Chris
 if(Sys.info()['user']=='ctrisos') {
-  wd <-'/Users/ctrisos/Google Drive/sDivUrbBirds/'
+  wd <-'/Users/ctrisos/Google Drive/sDivUrbBirds'
   workingData <-'/Users/ctrisos/Google Drive/sDivUrbBirds/Data/DataForAnalysis'
   rawData<-'/Users/ctrisos/Google Drive/sDivUrbBirds/Data/OriginalData'
   #registerDoParallel(2) # choose how many cores it can use
@@ -56,7 +56,7 @@ if(Sys.info()['user']=='aj76nydo') {
 
 #Sandrine
 if(Sys.info()['user']=='ctrisos') {
-  wd <-'/Users/ctrisos/Google Drive/sDivUrbBirds/'
+  wd <-'/Users/ctrisos/Google Drive/sDivUrbBirds'
   workingData <-'/Users/ctrisos/Google Drive/sDivUrbBirds/Data/DataForAnalysis'
   rawData<-'/Users/ctrisos/Google Drive/sDivUrbBirds/Data/OriginalData'
   #registerDoParallel(2) # choose how many cores it can use
@@ -80,8 +80,8 @@ if(Sys.info()['user']=='d.sol') {
 
 #### Any custom functions we all want can be loaded here
 
-source("/Users/d.sol/Google Drive/sDivUrbBirds/Data/Sources/utils.R")  # function to draw figures in PCAs
-source("/Users/d.sol/Google Drive/sDivUrbBirds/Data/Sources/QEpart.R")  # function to draw figures in PCAs
+source(paste0(wd,"/Data/Sources/utils.R"))  # function to draw figures in PCAs
+source(paste0(wd,"/Data/Sources/QEpart.R"))  # function to draw figures in PCAs
 
 
 
