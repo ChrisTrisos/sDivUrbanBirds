@@ -46,7 +46,8 @@
 
 ## Community data preparation
 
-dat <- read.table("/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/Urban global data April 6 2018 for R.txt", header=TRUE)
+#dat <- read.table("/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/Urban global data April 6 2018 for R.txt", header=TRUE)
+dat<-read.table(paste0(workingData,"/Urban global data April 6 2018 for R.txt"), header=TRUE)
 # dat0 <- subset(dat,status=="native")  # if we want to exclude exotics
 # dat0[] <- lapply(dat0, function(x) if(is.factor(x)) factor(x) else x)
 
@@ -71,7 +72,8 @@ comm[comm=="NaN"] <- 0
 
 ## Functional data preparation
 
-func<-read.table("/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/morphological.axes.txt", header=TRUE)
+#func<-read.table("/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/morphological.axes.txt", header=TRUE)
+func<-read.table(paste0(workingData,"/morphological.axes.txt"),header=TRUE)
 names(func)
 
 funcdat<-func[,c(4,6,7,15, 8:14, 16)]
@@ -120,8 +122,8 @@ distwinghand<- distwinghand/max(distwinghand)
 
 ## estimation of phylogenetic distances among species
 
-ctree1 <- read.nexus("/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/AllBirdsEricson1_summary.tre")    # This is Ericson concensus tree
-ctree2 <- read.nexus("/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/AllBirdsHackett1_summary.tre")    # This is Hackett concensus tree
+ctree1 <- read.nexus(paste0(workingData,"/AllBirdsEricson1_summary.tre"))    # This is Ericson concensus tree
+ctree2 <- read.nexus(paste0(worlingData,"/AllBirdsHackett1_summary.tre"))    # This is Hackett concensus tree
 
 combined <- match.phylo.comm(ctree1, comm)
 ctree.Eric <- combined$phy
@@ -188,7 +190,7 @@ tmp <- ddply(dat0, c("country", "city", "community", "habitat"), summarise,
 
 tmp2 <- merge(FDmorphology,tmp[,-5], by="community")
       
-write.table(tmp2, "/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/Morphological diversity metrics for communities.txt")
+write.table(tmp2, paste0(workingData,"/Morphological diversity metrics for communities.txt"))
 # write.table(tmp2, "/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/Morphological diversity metrics for communities natives.txt")
 
 
