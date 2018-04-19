@@ -98,6 +98,23 @@ qqnorm(QE.taxonomy)
 QE.taxonomy.I <- interactionMeans(QE.taxonomy) # effect plots
 plot(QE.taxonomy.I, errorbar="ci95")
 
+
+# Simpson*R/(R-1), an index of abundance evenness, independent of species richness. 
+
+Abundance.Eveness <- x$QE.taxonomy*x$Species.richness/(x$Species.richness-1)
+x <- cbind(x,Abundance.Eveness)
+  
+AEveness = lme(Abundance.Eveness ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
+summary(AEveness)
+testInteractions(AEveness, pairwise="habitat.ordered")
+plot(AEveness)
+qqnorm(AEveness)
+AEveness.I <- interactionMeans(AEveness) # effect plots
+plot(AEveness.I, errorbar="ci95")
+
+
+
+
 # Final figure (effect +/- standard error)
 
 a <- ggplot(spp.richness.I, aes(x= habitat.ordered, y=spp.richness.I[,2])) + 
@@ -114,8 +131,15 @@ b <- ggplot(QE.taxonomy.I, aes(x= habitat.ordered, y=QE.taxonomy.I[,2])) +
   labs(x = "", y = "Simpson's index", cex=16) +
   geom_text(aes(label= c("a","a","ab","b","c")))
 
-tiff(paste0(GoogleFigs,"/plot_taxonomic_diversity.tiff"), width = 11, height = 8, units = 'in', res = 200)
-ggplot2.multiplot(a,b)
+c <- ggplot(AEveness.I, aes(x= habitat.ordered, y=AEveness.I[,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=AEveness.I[,2]-AEveness.I[,3], ymax=AEveness.I[,2]+AEveness.I[,3]), width=.2) +
+  geom_point(data=AEveness.I, mapping=aes(x=habitat.ordered, y=AEveness.I[,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "Abundance evenness index", cex=16) +
+  geom_text(aes(label= c("a","a","a","b","b")))
+
+tiff(paste0(GoogleFigs,"/plot_taxonomic_diversity.tiff"), width = 9, height = 8, units = 'in', res = 200)
+ggplot2.multiplot(a,b,c, cols=1)
 dev.off()
 
 
@@ -687,7 +711,7 @@ ggplot2.multiplot(a,b,c,d)
 dev.off()
 }
 
-########### 1. Analyses for morphological diversity, omly natives ##############
+########### 2. Analyses for morphological diversity, omly natives ##############
 ################################################################################
 
 {## Import biodiversity metrics for communities
@@ -718,7 +742,6 @@ dev.off()
   # * We need to include confounds (city age, human density, coordinates)
   
   
-  
   # Species richness
   
   spp.richness = lme(Species.richness ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
@@ -740,6 +763,23 @@ dev.off()
   QE.taxonomy.I <- interactionMeans(QE.taxonomy) # effect plots
   plot(QE.taxonomy.I, errorbar="ci95")
   
+  
+  # Simpson*R/(R-1), an index of abundance evenness, independent of species richness. 
+  
+  Abundance.Eveness <- x$QE.taxonomy*x$Species.richness/(x$Species.richness-1)
+  x <- cbind(x,Abundance.Eveness)
+  
+  AEveness = lme(Abundance.Eveness ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
+  summary(AEveness)
+  testInteractions(AEveness, pairwise="habitat.ordered")
+  plot(AEveness)
+  qqnorm(AEveness)
+  AEveness.I <- interactionMeans(AEveness) # effect plots
+  plot(AEveness.I, errorbar="ci95")
+  
+  
+  
+  
   # Final figure (effect +/- standard error)
   
   a <- ggplot(spp.richness.I, aes(x= habitat.ordered, y=spp.richness.I[,2])) + 
@@ -756,10 +796,21 @@ dev.off()
     labs(x = "", y = "Simpson's index", cex=16) +
     geom_text(aes(label= c("a","a","a","b","c")))
   
+  c <- ggplot(AEveness.I, aes(x= habitat.ordered, y=AEveness.I[,2])) + 
+    theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+    geom_errorbar(aes(ymin=AEveness.I[,2]-AEveness.I[,3], ymax=AEveness.I[,2]+AEveness.I[,3]), width=.2) +
+    geom_point(data=AEveness.I, mapping=aes(x=habitat.ordered, y=AEveness.I[,2]), size=8, shape=21, fill="white") +
+    labs(x = "", y = "Abundance evenness index", cex=16) +
+    geom_text(aes(label= c("a","a","a","b","b")))
   
-  tiff(paste0(GoogleFigs,"/plot_taxonomic_diversity_natives.tiff"), width = 11, height = 8, units = 'in', res = 200)
-  ggplot2.multiplot(a,b)
+  tiff(paste0(GoogleFigs,"/plot_taxonomic_diversity_natives.tiff"), width = 9, height = 8, units = 'in', res = 200)
+  ggplot2.multiplot(a,b,c, cols=1)
   dev.off()
+  
+  
+  
+  
+  
   
   
   
@@ -1101,7 +1152,7 @@ dev.off()
     geom_errorbar(aes(ymin=meanD.size.I [,2]-meanD.size.I [,3], ymax=meanD.size.I [,2]+meanD.size.I [,3]), width=.2) +
     geom_point(data=meanD.size.I , mapping=aes(x=habitat.ordered, y=meanD.size.I [,2]), size=8, shape=21, fill="white") +
     labs(x = "", y = "meanD body size", cex=16) +
-    geom_text(aes(label= c("a","b","ab","ab","ac")))
+    geom_text(aes(label= c("a","b","ab","ab","a")))
   
   d <- ggplot(Balance.size.I , aes(x= habitat.ordered, y=Balance.size.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
@@ -1228,14 +1279,14 @@ dev.off()
     geom_errorbar(aes(ymin=QE.phyE.I [,2]-QE.phyE.I [,3], ymax=QE.phyE.I [,2]+QE.phyE.I [,3]), width=.2) +
     geom_point(data=QE.phyE.I , mapping=aes(x=habitat.ordered, y=QE.phyE.I [,2]), size=8, shape=21, fill="white") +
     labs(x = "", y = "QE Erickson’s phylogeny", cex=16) +
-    geom_text(aes(label= c("ac","b","ac","abc","bc")))
+    geom_text(aes(label= c("a","b","a","ab","b")))
   
   b <- ggplot(CR.phyE.I , aes(x= habitat.ordered, y=CR.phyE.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=CR.phyE.I [,2]-CR.phyE.I [,3], ymax=CR.phyE.I [,2]+CR.phyE.I [,3]), width=.2) +
     geom_point(data=CR.phyE.I , mapping=aes(x=habitat.ordered, y=CR.phyE.I [,2]), size=8, shape=21, fill="white") +
     labs(x = "", y = "CR Erickson’s phylogeny ", cex=16) +
-    geom_text(aes(label= c("ab","a","bc","bc","c")))
+    geom_text(aes(label= c("ab","b","a","a","a")))
   
   c <- ggplot(meanD.phyE.I , aes(x= habitat.ordered, y=meanD.phyE.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
@@ -1249,7 +1300,7 @@ dev.off()
     geom_errorbar(aes(ymin=Balance.phyE.I [,2]-Balance.phyE.I [,3], ymax=Balance.phyE.I [,2]+Balance.phyE.I [,3]), width=.2) +
     geom_point(data=Balance.phyE.I , mapping=aes(x=habitat.ordered, y=Balance.phyE.I [,2]), size=8, shape=21, fill="white") +
     labs(x = "", y = "Balance Erickson’s phylogeny ", cex=16) +
-    geom_text(aes(label= c("a","a","a","b","b")))
+    geom_text(aes(label= c("a","a","ab","b","b")))
   
   tiff(paste0(GoogleFigs,"/plot_FD_Erickson_phylogeny_natives.tiff"), width = 11, height = 8, units = 'in', res = 200)
   ggplot2.multiplot(a,b,c,d)
@@ -1306,21 +1357,21 @@ dev.off()
     geom_errorbar(aes(ymin=CR.phyH.I [,2]-CR.phyH.I [,3], ymax=CR.phyH.I [,2]+CR.phyH.I [,3]), width=.2) +
     geom_point(data=CR.phyH.I , mapping=aes(x=habitat.ordered, y=CR.phyH.I [,2]), size=8, shape=21, fill="white") +
     labs(x = "", y = "CR Hackett’s phylogeny ", cex=16) +
-    geom_text(aes(label= c("a","b","ac","abc","c")))
+    geom_text(aes(label= c("a","a","b","b","b")))  # check significances
   
   c <- ggplot(meanD.phyH.I, aes(x= habitat.ordered, y=meanD.phyH.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=meanD.phyH.I [,2]-meanD.phyH.I [,3], ymax=meanD.phyH.I [,2]+meanD.phyH.I [,3]), width=.2) +
     geom_point(data=meanD.phyH.I , mapping=aes(x=habitat.ordered, y=meanD.phyH.I [,2]), size=8, shape=21, fill="white") +
     labs(x = "", y = "meanD Hackett’s phylogeny ", cex=16) +
-    geom_text(aes(label= c("abc","b","c","abc","abc")))
+    geom_text(aes(label= c("a","a","a","a","a")))
   
   d <- ggplot(Balance.phyH.I , aes(x= habitat.ordered, y=Balance.phyH.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=Balance.phyH.I [,2]-Balance.phyH.I [,3], ymax=Balance.phyH.I [,2]+Balance.phyH.I [,3]), width=.2) +
     geom_point(data=Balance.phyH.I , mapping=aes(x=habitat.ordered, y=Balance.phyH.I [,2]), size=8, shape=21, fill="white") +
     labs(x = "", y = "Balance Hackett’s phylogeny ", cex=16) +
-    geom_text(aes(label= c("a","a","ab","bc","c")))
+    geom_text(aes(label= c("a","a","ab","b","b")))
   
   tiff(paste0(GoogleFigs,"/plot_FD_Hackett_phylogeny_natives.tiff"), width = 11, height = 8, units = 'in', res = 200)
   ggplot2.multiplot(a,b,c,d)
