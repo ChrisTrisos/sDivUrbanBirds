@@ -187,28 +187,28 @@ a <- ggplot(QE.all.morph.I, aes(x= habitat.ordered, y=QE.all.morph.I[,2])) +
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=QE.all.morph.I[,2]-QE.all.morph.I[,3], ymax=QE.all.morph.I[,2]+QE.all.morph.I[,3]), width=.2) +
   geom_point(data=QE.all.morph.I, mapping=aes(x=habitat.ordered, y=QE.all.morph.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "QE all traits", cex=16) +
+  labs(x = "", y = "Functional diversity (QE), all traits", cex=16) +
   geom_text(aes(label= c("a","b","ab","b","b")))
 
 b <- ggplot(CR.all.morph.I, aes(x= habitat.ordered, y=CR.all.morph.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=CR.all.morph.I[,2]-CR.all.morph.I[,3], ymax=CR.all.morph.I[,2]+CR.all.morph.I[,3]), width=.2) +
   geom_point(data=CR.all.morph.I, mapping=aes(x=habitat.ordered, y=CR.all.morph.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "CR all traits", cex=16) +
+  labs(x = "", y = "Functional redundancies, all traits", cex=16) +
   geom_text(aes(label= c("ab","c","abc","ac","b")))
 
 c <- ggplot(meanD.all.morph.I, aes(x= habitat.ordered, y=meanD.all.morph.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=meanD.all.morph.I[,2]-meanD.all.morph.I[,3], ymax=meanD.all.morph.I[,2]+meanD.all.morph.I[,3]), width=.2) +
   geom_point(data=meanD.all.morph.I, mapping=aes(x=habitat.ordered, y=meanD.all.morph.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "meanD all traits", cex=16) +
+  labs(x = "", y = "Average species dissimilarity, all traits", cex=16) +
   geom_text(aes(label= c("a","b","ab","ab","a")))
   
 d <- ggplot(Balance.all.morph.I, aes(x= habitat.ordered, y=Balance.all.morph.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=Balance.all.morph.I[,2]-Balance.all.morph.I[,3], ymax=Balance.all.morph.I[,2]+Balance.all.morph.I[,3]), width=.2) +
   geom_point(data=Balance.all.morph.I, mapping=aes(x=habitat.ordered, y=Balance.all.morph.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "Balance all traits", cex=16) +
+  labs(x = "", y = "Balance component, component, all traits", cex=16) +
   geom_text(aes(label= c("a","a","a","a","a")))
 
 tiff(paste0(GoogleFigs,"plot_FD_all_traits.tiff"), width = 11, height = 8, units = 'in', res = 200)
@@ -257,28 +257,28 @@ a <- ggplot(QE.PCA3.I, aes(x= habitat.ordered, y=QE.PCA3.I[,2])) +
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=QE.PCA3.I[,2]-QE.PCA3.I[,3], ymax=QE.PCA3.I[,2]+QE.PCA3.I[,3]), width=.2) +
   geom_point(data=QE.PCA3.I, mapping=aes(x=habitat.ordered, y=QE.PCA3.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "QE PCA3", cex=16) +
+  labs(x = "", y = "Functional diversity (QE), PCA3", cex=16) +
   geom_text(aes(label= c("a","b","ab","b","b")))
 
 b <- ggplot(CR.PCA3.I, aes(x= habitat.ordered, y=CR.PCA3.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=CR.PCA3.I[,2]-CR.PCA3.I[,3], ymax=CR.PCA3.I[,2]+CR.PCA3.I[,3]), width=.2) +
   geom_point(data=CR.PCA3.I, mapping=aes(x=habitat.ordered, y=CR.PCA3.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "CR PCA3", cex=16) +
+  labs(x = "", y = "Functional redundancies, PCA3", cex=16) +
   geom_text(aes(label= c("a","b","ab","ab","a")))
 
 c <- ggplot(meanD.PCA3.I, aes(x= habitat.ordered, y=meanD.PCA3.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=meanD.PCA3.I[,2]-meanD.PCA3.I[,3], ymax=meanD.PCA3.I[,2]+meanD.PCA3.I[,3]), width=.2) +
   geom_point(data=meanD.PCA3.I, mapping=aes(x=habitat.ordered, y=meanD.PCA3.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "meanD PCA3", cex=16) +
+  labs(x = "", y = "Average species dissimilarity, PCA3", cex=16) +
   geom_text(aes(label= c("a","b","ab","ab","a")))
 
 d <- ggplot(Balance.PCA3.I, aes(x= habitat.ordered, y=Balance.PCA3.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=Balance.PCA3.I[,2]-Balance.PCA3.I[,3], ymax=Balance.PCA3.I[,2]+Balance.PCA3.I[,3]), width=.2) +
   geom_point(data=Balance.PCA3.I, mapping=aes(x=habitat.ordered, y=Balance.PCA3.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "Balance PCA3", cex=16) +
+  labs(x = "", y = "Balance component, component, PCA3", cex=16) +
   geom_text(aes(label= c("a","a","a","a","a")))
 
 #tiff(paste0(GoogleFigs,"/plot_FD_PCA3.tiff"), width = 11, height = 8, units = 'in', res = 200)
@@ -330,28 +330,28 @@ a <- ggplot(QE.beak.I, aes(x= habitat.ordered, y=QE.beak.I[,2])) +
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=QE.beak.I[,2]-QE.beak.I[,3], ymax=QE.beak.I[,2]+QE.beak.I[,3]), width=.2) +
   geom_point(data=QE.beak.I, mapping=aes(x=habitat.ordered, y=QE.beak.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "QE beak", cex=16) +
+  labs(x = "", y = "Functional diversity (QE), beak", cex=16) +
   geom_text(aes(label= c("a","a","ab","b","b")))
 
 b <- ggplot(CR.beak.I, aes(x= habitat.ordered, y=CR.beak.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=CR.beak.I[,2]-CR.beak.I[,3], ymax=CR.beak.I[,2]+CR.beak.I[,3]), width=.2) +
   geom_point(data=CR.beak.I, mapping=aes(x=habitat.ordered, y=CR.beak.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "CR beak", cex=16) +
+  labs(x = "", y = "Functional redundancies, beak", cex=16) +
   geom_text(aes(label= c("a","a","a","b","b")))
 
 c <- ggplot(meanD.beak.I, aes(x= habitat.ordered, y=meanD.beak.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=meanD.beak.I[,2]-meanD.beak.I[,3], ymax=meanD.beak.I[,2]+meanD.beak.I[,3]), width=.2) +
   geom_point(data=meanD.beak.I, mapping=aes(x=habitat.ordered, y=meanD.beak.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "meanD beak", cex=16) +
+  labs(x = "", y = "Average species dissimilarity, beak", cex=16) +
   geom_text(aes(label= c("a","a","ab","b","c")))
 
 d <- ggplot(Balance.beak.I, aes(x= habitat.ordered, y=Balance.beak.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=Balance.beak.I[,2]-Balance.beak.I[,3], ymax=Balance.beak.I[,2]+Balance.beak.I[,3]), width=.2) +
   geom_point(data=Balance.beak.I, mapping=aes(x=habitat.ordered, y=Balance.beak.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "Balance beak", cex=16) +
+  labs(x = "", y = "Balance component, beak", cex=16) +
   geom_text(aes(label= c("a","a","a","b","b")))
 
 tiff(paste0(GoogleFigs,"/plot_FD_beak.tiff"), width = 11, height = 8, units = 'in', res = 200)
@@ -400,28 +400,28 @@ a <- ggplot(QE.locom.I , aes(x= habitat.ordered, y=QE.locom.I [,2])) +
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=QE.locom.I [,2]-QE.locom.I [,3], ymax=QE.locom.I [,2]+QE.locom.I [,3]), width=.2) +
   geom_point(data=QE.locom.I , mapping=aes(x=habitat.ordered, y=QE.locom.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "QE locomotory system", cex=16) +
+  labs(x = "", y = "Functional diversity (QE), locomotory system", cex=16) +
   geom_text(aes(label= c("a","ab","ab","ab","b")))
 
 b <- ggplot(CR.locom.I , aes(x= habitat.ordered, y=CR.locom.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=CR.locom.I [,2]-CR.locom.I [,3], ymax=CR.locom.I [,2]+CR.locom.I [,3]), width=.2) +
   geom_point(data=CR.locom.I , mapping=aes(x=habitat.ordered, y=CR.locom.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "CR locomotory system", cex=16) +
+  labs(x = "", y = "Functional redundancies, locomotory system", cex=16) +
   geom_text(aes(label= c("a","a","a","a","a")))
 
 c <- ggplot(meanD.locom.I , aes(x= habitat.ordered, y=meanD.locom.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=meanD.locom.I [,2]-meanD.locom.I [,3], ymax=meanD.locom.I [,2]+meanD.locom.I [,3]), width=.2) +
   geom_point(data=meanD.locom.I , mapping=aes(x=habitat.ordered, y=meanD.locom.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "meanD locomotory system", cex=16) +
+  labs(x = "", y = "Average species dissimilarity, locomotory system", cex=16) +
   geom_text(aes(label= c("ab","ab","a","b","b")))
 
 d <- ggplot(Balance.locom.I , aes(x= habitat.ordered, y=Balance.locom.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=Balance.locom.I [,2]-Balance.locom.I [,3], ymax=Balance.locom.I [,2]+Balance.locom.I [,3]), width=.2) +
   geom_point(data=Balance.locom.I , mapping=aes(x=habitat.ordered, y=Balance.locom.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "Balance locomotory system", cex=16) +
+  labs(x = "", y = "Balance component, locomotory system", cex=16) +
   geom_text(aes(label= c("ab","ab","a","ab","b")))
 
 tiff(paste0(GoogleFigs,"/plot_FD_Locomotory.tiff"), width = 11, height = 8, units = 'in', res = 200)
@@ -470,28 +470,28 @@ a <- ggplot(QE.size.I , aes(x= habitat.ordered, y=QE.size.I [,2])) +
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=QE.size.I [,2]-QE.size.I [,3], ymax=QE.size.I [,2]+QE.size.I [,3]), width=.2) +
   geom_point(data=QE.size.I , mapping=aes(x=habitat.ordered, y=QE.size.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "QE body size", cex=16) +
+  labs(x = "", y = "Functional diversity (QE), body size", cex=16) +
   geom_text(aes(label= c("a","b","a","b","b")))
 
 b <- ggplot(CR.size.I , aes(x= habitat.ordered, y=CR.size.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=CR.size.I [,2]-CR.size.I [,3], ymax=CR.size.I [,2]+CR.size.I [,3]), width=.2) +
   geom_point(data=CR.size.I , mapping=aes(x=habitat.ordered, y=CR.size.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "CR body size", cex=16) +
+  labs(x = "", y = "Functional redundancies, body size", cex=16) +
   geom_text(aes(label= c("a","b","ab","b","a")))
 
 c <- ggplot(meanD.size.I , aes(x= habitat.ordered, y=meanD.size.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=meanD.size.I [,2]-meanD.size.I [,3], ymax=meanD.size.I [,2]+meanD.size.I [,3]), width=.2) +
   geom_point(data=meanD.size.I , mapping=aes(x=habitat.ordered, y=meanD.size.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "meanD body size", cex=16) +
+  labs(x = "", y = "Average species dissimilarity, body size", cex=16) +
   geom_text(aes(label= c("a","b","abc","abc","ac")))
 
 d <- ggplot(Balance.size.I , aes(x= habitat.ordered, y=Balance.size.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=Balance.size.I [,2]-Balance.size.I [,3], ymax=Balance.size.I [,2]+Balance.size.I [,3]), width=.2) +
   geom_point(data=Balance.size.I , mapping=aes(x=habitat.ordered, y=Balance.size.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "Balance body size", cex=16) +
+  labs(x = "", y = "Balance component, body size", cex=16) +
   geom_text(aes(label= c("a","a","a","a","a")))
 
 tiff(paste0(GoogleFigs,"/plot_FD_Body_size.tiff"), width = 11, height = 8, units = 'in', res = 200)
@@ -541,28 +541,28 @@ a <- ggplot(QE.winghand.I , aes(x= habitat.ordered, y=QE.winghand.I [,2])) +
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=QE.winghand.I [,2]-QE.winghand.I [,3], ymax=QE.winghand.I [,2]+QE.winghand.I [,3]), width=.2) +
   geom_point(data=QE.winghand.I , mapping=aes(x=habitat.ordered, y=QE.winghand.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "QE wing hand", cex=16) +
+  labs(x = "", y = "Functional diversity (QE), wing hand", cex=16) +
   geom_text(aes(label= c("a","ab","ab","ab","b")))
 
 b <- ggplot(CR.winghand.I , aes(x= habitat.ordered, y=CR.winghand.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=CR.winghand.I [,2]-CR.winghand.I [,3], ymax=CR.winghand.I [,2]+CR.winghand.I [,3]), width=.2) +
   geom_point(data=CR.winghand.I , mapping=aes(x=habitat.ordered, y=CR.winghand.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "CR wing hand ", cex=16) +
+  labs(x = "", y = "Functional redundancies, wing hand ", cex=16) +
   geom_text(aes(label= c("a","a","a","a","a")))
 
 c <- ggplot(meanD.winghand.I , aes(x= habitat.ordered, y=meanD.winghand.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=meanD.winghand.I [,2]-meanD.winghand.I [,3], ymax=meanD.winghand.I [,2]+meanD.winghand.I [,3]), width=.2) +
   geom_point(data=meanD.winghand.I , mapping=aes(x=habitat.ordered, y=meanD.winghand.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "meanD wing hand ", cex=16) +
+  labs(x = "", y = "Average species dissimilarity, wing hand ", cex=16) +
   geom_text(aes(label= c("a","a","a","a","a")))
 
 d <- ggplot(Balance.winghand.I , aes(x= habitat.ordered, y=Balance.winghand.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=Balance.winghand.I [,2]-Balance.winghand.I [,3], ymax=Balance.winghand.I [,2]+Balance.winghand.I [,3]), width=.2) +
   geom_point(data=Balance.winghand.I , mapping=aes(x=habitat.ordered, y=Balance.winghand.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "Balance wing hand ", cex=16) +
+  labs(x = "", y = "Balance component, wing hand ", cex=16) +
   geom_text(aes(label= c("a","a","a","a","a")))
 
 tiff(paste0(GoogleFigs,"/plot_FD_wing_hand.tiff"), width = 11, height = 8, units = 'in', res = 200)
@@ -611,28 +611,28 @@ a <- ggplot(QE.phyE.I , aes(x= habitat.ordered, y=QE.phyE.I [,2])) +
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=QE.phyE.I [,2]-QE.phyE.I [,3], ymax=QE.phyE.I [,2]+QE.phyE.I [,3]), width=.2) +
   geom_point(data=QE.phyE.I , mapping=aes(x=habitat.ordered, y=QE.phyE.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "QE Erickson’s phylogeny", cex=16) +
+  labs(x = "", y = "Phylogenetic diversity (QE), Erickson’s phylogeny", cex=16) +
   geom_text(aes(label= c("ac","b","ac","abc","bc")))
 
 b <- ggplot(CR.phyE.I , aes(x= habitat.ordered, y=CR.phyE.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=CR.phyE.I [,2]-CR.phyE.I [,3], ymax=CR.phyE.I [,2]+CR.phyE.I [,3]), width=.2) +
   geom_point(data=CR.phyE.I , mapping=aes(x=habitat.ordered, y=CR.phyE.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "CR Erickson’s phylogeny ", cex=16) +
+  labs(x = "", y = "Functional redundancies, Erickson’s phylogeny ", cex=16) +
   geom_text(aes(label= c("ab","a","bc","bc","c")))
 
 c <- ggplot(meanD.phyE.I , aes(x= habitat.ordered, y=meanD.phyE.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=meanD.phyE.I [,2]-meanD.phyE.I [,3], ymax=meanD.phyE.I [,2]+meanD.phyE.I [,3]), width=.2) +
   geom_point(data=meanD.phyE.I , mapping=aes(x=habitat.ordered, y=meanD.phyE.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "meanD Erickson’s phylogeny ", cex=16) +
+  labs(x = "", y = "Average species dissimilarity, Erickson’s phylogeny ", cex=16) +
   geom_text(aes(label= c("ab","a","b","ab","ab")))
 
 d <- ggplot(Balance.phyE.I , aes(x= habitat.ordered, y=Balance.phyE.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=Balance.phyE.I [,2]-Balance.phyE.I [,3], ymax=Balance.phyE.I [,2]+Balance.phyE.I [,3]), width=.2) +
   geom_point(data=Balance.phyE.I , mapping=aes(x=habitat.ordered, y=Balance.phyE.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "Balance Erickson’s phylogeny ", cex=16) +
+  labs(x = "", y = "Balance component, Erickson’s phylogeny ", cex=16) +
   geom_text(aes(label= c("a","a","a","b","b")))
 
 tiff(paste0(GoogleFigs,"/plot_FD_Erickson_phylogeny.tiff"), width = 11, height = 8, units = 'in', res = 200)
@@ -682,34 +682,38 @@ a <- ggplot(QE.phyH.I , aes(x= habitat.ordered, y=QE.phyH.I [,2])) +
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=QE.phyH.I [,2]-QE.phyH.I [,3], ymax=QE.phyH.I [,2]+QE.phyH.I [,3]), width=.2) +
   geom_point(data=QE.phyH.I , mapping=aes(x=habitat.ordered, y=QE.phyH.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "QE Hackett’s phylogeny", cex=16) +
+  labs(x = "", y = "Phylogenetic diversity (QE), Hackett’s phylogeny", cex=16) +
   geom_text(aes(label= c("a","b","ac","abc","b")))
 
 b <- ggplot(CR.phyH.I , aes(x= habitat.ordered, y=CR.phyH.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=CR.phyH.I [,2]-CR.phyH.I [,3], ymax=CR.phyH.I [,2]+CR.phyH.I [,3]), width=.2) +
   geom_point(data=CR.phyH.I , mapping=aes(x=habitat.ordered, y=CR.phyH.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "CR Hackett’s phylogeny ", cex=16) +
+  labs(x = "", y = "Functional redundancies, Hackett’s phylogeny ", cex=16) +
   geom_text(aes(label= c("a","b","ac","abc","c")))
 
 c <- ggplot(meanD.phyH.I, aes(x= habitat.ordered, y=meanD.phyH.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=meanD.phyH.I [,2]-meanD.phyH.I [,3], ymax=meanD.phyH.I [,2]+meanD.phyH.I [,3]), width=.2) +
   geom_point(data=meanD.phyH.I , mapping=aes(x=habitat.ordered, y=meanD.phyH.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "meanD Hackett’s phylogeny ", cex=16) +
+  labs(x = "", y = "Average species dissimilarity, Hackett’s phylogeny ", cex=16) +
   geom_text(aes(label= c("abc","b","c","abc","abc")))
 
 d <- ggplot(Balance.phyH.I , aes(x= habitat.ordered, y=Balance.phyH.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=Balance.phyH.I [,2]-Balance.phyH.I [,3], ymax=Balance.phyH.I [,2]+Balance.phyH.I [,3]), width=.2) +
   geom_point(data=Balance.phyH.I , mapping=aes(x=habitat.ordered, y=Balance.phyH.I [,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "Balance Hackett’s phylogeny ", cex=16) +
+  labs(x = "", y = "Balance component, Hackett’s phylogeny ", cex=16) +
   geom_text(aes(label= c("a","a","ab","bc","c")))
 
 tiff(paste0(GoogleFigs,"/plot_FD_Hackett_phylogeny.tiff"), width = 11, height = 8, units = 'in', res = 200)
 ggplot2.multiplot(a,b,c,d)
 dev.off()
 }
+
+
+
+
 
 ########### 2. Analyses for morphological diversity, omly natives ##############
 ################################################################################
@@ -855,28 +859,28 @@ dev.off()
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=QE.all.morph.I[,2]-QE.all.morph.I[,3], ymax=QE.all.morph.I[,2]+QE.all.morph.I[,3]), width=.2) +
     geom_point(data=QE.all.morph.I, mapping=aes(x=habitat.ordered, y=QE.all.morph.I[,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "QE all traits", cex=16) +
+    labs(x = "", y = "Functional diversity (QE), all traits", cex=16) +
     geom_text(aes(label= c("a","ab","ab","b","b")))
   
   b <- ggplot(CR.all.morph.I, aes(x= habitat.ordered, y=CR.all.morph.I[,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=CR.all.morph.I[,2]-CR.all.morph.I[,3], ymax=CR.all.morph.I[,2]+CR.all.morph.I[,3]), width=.2) +
     geom_point(data=CR.all.morph.I, mapping=aes(x=habitat.ordered, y=CR.all.morph.I[,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "CR all traits", cex=16) +
+    labs(x = "", y = "Functional redundancies, all traits", cex=16) +
     geom_text(aes(label= c("ab","a","ab","ab","b")))
   
   c <- ggplot(meanD.all.morph.I, aes(x= habitat.ordered, y=meanD.all.morph.I[,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=meanD.all.morph.I[,2]-meanD.all.morph.I[,3], ymax=meanD.all.morph.I[,2]+meanD.all.morph.I[,3]), width=.2) +
     geom_point(data=meanD.all.morph.I, mapping=aes(x=habitat.ordered, y=meanD.all.morph.I[,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "meanD all traits", cex=16) +
+    labs(x = "", y = "Average species dissimilarity, all traits", cex=16) +
     geom_text(aes(label= c("a","b","ab","ab","a")))
   
   d <- ggplot(Balance.all.morph.I, aes(x= habitat.ordered, y=Balance.all.morph.I[,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=Balance.all.morph.I[,2]-Balance.all.morph.I[,3], ymax=Balance.all.morph.I[,2]+Balance.all.morph.I[,3]), width=.2) +
     geom_point(data=Balance.all.morph.I, mapping=aes(x=habitat.ordered, y=Balance.all.morph.I[,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "Balance all traits", cex=16) +
+    labs(x = "", y = "Balance component, all traits", cex=16) +
     geom_text(aes(label= c("a","a","a","a","a")))
   
   tiff(paste0(GoogleFigs,"/plot_FD_all_traits_natives.tiff"), width = 11, height = 8, units = 'in', res = 200)
@@ -925,28 +929,28 @@ dev.off()
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=QE.PCA3.I[,2]-QE.PCA3.I[,3], ymax=QE.PCA3.I[,2]+QE.PCA3.I[,3]), width=.2) +
     geom_point(data=QE.PCA3.I, mapping=aes(x=habitat.ordered, y=QE.PCA3.I[,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "QE PCA3", cex=16) +
+    labs(x = "", y = "Functional diversity (QE), PCA3", cex=16) +
     geom_text(aes(label= c("a","b","ab","b","b")))
   
   b <- ggplot(CR.PCA3.I, aes(x= habitat.ordered, y=CR.PCA3.I[,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=CR.PCA3.I[,2]-CR.PCA3.I[,3], ymax=CR.PCA3.I[,2]+CR.PCA3.I[,3]), width=.2) +
     geom_point(data=CR.PCA3.I, mapping=aes(x=habitat.ordered, y=CR.PCA3.I[,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "CR PCA3", cex=16) +
+    labs(x = "", y = "Functional redundancies, PCA3", cex=16) +
     geom_text(aes(label= c("ab","a","ab","ab","b")))
   
   c <- ggplot(meanD.PCA3.I, aes(x= habitat.ordered, y=meanD.PCA3.I[,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=meanD.PCA3.I[,2]-meanD.PCA3.I[,3], ymax=meanD.PCA3.I[,2]+meanD.PCA3.I[,3]), width=.2) +
     geom_point(data=meanD.PCA3.I, mapping=aes(x=habitat.ordered, y=meanD.PCA3.I[,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "meanD PCA3", cex=16) +
+    labs(x = "", y = "Average species dissimilarity, PCA3", cex=16) +
     geom_text(aes(label= c("a","b","ab","ab","a")))
   
   d <- ggplot(Balance.PCA3.I, aes(x= habitat.ordered, y=Balance.PCA3.I[,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=Balance.PCA3.I[,2]-Balance.PCA3.I[,3], ymax=Balance.PCA3.I[,2]+Balance.PCA3.I[,3]), width=.2) +
     geom_point(data=Balance.PCA3.I, mapping=aes(x=habitat.ordered, y=Balance.PCA3.I[,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "Balance PCA3", cex=16) +
+    labs(x = "", y = "Balance component, PCA3", cex=16) +
     geom_text(aes(label= c("a","a","a","a","a")))
   
   tiff(paste0(GoogleFigs,"/plot_FD_PCA3_natives.tiff"), width = 11, height = 8, units = 'in', res = 200)
@@ -997,28 +1001,28 @@ dev.off()
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=QE.beak.I[,2]-QE.beak.I[,3], ymax=QE.beak.I[,2]+QE.beak.I[,3]), width=.2) +
     geom_point(data=QE.beak.I, mapping=aes(x=habitat.ordered, y=QE.beak.I[,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "QE beak", cex=16) +
+    labs(x = "", y = "Functional diversity (QE), beak", cex=16) +
     geom_text(aes(label= c("a","a","a","a","a")))
   
   b <- ggplot(CR.beak.I, aes(x= habitat.ordered, y=CR.beak.I[,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=CR.beak.I[,2]-CR.beak.I[,3], ymax=CR.beak.I[,2]+CR.beak.I[,3]), width=.2) +
     geom_point(data=CR.beak.I, mapping=aes(x=habitat.ordered, y=CR.beak.I[,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "CR beak", cex=16) +
+    labs(x = "", y = "Functional redundancies, beak", cex=16) +
     geom_text(aes(label= c("a","a","a","b","b")))
   
   c <- ggplot(meanD.beak.I, aes(x= habitat.ordered, y=meanD.beak.I[,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=meanD.beak.I[,2]-meanD.beak.I[,3], ymax=meanD.beak.I[,2]+meanD.beak.I[,3]), width=.2) +
     geom_point(data=meanD.beak.I, mapping=aes(x=habitat.ordered, y=meanD.beak.I[,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "meanD beak", cex=16) +
+    labs(x = "", y = "Average species dissimilarity, beak", cex=16) +
     geom_text(aes(label= c("a","ab","ab","ab","bc")))
   
   d <- ggplot(Balance.beak.I, aes(x= habitat.ordered, y=Balance.beak.I[,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=Balance.beak.I[,2]-Balance.beak.I[,3], ymax=Balance.beak.I[,2]+Balance.beak.I[,3]), width=.2) +
     geom_point(data=Balance.beak.I, mapping=aes(x=habitat.ordered, y=Balance.beak.I[,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "Balance beak", cex=16) +
+    labs(x = "", y = "Balance component, beak", cex=16) +
     geom_text(aes(label= c("a","a","a","b","b")))  # check why the summary of the model() and the testInteractions() give different results
   
   tiff(paste0(GoogleFigs,"/plot_FD_beak_natives.tiff"), width = 11, height = 8, units = 'in', res = 200)
@@ -1067,28 +1071,28 @@ dev.off()
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=QE.locom.I [,2]-QE.locom.I [,3], ymax=QE.locom.I [,2]+QE.locom.I [,3]), width=.2) +
     geom_point(data=QE.locom.I , mapping=aes(x=habitat.ordered, y=QE.locom.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "QE locomotory system", cex=16) +
+    labs(x = "", y = "Functional diversity (QE), locomotory system", cex=16) +
     geom_text(aes(label= c("a","ab","ab","ab","b")))
   
   b <- ggplot(CR.locom.I , aes(x= habitat.ordered, y=CR.locom.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=CR.locom.I [,2]-CR.locom.I [,3], ymax=CR.locom.I [,2]+CR.locom.I [,3]), width=.2) +
     geom_point(data=CR.locom.I , mapping=aes(x=habitat.ordered, y=CR.locom.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "CR locomotory system", cex=16) +
+    labs(x = "", y = "Functional redundancies, locomotory system", cex=16) +
     geom_text(aes(label= c("a","a","a","a","a")))
   
   c <- ggplot(meanD.locom.I , aes(x= habitat.ordered, y=meanD.locom.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=meanD.locom.I [,2]-meanD.locom.I [,3], ymax=meanD.locom.I [,2]+meanD.locom.I [,3]), width=.2) +
     geom_point(data=meanD.locom.I , mapping=aes(x=habitat.ordered, y=meanD.locom.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "meanD locomotory system", cex=16) +
+    labs(x = "", y = "Average species dissimilarity, locomotory system", cex=16) +
     geom_text(aes(label= c("a","a","a","a","a")))
   
   d <- ggplot(Balance.locom.I , aes(x= habitat.ordered, y=Balance.locom.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=Balance.locom.I [,2]-Balance.locom.I [,3], ymax=Balance.locom.I [,2]+Balance.locom.I [,3]), width=.2) +
     geom_point(data=Balance.locom.I , mapping=aes(x=habitat.ordered, y=Balance.locom.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "Balance locomotory system", cex=16) +
+    labs(x = "", y = "Balance component, locomotory system", cex=16) +
     geom_text(aes(label= c("a","a","a","a","a")))
   
   tiff(paste0(GoogleFigs,"/plot_FD_Locomotory_natives.tiff"), width = 11, height = 8, units = 'in', res = 200)
@@ -1137,28 +1141,28 @@ dev.off()
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=QE.size.I [,2]-QE.size.I [,3], ymax=QE.size.I [,2]+QE.size.I [,3]), width=.2) +
     geom_point(data=QE.size.I , mapping=aes(x=habitat.ordered, y=QE.size.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "QE body size", cex=16) +
+    labs(x = "", y = "Functional diversity (QE), body size", cex=16) +
     geom_text(aes(label= c("a","ab","ab","b","b")))
   
   b <- ggplot(CR.size.I , aes(x= habitat.ordered, y=CR.size.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=CR.size.I [,2]-CR.size.I [,3], ymax=CR.size.I [,2]+CR.size.I [,3]), width=.2) +
     geom_point(data=CR.size.I , mapping=aes(x=habitat.ordered, y=CR.size.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "CR body size", cex=16) +
+    labs(x = "", y = "Functional redundancies, body size", cex=16) +
     geom_text(aes(label= c("a","a","a","a","a")))
   
   c <- ggplot(meanD.size.I , aes(x= habitat.ordered, y=meanD.size.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=meanD.size.I [,2]-meanD.size.I [,3], ymax=meanD.size.I [,2]+meanD.size.I [,3]), width=.2) +
     geom_point(data=meanD.size.I , mapping=aes(x=habitat.ordered, y=meanD.size.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "meanD body size", cex=16) +
+    labs(x = "", y = "Average species dissimilarity, body size", cex=16) +
     geom_text(aes(label= c("a","b","ab","ab","a")))
   
   d <- ggplot(Balance.size.I , aes(x= habitat.ordered, y=Balance.size.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=Balance.size.I [,2]-Balance.size.I [,3], ymax=Balance.size.I [,2]+Balance.size.I [,3]), width=.2) +
     geom_point(data=Balance.size.I , mapping=aes(x=habitat.ordered, y=Balance.size.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "Balance body size", cex=16) +
+    labs(x = "", y = "Balance component, body size", cex=16) +
     geom_text(aes(label= c("a","a","a","a","a")))
   
   tiff(paste0(GoogleFigs,"/plot_FD_Body_size_natives.tiff"), width = 11, height = 8, units = 'in', res = 200)
@@ -1208,28 +1212,28 @@ dev.off()
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=QE.winghand.I [,2]-QE.winghand.I [,3], ymax=QE.winghand.I [,2]+QE.winghand.I [,3]), width=.2) +
     geom_point(data=QE.winghand.I , mapping=aes(x=habitat.ordered, y=QE.winghand.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "QE wing hand", cex=16) +
+    labs(x = "", y = "Functional diversity (QE), wing hand", cex=16) +
     geom_text(aes(label= c("a","ab","ab","ab","b")))
   
   b <- ggplot(CR.winghand.I , aes(x= habitat.ordered, y=CR.winghand.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=CR.winghand.I [,2]-CR.winghand.I [,3], ymax=CR.winghand.I [,2]+CR.winghand.I [,3]), width=.2) +
     geom_point(data=CR.winghand.I , mapping=aes(x=habitat.ordered, y=CR.winghand.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "CR wing hand ", cex=16) +
+    labs(x = "", y = "Functional redundancies, wing hand ", cex=16) +
     geom_text(aes(label= c("ab","ab","a","ab","b")))
   
   c <- ggplot(meanD.winghand.I , aes(x= habitat.ordered, y=meanD.winghand.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=meanD.winghand.I [,2]-meanD.winghand.I [,3], ymax=meanD.winghand.I [,2]+meanD.winghand.I [,3]), width=.2) +
     geom_point(data=meanD.winghand.I , mapping=aes(x=habitat.ordered, y=meanD.winghand.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "meanD wing hand ", cex=16) +
+    labs(x = "", y = "Average species dissimilarity, wing hand ", cex=16) +
     geom_text(aes(label= c("a","a","a","a","a")))
   
   d <- ggplot(Balance.winghand.I , aes(x= habitat.ordered, y=Balance.winghand.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=Balance.winghand.I [,2]-Balance.winghand.I [,3], ymax=Balance.winghand.I [,2]+Balance.winghand.I [,3]), width=.2) +
     geom_point(data=Balance.winghand.I , mapping=aes(x=habitat.ordered, y=Balance.winghand.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "Balance wing hand ", cex=16) +
+    labs(x = "", y = "Balance component, wing hand ", cex=16) +
     geom_text(aes(label= c("a","a","a","a","a")))
   
   tiff(paste0(GoogleFigs,"/plot_FD_wing_hand_natives.tiff"), width = 11, height = 8, units = 'in', res = 200)
@@ -1278,28 +1282,28 @@ dev.off()
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=QE.phyE.I [,2]-QE.phyE.I [,3], ymax=QE.phyE.I [,2]+QE.phyE.I [,3]), width=.2) +
     geom_point(data=QE.phyE.I , mapping=aes(x=habitat.ordered, y=QE.phyE.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "QE Erickson’s phylogeny", cex=16) +
+    labs(x = "", y = "Phylogenetic diversity (QE), Erickson’s phylogeny", cex=16) +
     geom_text(aes(label= c("a","b","a","ab","b")))
   
   b <- ggplot(CR.phyE.I , aes(x= habitat.ordered, y=CR.phyE.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=CR.phyE.I [,2]-CR.phyE.I [,3], ymax=CR.phyE.I [,2]+CR.phyE.I [,3]), width=.2) +
     geom_point(data=CR.phyE.I , mapping=aes(x=habitat.ordered, y=CR.phyE.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "CR Erickson’s phylogeny ", cex=16) +
+    labs(x = "", y = "Functional redundancies, Erickson’s phylogeny ", cex=16) +
     geom_text(aes(label= c("ab","b","a","a","a")))
   
   c <- ggplot(meanD.phyE.I , aes(x= habitat.ordered, y=meanD.phyE.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=meanD.phyE.I [,2]-meanD.phyE.I [,3], ymax=meanD.phyE.I [,2]+meanD.phyE.I [,3]), width=.2) +
     geom_point(data=meanD.phyE.I , mapping=aes(x=habitat.ordered, y=meanD.phyE.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "meanD Erickson’s phylogeny ", cex=16) +
+    labs(x = "", y = "Average species dissimilarity, Erickson’s phylogeny ", cex=16) +
     geom_text(aes(label= c("ab","a","b","ab","ab")))
   
   d <- ggplot(Balance.phyE.I , aes(x= habitat.ordered, y=Balance.phyE.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=Balance.phyE.I [,2]-Balance.phyE.I [,3], ymax=Balance.phyE.I [,2]+Balance.phyE.I [,3]), width=.2) +
     geom_point(data=Balance.phyE.I , mapping=aes(x=habitat.ordered, y=Balance.phyE.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "Balance Erickson’s phylogeny ", cex=16) +
+    labs(x = "", y = "Balance component, Erickson’s phylogeny ", cex=16) +
     geom_text(aes(label= c("a","a","ab","b","b")))
   
   tiff(paste0(GoogleFigs,"/plot_FD_Erickson_phylogeny_natives.tiff"), width = 11, height = 8, units = 'in', res = 200)
@@ -1349,28 +1353,28 @@ dev.off()
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=QE.phyH.I [,2]-QE.phyH.I [,3], ymax=QE.phyH.I [,2]+QE.phyH.I [,3]), width=.2) +
     geom_point(data=QE.phyH.I , mapping=aes(x=habitat.ordered, y=QE.phyH.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "QE Hackett’s phylogeny", cex=16) +
+    labs(x = "", y = "Phylogenetic diversity (QE), Hackett’s phylogeny", cex=16) +
     geom_text(aes(label= c("a","b","ac","abc","b")))
   
   b <- ggplot(CR.phyH.I , aes(x= habitat.ordered, y=CR.phyH.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=CR.phyH.I [,2]-CR.phyH.I [,3], ymax=CR.phyH.I [,2]+CR.phyH.I [,3]), width=.2) +
     geom_point(data=CR.phyH.I , mapping=aes(x=habitat.ordered, y=CR.phyH.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "CR Hackett’s phylogeny ", cex=16) +
+    labs(x = "", y = "Functional redundancies, Hackett’s phylogeny ", cex=16) +
     geom_text(aes(label= c("a","a","b","b","b")))  # check significances
   
   c <- ggplot(meanD.phyH.I, aes(x= habitat.ordered, y=meanD.phyH.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=meanD.phyH.I [,2]-meanD.phyH.I [,3], ymax=meanD.phyH.I [,2]+meanD.phyH.I [,3]), width=.2) +
     geom_point(data=meanD.phyH.I , mapping=aes(x=habitat.ordered, y=meanD.phyH.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "meanD Hackett’s phylogeny ", cex=16) +
+    labs(x = "", y = "Average species dissimilarity, Hackett’s phylogeny ", cex=16) +
     geom_text(aes(label= c("a","a","a","a","a")))
   
   d <- ggplot(Balance.phyH.I , aes(x= habitat.ordered, y=Balance.phyH.I [,2])) + 
     theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
     geom_errorbar(aes(ymin=Balance.phyH.I [,2]-Balance.phyH.I [,3], ymax=Balance.phyH.I [,2]+Balance.phyH.I [,3]), width=.2) +
     geom_point(data=Balance.phyH.I , mapping=aes(x=habitat.ordered, y=Balance.phyH.I [,2]), size=8, shape=21, fill="white") +
-    labs(x = "", y = "Balance Hackett’s phylogeny ", cex=16) +
+    labs(x = "", y = "Balance component, Hackett’s phylogeny ", cex=16) +
     geom_text(aes(label= c("a","a","ab","b","b")))
   
   tiff(paste0(GoogleFigs,"/plot_FD_Hackett_phylogeny_natives.tiff"), width = 11, height = 8, units = 'in', res = 200)
