@@ -208,10 +208,10 @@ d <- ggplot(Balance.all.morph.I, aes(x= habitat.ordered, y=Balance.all.morph.I[,
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=Balance.all.morph.I[,2]-Balance.all.morph.I[,3], ymax=Balance.all.morph.I[,2]+Balance.all.morph.I[,3]), width=.2) +
   geom_point(data=Balance.all.morph.I, mapping=aes(x=habitat.ordered, y=Balance.all.morph.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "Balance component, component, all traits", cex=16) +
+  labs(x = "", y = "Balance component, all traits", cex=16) +
   geom_text(aes(label= c("a","a","a","a","a")))
 
-tiff(paste0(GoogleFigs,"plot_FD_all_traits.tiff"), width = 11, height = 8, units = 'in', res = 200)
+tiff(paste0(GoogleFigs,"/plot_FD_all_traits.tiff"), width = 11, height = 8, units = 'in', res = 200)
 ggplot2.multiplot(a,b,c,d)
 dev.off()
 
@@ -278,11 +278,10 @@ d <- ggplot(Balance.PCA3.I, aes(x= habitat.ordered, y=Balance.PCA3.I[,2])) +
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=Balance.PCA3.I[,2]-Balance.PCA3.I[,3], ymax=Balance.PCA3.I[,2]+Balance.PCA3.I[,3]), width=.2) +
   geom_point(data=Balance.PCA3.I, mapping=aes(x=habitat.ordered, y=Balance.PCA3.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "Balance component, component, PCA3", cex=16) +
+  labs(x = "", y = "Balance component, PCA3", cex=16) +
   geom_text(aes(label= c("a","a","a","a","a")))
 
-#tiff(paste0(GoogleFigs,"/plot_FD_PCA3.tiff"), width = 11, height = 8, units = 'in', res = 200)
-tiff(paste0(GoogleFigs,"plot_FD_PCA3.tiff"), width = 11, height = 8, units = 'in', res = 200)
+tiff(paste0(GoogleFigs,"/plot_FD_PCA3.tiff"), width = 11, height = 8, units = 'in', res = 200)
 ggplot2.multiplot(a,b,c,d)
 dev.off()
 
