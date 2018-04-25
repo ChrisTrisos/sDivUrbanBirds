@@ -11,23 +11,23 @@ dat<-read.table(paste0(workingData,"/Urban global data April 6 2018 for R.txt"),
 # dat0[] <- lapply(dat0, function(x) if(is.factor(x)) factor(x) else x)
 
 dat01 <- subset(dat, urban.analyses=="yes") # if we focus on communities within urbanisation gradients
-dat02[] <- lapply(dat01, function(x) if(is.factor(x)) factor(x) else x)
+dat01[] <- lapply(dat01, function(x) if(is.factor(x)) factor(x) else x)
 
-levels(dat02$habitat) <- c("Wildland",       "Urban_Park",     "Wildland",     "Wildland", "Rural",   "Rural",  "Rural",   "Rural", "Suburban", "Urban", "Suburban", "Wildland")
+levels(dat01$habitat) <- c("Wildland",       "Urban_Park",     "Wildland",     "Wildland", "Rural",   "Rural",  "Rural",   "Rural", "Suburban", "Urban", "Suburban", "Wildland")
 
-dat02$link <- as.factor(paste(dat02$city,dat02$animal, dat02$habitat,sep = ""))  # we create a new variable to then link with subsequent data
+dat01$link <- as.factor(paste(dat01$city,dat01$animal, dat01$habitat,sep = ""))  # we create a new variable to then link with subsequent data
 
 
 
 ## We estimate mean corrected relative abundance in the wildland
 
-tmp <- ddply(dat02, c("city", "habitat", "animal"), summarise,
+tmp <- ddply(dat01, c("city", "habitat", "animal"), summarise,
              propagule  = sum(effort.corrected.abundance)/sum(community.size))
 tmp$link <- as.factor(paste(tmp$city,tmp$animal, tmp$habitat,sep = ""))  # we create a new variable to then link with subsequent data
 
 tmp <- tmp[,-c(1:3)]
 
-dat03 <- merge(dat02[,-19],tmp, by="link")
+dat03 <- merge(dat01[,-19],tmp, by="link")
 
 
 
@@ -49,6 +49,11 @@ str(dat.toler)
 
 ctree1 <- read.nexus(paste0(workingData,"/AllBirdsEricson1_summary.tre"))    # This is Ericson concensus tree
 ctree2 <- read.nexus(paste0(workingData,"/AllBirdsHackett1_summary.tre"))    # This is Hackett concensus tree
+
+
+
+
+
 
 
 
@@ -93,6 +98,26 @@ autocorr(m1$Sol)
 plot(m1$Sol)
 
 
+
+
+## Random forests to assess the relaibility of morphological traits as functional traits
+
+library(randomForest)
+
+fit1 <- randomForest(effort.corrected.abundance ~ propagule+beak.shape+body.size+hand_wing+locom.shape+community, data = dat.toler.urb, do.trace=10, ntree=100, labelVar=TRUE, importance=TRUE)
+
+print(fit1)
+plot(fit1)
+round(importance(fit1), 2)
+varImpPlot(fit1)
+
+fit1$test
+
+
+library(rpart)
+
+fit <- rpart(effort.corrected.abundance ~ propagule+beak.shape+body.size+hand_wing+locom.shape, data = dat.toler.urb, method="poisson")
+print(fit)
 
 
 
