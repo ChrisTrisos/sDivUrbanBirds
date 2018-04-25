@@ -1,6 +1,6 @@
-###########################################################################
-#####  Estimatation of functional alpha diversity across communities ######
-###########################################################################
+#########################################################################
+#####  Estimation of functional alpha diversity across communities ######
+#########################################################################
 
 # warnings: check the two species that are lacking for diet and foraging behaviour and the NAs of one species
 
@@ -46,21 +46,21 @@
 
 ## Community data preparation
 
-#dat <- read.table("/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/Urban global data April 6 2018 for R.txt", header=TRUE)
-dat<-read.table(paste0(workingData,"/Urban global data April 6 2018 for R.txt"), header=TRUE)
-# dat0 <- subset(dat,status=="native")  # if we want to exclude exotics
-# dat0[] <- lapply(dat0, function(x) if(is.factor(x)) factor(x) else x)
+dat<-read.table(paste0(workingData,"/Urban global data April 25 2018 for R.txt"), header=TRUE)
+dat$community <- factor(dat$community)
+# dat <- subset(dat,status=="native")  # if we want to exclude exotics
+# dat[] <- lapply(dat0, function(x) if(is.factor(x)) factor(x) else x)
 
-dat01 <- subset(dat, urban.analyses=="yes") # if we focus on communities within urbanisation gradients
+dat01 <- subset(dat, urban.analyses=="yes") # if we focus on communities within cities or along urbanisation gradients
 dat01[] <- lapply(dat01, function(x) if(is.factor(x)) factor(x) else x)
-
-# dat01 <- subset(dat0,urban.analyses=="yes") # if we focus on communities within urbanisation gradients
-# dat01[] <- lapply(dat01, function(x) if(is.factor(x)) factor(x) else x)
 
 dat02 <- dat01[dat01$relative.abundance>0,] # we exclude species absent
 dat02[] <- lapply(dat02, function(x) if(is.factor(x)) factor(x) else x)
+# dat02 <- dat01  # if we want to include all occurrence data
+
 
 comm <- acast(na.omit(dat02[,c(5,8,17)]), community~animal, value.var="relative.abundance", fun.aggregate=mean)   # we transform it to a matrix species*community    # fun.aggregate=mean is used as otherwise it gives the length
+# comm <- acast(na.omit(dat02[,c(5,8,15)]), community~animal, value.var="occurrence", fun.aggregate=mean)   # if we use presence/absence instead of abundances
 comm[comm=="NaN"] <- 0
 
 
@@ -175,7 +175,6 @@ phyE.2 <- QEpart(comm.Eric, dis = phydisE)
 phyH.2 <- QEpart(comm.Hack, dis = phydisH)
 
 
-
 ## Preparing data for subsequent analyses
 
 FDmorphology<-as.data.frame(cbind(labels(comm[,2]),all.morph$red$N,all.morph$red$D,all.morph$red$Q,all.morph$red$U,1-all.morph$red$U,PCA3$red$Q,PCA3$red$U,1-PCA3$red$U,beak$red$Q,beak$red$U,1-beak$red$U,locom$red$Q,locom$red$U,1-locom$red$U,size$red$Q,size$red$U,1-size$red$U,winghand$red$Q,winghand$red$U,1-winghand$red$U,phyE$red$Q,phyE$red$U,1-phyE$red$U,phyH$red$Q,phyH$red$U,1-phyH$red$U,all.morph.2$meanD,PCA3.2$meanD,beak.2$meanD,locom.2$meanD,size.2$meanD,winghand.2$meanD,phyE.2$meanD,phyH.2$meanD,all.morph.2$Balance,PCA3.2$Balance,beak.2$Balance,locom.2$Balance,size.2$Balance,winghand.2$Balance,phyE.2$Balance,phyH.2$Balance))
@@ -185,13 +184,14 @@ colnames(FDmorphology)<-c("community","Species.richness","QE.taxonomy","QE.all.m
 
 # We add habitat and study site information
 
-tmp <- ddply(dat0, c("country", "city", "community", "habitat"), summarise,
-               N    = length(relative.abundance))
+tmp <- ddply(dat, c("country", "city", "community", "habitat", "used.urban.nonurban"), summarise,
+               Regional.spp.richness = length(relative.abundance))
 
-tmp2 <- merge(FDmorphology,tmp[,-5], by="community")
+tmp2 <- merge(FDmorphology,tmp, by="community")
       
 write.table(tmp2, paste0(workingData,"/Morphological diversity metrics for communities.txt"))
-# write.table(tmp2, "/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/Morphological diversity metrics for communities natives.txt")
+# write.table(tmp2, paste0(workingData,"/Morphological diversity metrics for communities natives.txt"))
+# write.table(tmp2, paste0(workingData,"/Morphological diversity metrics for communities ocurrences.txt"))
 
 
 
@@ -262,7 +262,7 @@ library(plyr)
 
 # Run the functions length, mean, and sd on the value of "change" for each group, 
 # broken down by sex + condition
-cdata <- ddply(dat0, c("country", "city", "community", "habitat"), summarise,
+cdata <- ddply(dat, c("country", "city", "community", "habitat", "used.urban.nonurban"), summarise,
                N    = length(relative.abundance))
 
 write.table(merge(Rao,cdata[,-5], by="community"), "QE.morphol.comm.txt")

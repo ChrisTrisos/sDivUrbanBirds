@@ -15,7 +15,6 @@
 ### Data                              
 ##########
 
-#morph0 <- read.table("/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/Morphological traits urban birds 24 Feb 2018 for R.txt", h=TRUE)
 morph0<- read.table(paste0(workingData,"/Morphological traits urban birds 24 Feb 2018 for R.txt"), h=TRUE)
 
 morph <- morph0[,c(8,10,12:18)] # we exclude redundant traits

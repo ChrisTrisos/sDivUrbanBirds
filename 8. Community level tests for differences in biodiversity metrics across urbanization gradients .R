@@ -17,9 +17,9 @@
 
 ### INPUTS: ### 
 
-# Morphologically-based diversity metrics for communities ("Morphological diversity metrics for communities.txt")
-# Diet-based diversity metrics for communities ("Morphological diversity metrics for communities.txt")
-# Foraging behaviour data-based diversity metrics for communities ("Morphological diversity metrics for communities.txt")
+# Morphologically-based diversity metrics for communities, based on abundances ("Morphological diversity metrics for communities.txt")
+# Morphologically-based diversity metrics for communities including only natives, based on abundances ("Morphological diversity metrics for communities.txt")
+# Morphologically-based diversity metrics for communities, based on occurrences (Morphological diversity metrics for communities ocurrences.txt)
 
 
 ### OUTPUTS: ###
@@ -35,6 +35,8 @@
 
 ## 1. Analyses for morphological diversity
 ## 2. Analyses for morphological diversity, only natives
+## 3. Analyses for morphological diversity, with occurrence data
+
 
 
 
@@ -44,14 +46,11 @@
 
 {## Import biodiversity metrics for communities
 
-<<<<<<< HEAD
-# x <- read.table("/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/Morphological diversity metrics for communities.txt") # metrics estimated including all species
-# x <- read.table("/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/Morphological diversity metrics for communities natives.txt")  # metrics estimated excluding exotics
-=======
-#x <- read.table("/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/Morphological diversity metrics for communities.txt") # metrics estimated including all species
 x<-read.table(paste0(workingData,"/Morphological diversity metrics for communities.txt"))
-# x <- read.table("Morphological diversity metrics for communities natives.txt")  # metrics estimated excluding exotics
->>>>>>> 1483dfcd4dc55a894b3bfccc615633c05db0fe09
+
+# We restrict the analyses to studies where there is information inside and outside the city
+x <- subset(x, used.urban.nonurban=="yes")
+x[] <- lapply(x, function(x) if(is.factor(x)) factor(x) else x)
 
 
 # Three ways to code habitats
@@ -714,13 +713,17 @@ dev.off()
 
 
 
-########### 2. Analyses for morphological diversity, omly natives ##############
+########### 2. Analyses for morphological diversity, only natives ##############
 ################################################################################
 
 {## Import biodiversity metrics for communities
   
-  # x <- read.table("/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/Morphological diversity metrics for communities natives.txt")  # metrics estimated excluding exotics
   x<-read.table(paste0(workingData,"/Morphological diversity metrics for communities natives.txt"))
+  
+  # We restrict the analyses to studies where there is information inside and outside the city
+  x <- subset(x, used.urban.nonurban=="yes")
+  x[] <- lapply(x, function(x) if(is.factor(x)) factor(x) else x)
+  
   
   
   # Three ways to code habitats
@@ -955,7 +958,6 @@ dev.off()
   tiff(paste0(GoogleFigs,"/plot_FD_PCA3_natives.tiff"), width = 11, height = 8, units = 'in', res = 200)
   ggplot2.multiplot(a,b,c,d)
   dev.off()
-  
   
   
   
@@ -1380,3 +1382,88 @@ dev.off()
   ggplot2.multiplot(a,b,c,d)
   dev.off()
 }
+
+
+
+
+
+
+########### 3. Analyses for morphological diversity, ocurrence data ##############
+##################################################################################
+
+
+{## Import biodiversity metrics for communities
+  
+  x<-read.table(paste0(workingData,"/Morphological diversity metrics for communities ocurrences.txt"))
+  
+# We restrict the analyses to studies where there is information inside and outside the city
+  x <- subset(x, used.urban.nonurban=="yes")
+  x[] <- lapply(x, function(x) if(is.factor(x)) factor(x) else x)
+  
+  
+  # Three ways to code habitats
+  
+  # 1. All habitats separated
+  # levels(x$habitat) <- c("closed_wild", "Urban_Park", "little_urbanised", "open_wild", "pasture", "plantation", "rural", "rural_wild", "sub", "urb", "urban_mosaic", "wild_mosaic")
+  
+  # 2. All urban habitats separated, all non-urban habitat together
+  levels(x$habitat) <- c("Wildland",       "Urban_Park",     "Wildland",     "Wildland", "Rural",   "Rural",  "Rural",   "Rural", "Suburban", "Urban", "Suburban", "Wildland")
+  habitat.ordered  = factor(x$habitat, levels=c("Wildland","Rural","Urban_Park","Suburban","Urban"))
+  x <- cbind(x,habitat.ordered)
+  
+  # 3. All urban and non-urban habitats pooled together
+  # levels(habitat.city) <- c("Wildland",       "Urban",     "Wildland",     "Wildland", "Rural",   "Rural",  "Rural",   "Rural", "Urban", "Urban", "Urban", "Wildland")
+  
+  
+  
+  ## Tests of the effect of urbanization on biodiversity*
+  ################################################################
+  
+  # * Note that the best random structure has been previously evaluated with the method=REML
+  # * We need to include confounds (city age, human density, coordinates)
+  
+  
+  
+  # Species richness
+  
+  spp.richness = lme(Species.richness ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
+  summary(spp.richness)
+  testInteractions(spp.richness, pairwise="habitat.ordered")
+  plot(spp.richness)
+  qqnorm(spp.richness)
+  spp.richness.I <- interactionMeans(spp.richness) # effect plots
+  plot(spp.richness.I, errorbar="ci95")
+  
+  
+  
+  # 8 functional traits 
+  
+  QE.all.morph = lme(QE.all.morph ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
+  summary(QE.all.morph)
+  testInteractions(QE.all.morph, pairwise="habitat.ordered")
+  plot(QE.all.morph)
+  qqnorm(QE.all.morph)
+  QE.all.morph.I <- interactionMeans(QE.all.morph) # effect plots
+  plot(QE.all.morph.I, errorbar="ci95")
+  
+  
+  
+  a <- ggplot(spp.richness.I, aes(x= habitat.ordered, y=spp.richness.I[,2])) + 
+    theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+    geom_errorbar(aes(ymin=spp.richness.I[,2]-spp.richness.I[,3], ymax=spp.richness.I[,2]+spp.richness.I[,3]), width=.2) +
+    geom_point(data=spp.richness.I, mapping=aes(x=habitat.ordered, y=spp.richness.I[,2]), size=8, shape=21, fill="white") +
+    labs(x = "", y = "Species richness", cex=16) +
+    geom_text(aes(label= c("a","a","a","a","b")))
+  
+  b <- ggplot(QE.all.morph.I, aes(x= habitat.ordered, y=QE.all.morph.I[,2])) + 
+    theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+    geom_errorbar(aes(ymin=QE.all.morph.I[,2]-QE.all.morph.I[,3], ymax=QE.all.morph.I[,2]+QE.all.morph.I[,3]), width=.2) +
+    geom_point(data=QE.all.morph.I, mapping=aes(x=habitat.ordered, y=QE.all.morph.I[,2]), size=8, shape=21, fill="white") +
+    labs(x = "", y = "Functional diversity (QE), all traits", cex=16) +
+    geom_text(aes(label= c("a","b","ab","ab","ab")))
+  
+  tiff(paste0(GoogleFigs,"/plot_Biodiversity_loss_Occurrences.tiff"), width = 11, height = 8, units = 'in', res = 200)
+  ggplot2.multiplot(a,b)
+  dev.off()
+  
+  
