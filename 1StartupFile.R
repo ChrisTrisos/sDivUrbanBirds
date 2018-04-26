@@ -23,6 +23,8 @@ library(phia)
 library(effects)
 library(ggplot2)
 library(easyGgplot2)
+library(iNEXT)
+library(BAT)
 
 # set wd path for each user
 # wd is the file path to the google drive

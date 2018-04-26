@@ -123,7 +123,7 @@ distwinghand<- distwinghand/max(distwinghand)
 ## estimation of phylogenetic distances among species
 
 ctree1 <- read.nexus(paste0(workingData,"/AllBirdsEricson1_summary.tre"))    # This is Ericson concensus tree
-ctree2 <- read.nexus(paste0(worlingData,"/AllBirdsHackett1_summary.tre"))    # This is Hackett concensus tree
+ctree2 <- read.nexus(paste0(workingData,"/AllBirdsHackett1_summary.tre"))    # This is Hackett concensus tree
 
 combined <- match.phylo.comm(ctree1, comm)
 ctree.Eric <- combined$phy

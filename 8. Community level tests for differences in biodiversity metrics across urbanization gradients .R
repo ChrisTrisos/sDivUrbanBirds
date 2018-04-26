@@ -1465,5 +1465,5 @@ dev.off()
   tiff(paste0(GoogleFigs,"/plot_Biodiversity_loss_Occurrences.tiff"), width = 11, height = 8, units = 'in', res = 200)
   ggplot2.multiplot(a,b)
   dev.off()
-  
+  }
   
