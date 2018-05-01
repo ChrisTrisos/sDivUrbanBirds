@@ -197,74 +197,137 @@ write.table(tmp2, paste0(workingData,"/Morphological diversity metrics for commu
 
 
 
-
-
-## Not yet finished, waiting for Joe's data
-
 ################ Analyses for diet  ######################
 ##########################################################
 
 
 ### Functional diet data
 
-setwd("~/ownCloud2/Science/Research/Urbanisation/Functional diversity and urbanization/Data and analyses")
+## Need to estimate first "comm" running the firts part of this code
 
-# Missing data Thalasseus_eurygnatha, Saxicola_torquatus
+diet <-read.table(paste0(workingData,"/Diet urban birds 28 April 2018 for R.txt"), header=TRUE)
+# Missing data Thalasseus_eurygnatha, Saxicola_torquatus, already removed from diet
 
-diet <-read.table("Diet urban birds 8 April 2018 for R.txt", header=TRUE)
 names(diet)
-diet <- diet[order(diet$Scientific),] # wee need to order the species
+diet <- diet[order(diet$animal),] # wee need to order the species
 
-# write.table(dietdat,"borrar.txt")
-
-dietdat<-na.omit(diet[,c(7:17)])
-names(dietdat)
-rownames(dietdat) <- dietdat$Scientific
-dietdat <- dietdat[-1127,-1]
-
-dietdat <- dietdat[labels(comm[1,]),]  # we take only species in communities
-
-dietdat1 <-  read.table("borrra1.txt", h=TRUE)
-distdiet1 <- gowdis(dietdat1, ord="classic")
-#distdiet <- distance(dietdat, "gower")    # all traits
-distdiet2 <- gowdis(dietdat1[1:5], ord="classic")
-distdiet3 <- gowdis(dietdat1[6:9], ord="classic")
+diet<-diet[,c(5,7:16)]
 
 
-dat <- read.table("Urban global data April 6 2018 for R.txt", header=TRUE)
-# dat0 <- subset(dat,status=="native")  # if we want to exclude exotics
-dat0 <- subset(dat,urban.analyses=="yes") # if we focus on communities within urbanisation gradients
-# dat0 <- subset(dat,location=="Amravati" | location=="BCN.B")
+names(diet)
+rownames(diet) <- diet$animal
+diet <- diet[,-1]
 
-dat01 <- dat0[dat0$animal!="Saxicola_torquatus",]
-
-dat01 <- dat01[dat01$relative.abundance>0,] # we exclude species absent
-comm01 <- acast(na.omit(dat01[,c(5,8,17)]), community~animal, value.var="relative.abundance", fun.aggregate=mean)   # we transform it to a matrix species*community    # fun.aggregate=mean is used as otherwise it gives the length
-comm01[comm01=="NaN"] <- 0
-
-Rao.diet <- QE(comm01, distdiet1)
-Rao.diet.animal <- QE(comm01, distdiet2)
-Rao.diet.vegetal <- QE(comm01, distdiet3)
+diet <- merge(diet,)
 
 
+## Estimation of distances
 
-# Prepare the data for subsequent analyses
+dietdat <- na.omit(diet[labels(comm[1,]),])  # we take only species in communities
 
-### Outputs
+comm1 <- comm[,rownames(dietdat)]  # as one species is missing, we need to update community
 
-Rao <- cbind(labels(comm[,2]), Rao.all, Rao.3PCAs, Rao.beak, Rao.locom, Rao.size, Rao.winghand, Rao.spp, Rao.phy, Rao.diet, Rao.diet.animal, Rao.diet.vegetal)
-colnames(Rao) <- c("community", "QE.all", "QE.3PCAs", "QE.beak","QE.locom","QE.size", "QE.winghand", "QE.spp", "QE.phyl", "QE.diet", "QE.diet.anim", "QE.diet.veg")
+distdiet<- distance(dietdat, "euclidean") 
+distdiet <- distdiet/max(distdiet) 
+
+all.diet <- QEpart(comm1, distdiet)
+
+# redundancies are estimated as 1-QE/Simpson (Ricotta et al. 2016)
+
+redundancy <- 1-(all.diet$QE/all.diet$Simpson)
+
+## Preparing data for subsequent analyses
+
+FDdiet <-as.data.frame(cbind(labels(comm1[,2]), all.diet$QE, all.diet$meanD, all.diet$Balance, redundancy))
+
+colnames(FDdiet)<-c("community","QE.diet","diet.meanD","diet.Balance","CR.diet")
 
 
 
+# We add habitat and study site information
 
-library(plyr)
+tmp <- ddply(dat, c("country", "city", "community", "habitat", "used.urban.nonurban"), summarise,
+             Regional.spp.richness = length(relative.abundance))
 
-# Run the functions length, mean, and sd on the value of "change" for each group, 
-# broken down by sex + condition
-cdata <- ddply(dat, c("country", "city", "community", "habitat", "used.urban.nonurban"), summarise,
-               N    = length(relative.abundance))
+tmp2 <- merge(FDdiet,tmp, by="community")
 
-write.table(merge(Rao,cdata[,-5], by="community"), "QE.morphol.comm.txt")
+write.table(tmp2, paste0(workingData,"/Diet diversity metrics for communities.txt"))
+# write.table(tmp2, paste0(workingData,"/Diet diversity metrics for communities natives.txt"))
+# write.table(tmp2, paste0(workingData,"/Diet diversity metrics for communities ocurrences.txt"))
+
+
+
+
+
+
+################ Analyses for morphology by diet  ####################
+######################################################################
+
+
+### We will examine FD for all traits, subsetted by insectivory, nectarivory, ...
+
+## Need to estimate first "comm" running the firts part of this code
+
+diet <-read.table(paste0(workingData,"/Diet urban birds 28 April 2018 for R.txt"), header=TRUE)
+names(diet)
+diet<-diet[,c(5,7:16)]
+
+func<-read.table(paste0(workingData,"/morphological.axes.txt"),header=TRUE)
+names(func)
+all <-func[,c(1,9:16)]  # dataset for all traits when analysed separately
+
+diet.morph <- merge(diet,all, by="animal")
+
+diet.morph <- diet.morph[order(diet.morph$animal),] # wee need to order the species
+names(diet.morph)
+rownames(diet.morph) <- diet.morph$animal
+diet.morph <- diet.morph[,-1]
+
+
+
+
+
+
+
+
+
+
+
+## Estimation of distances
+
+dietdat <- na.omit(diet[labels(comm[1,]),])  # we take only species in communities
+
+comm1 <- comm[,rownames(dietdat)]  # as one species is missing, we need to update community
+
+distdiet<- distance(dietdat, "euclidean") 
+distdiet <- distdiet/max(distdiet) 
+
+all.diet <- QEpart(comm1, distdiet)
+
+# redundancies are estimated as 1-QE/Simpson (Ricotta et al. 2016)
+
+redundancy <- 1-(all.diet$QE/all.diet$Simpson)
+
+
+
+## Preparing data for subsequent analyses
+
+FDdiet <-as.data.frame(cbind(labels(comm1[,2]), all.diet$QE, all.diet$meanD, all.diet$Balance, redundancy))
+
+colnames(FDdiet)<-c("community","QE.diet","diet.meanD","diet.Balance","CR.diet")
+
+
+
+# We add habitat and study site information
+
+tmp <- ddply(dat, c("country", "city", "community", "habitat", "used.urban.nonurban"), summarise,
+             Regional.spp.richness = length(relative.abundance))
+
+tmp2 <- merge(FDdiet,tmp, by="community")
+
+write.table(tmp2, paste0(workingData,"/Diet diversity metrics for communities.txt"))
+# write.table(tmp2, paste0(workingData,"/Diet diversity metrics for communities natives.txt"))
+# write.table(tmp2, paste0(workingData,"/Diet diversity metrics for communities ocurrences.txt"))
+
 
 

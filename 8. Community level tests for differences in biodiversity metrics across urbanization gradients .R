@@ -36,8 +36,9 @@
 ## 1. Analyses for morphological diversity
 ## 2. Analyses for morphological diversity, only natives
 ## 3. Analyses for morphological diversity, with occurrence data
-
-
+## 4. Analyses for diet diversity
+## 5. Analyses for diet diversity, only natives
+## 6. Analyses for diet diversity, with occurrence data
 
 
 
@@ -1467,3 +1468,104 @@ dev.off()
   dev.off()
   }
   
+
+
+########### 4. Analyses for diet diversity ##############
+##################################################################
+
+
+## Import biodiversity metrics for communities
+
+x<-read.table(paste0(workingData,"/Diet diversity metrics for communities.txt"))
+
+# We restrict the analyses to studies where there is information inside and outside the city
+x <- subset(x, used.urban.nonurban=="yes")
+x[] <- lapply(x, function(x) if(is.factor(x)) factor(x) else x)
+
+
+# Three ways to code habitats
+
+# 1. All habitats separated
+# levels(x$habitat) <- c("closed_wild", "Urban_Park", "little_urbanised", "open_wild", "pasture", "plantation", "rural", "rural_wild", "sub", "urb", "urban_mosaic", "wild_mosaic")
+
+# 2. All urban habitats separated, all non-urban habitat together
+levels(x$habitat) <- c("Wildland",       "Urban_Park",     "Wildland",     "Wildland", "Rural",   "Rural",  "Rural",   "Rural", "Suburban", "Urban", "Suburban", "Wildland")
+habitat.ordered  = factor(x$habitat, levels=c("Wildland","Rural","Urban_Park","Suburban","Urban"))
+x <- cbind(x,habitat.ordered)
+
+# 3. All urban and non-urban habitats pooled together
+# levels(habitat.city) <- c("Wildland",       "Urban",     "Wildland",     "Wildland", "Rural",   "Rural",  "Rural",   "Rural", "Urban", "Urban", "Urban", "Wildland")
+
+
+
+## Tests of the effect of urbanization on biodiversity*
+################################################################
+
+# * Note that the best random structure has been previously evaluated with the method=REML
+# * We need to include confounds (city age, human density, coordinates)
+
+QE.diet = lme(QE.diet ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
+summary(QE.diet)
+testInteractions(QE.diet, pairwise="habitat.ordered")
+plot(QE.diet)
+qqnorm(QE.diet)
+QE.diet.I <- interactionMeans(QE.diet) # effect plots
+plot(QE.diet.I, errorbar="ci95")
+
+CR.diet = lme(CR.diet ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
+summary(CR.diet)  
+testInteractions(CR.diet, pairwise="habitat.ordered")
+plot(CR.diet)
+qqnorm(CR.diet)
+CR.diet.I <- interactionMeans(CR.diet) # effect plots
+plot(CR.diet.I, errorbar="ci95")
+
+meanD.diet = lme(diet.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
+summary(meanD.diet)  
+testInteractions(meanD.diet, pairwise="habitat.ordered")
+plot(meanD.diet)
+qqnorm(meanD.diet)
+meanD.diet.I <- interactionMeans(meanD.diet) # effect plots
+plot(meanD.diet.I, errorbar="ci95")
+
+Balance.diet = lme(diet.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")  # if the most abundant species tended to be dissimilar = positive Balance component
+summary(Balance.diet)  
+testInteractions(Balance.diet, pairwise="habitat.ordered")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
+plot(Balance.diet)
+qqnorm(Balance.diet)
+Balance.diet.I <- interactionMeans(Balance.diet) # effect plots
+plot(Balance.diet.I, errorbar="ci95")
+
+# Final figure (effect +/- standard error)
+
+a <- ggplot(QE.diet.I , aes(x= habitat.ordered, y=QE.diet.I [,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=QE.diet.I [,2]-QE.diet.I [,3], ymax=QE.diet.I [,2]+QE.diet.I [,3]), width=.2) +
+  geom_point(data=QE.diet.I , mapping=aes(x=habitat.ordered, y=QE.diet.I [,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "Phylogenetic diversity (QE), diet", cex=16) +
+  geom_text(aes(label= c("a","a","a","a","b")))
+
+b <- ggplot(CR.diet.I , aes(x= habitat.ordered, y=CR.diet.I [,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=CR.diet.I [,2]-CR.diet.I [,3], ymax=CR.diet.I [,2]+CR.diet.I [,3]), width=.2) +
+  geom_point(data=CR.diet.I , mapping=aes(x=habitat.ordered, y=CR.diet.I [,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "Functional redundancies, diet ", cex=16) +
+  geom_text(aes(label= c("a","a","a","a","a")))
+
+c <- ggplot(meanD.diet.I, aes(x= habitat.ordered, y=meanD.diet.I [,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=meanD.diet.I [,2]-meanD.diet.I [,3], ymax=meanD.diet.I [,2]+meanD.diet.I [,3]), width=.2) +
+  geom_point(data=meanD.diet.I , mapping=aes(x=habitat.ordered, y=meanD.diet.I [,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "Average species dissimilarity, diet ", cex=16) +
+  geom_text(aes(label= c("a","ab","ab","ab","b")))
+
+d <- ggplot(Balance.diet.I , aes(x= habitat.ordered, y=Balance.diet.I [,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=Balance.diet.I [,2]-Balance.diet.I [,3], ymax=Balance.diet.I [,2]+Balance.diet.I [,3]), width=.2) +
+  geom_point(data=Balance.diet.I , mapping=aes(x=habitat.ordered, y=Balance.diet.I [,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "Balance component, diet ", cex=16) +
+  geom_text(aes(label= c("ab","ab","ab","a","b")))
+
+tiff(paste0(GoogleFigs,"/plot_FD_diet.tiff"), width = 11, height = 8, units = 'in', res = 200)
+ggplot2.multiplot(a,b,c,d)
+dev.off()

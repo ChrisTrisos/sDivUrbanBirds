@@ -25,6 +25,7 @@ library(ggplot2)
 library(easyGgplot2)
 library(iNEXT)
 library(BAT)
+library(MCMCglmm)
 
 # set wd path for each user
 # wd is the file path to the google drive
