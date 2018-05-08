@@ -228,7 +228,7 @@ fit <- MCMCglmm(
 
 
 
-### 4.  Use Gaussian mixed models to assess whether tolerance depends on moprhology ###
+### 4.  Use Gaussian mixed models to assess whether tolerance depends on morphology ###
 #######################################################################################
 
 # We will ask whether morphology is related to UTI and abundance in the city, and whether this reflects that species with particular traits are too rare in the surroundings of the city to colonise it

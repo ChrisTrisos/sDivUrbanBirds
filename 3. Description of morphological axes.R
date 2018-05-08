@@ -1,14 +1,23 @@
 ###################################################################
-#################### 1. MORPHOLOGICAL ANALYSES ####################
+#################### MORPHOLOGICAL ANALYSES ####################
 ###################################################################
 
 # GOALS: 1) Estimate ecologically meaningful traits based on 9 morpohological traits
 
 # INPUT: Species-level information on 9 traits
 
-# OUTPUT: A file for subsequent analyses ("morphological.axes.txt"), which contains the 9 traits (including the hand-wing index) plus PCA components describing body size, beak (shape and size) and locomotor system (shape and size)
+# OUTPUT: 
+    # A file for subsequent analyses ("morphological.axes.txt"), which contains the 9 traits (including the hand-wing index) plus PCA components describing body size, beak (shape and size) and locomotor system (shape and size)
+    # An analysis of the relationship between morphology and diet
 
-
+# SUMMARY:
+# PCA TO ALL 9 TRAITS TO ESTIMATE BODY SIZE   
+# PCA TO DESCRIBE BEAK SHAPE                                   
+# PCA TO DESCRIBE HINDLIMB MORPHOLOGY 
+# ANALYSIS OF DIET
+# ANALYSIS OF DIET VS MORPHOLOGY
+# CONVEX HULLS TO EXAMINE NICHE OVERLAP             
+# CONVEX HULLS TO EXAMINE NICHE OVERLAP, FOR ABUNDANT SPECIES (>10%)
 
 
 ###########
@@ -36,7 +45,7 @@ morph <- as.data.frame(scale(morph))   # we scale the data
 
 
 ########################################################################
-###      PCA TO ALL 9 TRAITS TO ESTIMATE BODY SIZE                ###                 
+###      PCA TO ALL 9 TRAITS TO ESTIMATE BODY SIZE                   ###                 
 ########################################################################
 
 
@@ -53,7 +62,7 @@ plot(body.size,morph$mass)
 
 
 ########################################################################
-###                2. PCA TO BEAK TRAITS                            ###                 
+###           PCA TO DESCRIBE BEAK SHAPE                             ###                 
 ########################################################################
 
 beak <- morph[,c(2:4)]
@@ -70,7 +79,7 @@ beak.shape <- pca.beak2$scores[,2]
 plot(beak.shape,body.size)
 
 ############################################################################
-###                3. PCA TO LOCOMOTOR TRAITS                           ###                 
+###           PCA TO DESCRIBE HINDLIMB MORPHOLOGY                        ###                 
 ############################################################################
 
 locom <- morph[,c(5:7,9)]
@@ -90,7 +99,7 @@ plot(locom.shape,morph$mass)
 
 
 #################################################################
-###                5. OUTPUT                                 ###                 
+###                    OUTPUT                                 ###                 
 #################################################################
 
 
@@ -99,3 +108,131 @@ morphological.axes <- data.frame(morph0$OrigNam, morph0$animal, beak.size, beak.
 colnames(morphological.axes) <- c("animal", "species", "beak.size", "beak.shape", "locom.size", "locom.shape", "body.size", "mass", "bill_length", "bill_width", "bill_depth", "tarsus", "second", "wing", "hand_wing", "tail" )
 
 write.table(morphological.axes,paste0(workingData,"/morphological.axes.txt"))
+
+
+
+
+########################################################################
+###               ANALYSIS OF DIET VS MORPHOLOGY                     ###                 
+########################################################################
+
+## We first merge diet and morphology
+
+diet <-read.table(paste0(workingData,"/Diet urban birds 28 April 2018 for R.txt"), header=TRUE)
+names(diet)
+diet<-diet[,c(5,6:16)]
+
+func<-read.table(paste0(workingData,"/morphological.axes.txt"),header=TRUE)
+names(func)
+all <-func[,c(1,3:16)]  # dataset for all traits when analysed separately
+
+diet.morph <- merge(diet,all, by="animal")
+
+diet.morph <- diet.morph[order(diet.morph$animal),] # wee need to order the species
+names(diet.morph)
+rownames(diet.morph) <- diet.morph$animal
+diet.morph <- diet.morph[,-c(1,2)]
+
+diet.morph <- na.omit(diet.morph[labels(comm[1,]),])  # we take only species in communities
+
+
+## we create a file adding community information to know which diet types are sufficiently represented in each study area
+
+dat<-read.table(paste0(workingData,"/Urban global data April 25 2018 for R.txt"), header=TRUE)
+
+diet.morph.tmp <- diet.morph
+diet.morph.tmp$animal <- rownames(diet.morph)
+
+morph.diet.comm <- merge(dat, diet.morph.tmp, by="animal")  # we add morphology to community abundance data
+
+## we obtain mean values for species for descriptive purposes
+
+tmp2 <- ddply(tmp, c("country", "city", "used.urban.nonurban", "animal"), summarise,
+             Diet.Inv.Spp = mean(Diet.Inv),
+             Diet.Vend.Spp = mean(Diet.Vend),
+             Diet.Vect.Spp = mean(Diet.Vect),
+             Diet.Vfish.Spp = mean(Diet.Vfish),
+             Diet.Vunk.Spp = mean(Diet.Vunk),
+             Diet.Scav.Spp = mean(Diet.Scav),
+             Diet.Fruit.Spp = mean(Diet.Fruit),
+             Diet.Nect.Spp = mean(Diet.Nect),
+             Diet.Seed.Spp = mean(Diet.Seed),
+             Diet.PlantO.Spp = mean(Diet.PlantO))
+
+table(tmp2$city,tmp2$Diet.Inv)
+table(tmp2$city,tmp2$Diet.Vend) 
+table(tmp2$city,tmp2$Diet.Vect)  
+table(tmp2$city,tmp2$Diet.Vfish) 
+table(tmp2$city,tmp2$Diet.Vunk)
+table(tmp2$city,tmp2$Diet.Scav) 
+table(tmp2$city,tmp2$Diet.Fruit)
+table(tmp2$city,tmp2$Diet.Nect)
+table(tmp2$city,tmp2$Diet.Seed)
+table(tmp2$city,tmp2$Diet.PlantO)
+
+
+
+
+########################################################################
+###            CONVEX HULLS TO EXAMINE NICHE OVERLAP                ###                 
+########################################################################
+
+## we draw some convex hulls for native species in particular cities, based on PCAs
+
+# Newcastle
+
+Newcastle <- subset(morph.diet.comm, morph.diet.comm$city=="Newcastle" & morph.diet.comm$relative.abundance>0 & morph.diet.comm$status=="native")
+dataf <- Newcastle[,c(41,40,8)]
+colnames(dataf) <- c("x","y","cat")
+
+library(geometry)
+
+chulls <- ddply(dataf, .(cat), function(df) df[chull(df$x, df$y), ])
+
+# plot polygons
+
+ggplot(data=dataf, aes(x=x, y=y, color=cat)) + geom_point() +
+  geom_polygon(data=chulls, aes(x=x, y=y, group=cat), fill=NA)
+
+# if you wanna get fancy with the colors
+# (will give annoying warnings if number of groups is smaller than 3, ignore)
+
+ggplot(data=dataf, aes(x=x, y=y, color=cat)) + geom_point() +
+  geom_polygon(data=chulls, aes(x=x, y=y, fill=cat), alpha=0.2) +
+  scale_color_brewer(palette='Set1') +
+  scale_fill_brewer(palette='Set1')
+
+
+
+
+#######################################################################################
+###            CONVEX HULLS TO EXAMINE NICHE OVERLAP FOR ABUNDANT SPECIES           ###                 
+#######################################################################################
+
+## we draw some convex hulls for native species in particular cities, based on PCAs
+
+# Newcastle
+
+Newcastle <- subset(morph.diet.comm, morph.diet.comm$city=="Newcastle" & morph.diet.comm$relative.abundance>0.001 & morph.diet.comm$status=="native")
+dataf <- Newcastle[,c(41,40,8)]
+colnames(dataf) <- c("x","y","cat")
+
+library(geometry)
+
+chulls <- ddply(dataf, .(cat), function(df) df[chull(df$x, df$y), ])
+
+# plot polygons
+
+ggplot(data=dataf, aes(x=x, y=y, color=cat)) + geom_point() +
+  geom_polygon(data=chulls, aes(x=x, y=y, group=cat), fill=NA)
+
+# if you wanna get fancy with the colors
+# (will give annoying warnings if number of groups is smaller than 3, ignore)
+
+ggplot(data=dataf, aes(x=x, y=y, color=cat)) + geom_point() +
+  geom_polygon(data=chulls, aes(x=x, y=y, fill=cat), alpha=0.2) +
+  scale_color_brewer(palette='Set1') +
+  scale_fill_brewer(palette='Set1')
+
+
+

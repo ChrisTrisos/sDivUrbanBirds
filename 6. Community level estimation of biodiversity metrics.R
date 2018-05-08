@@ -3,6 +3,7 @@
 #########################################################################
 
 # warnings: check the two species that are lacking for diet and foraging behaviour and the NAs of one species
+# warnings: adiv has some incopatibilities with other packages; if it does not work, start again, upload the package and use only the packages subsequently requested 
 
 ### GOALS: ### 
 
@@ -44,19 +45,21 @@
 ### ANALYSES START HERE ### 
 
 
-## Community data preparation
+## Community data preparation (if you run this part, you get communities*species abundances of natives)
+
+{
 
 dat<-read.table(paste0(workingData,"/Urban global data April 25 2018 for R.txt"), header=TRUE)
 dat$community <- factor(dat$community)
-# dat <- subset(dat,status=="native")  # if we want to exclude exotics
-# dat[] <- lapply(dat0, function(x) if(is.factor(x)) factor(x) else x)
+dat <- subset(dat,status=="native")  # if we want to exclude exotics
+dat[] <- lapply(dat, function(x) if(is.factor(x)) factor(x) else x)
 
 dat01 <- subset(dat, urban.analyses=="yes") # if we focus on communities within cities or along urbanisation gradients
 dat01[] <- lapply(dat01, function(x) if(is.factor(x)) factor(x) else x)
 
 dat02 <- dat01[dat01$relative.abundance>0,] # we exclude species absent
-dat02[] <- lapply(dat02, function(x) if(is.factor(x)) factor(x) else x)
 # dat02 <- dat01  # if we want to include all occurrence data
+dat02[] <- lapply(dat02, function(x) if(is.factor(x)) factor(x) else x)
 
 
 comm <- acast(na.omit(dat02[,c(5,8,17)]), community~animal, value.var="relative.abundance", fun.aggregate=mean)   # we transform it to a matrix species*community    # fun.aggregate=mean is used as otherwise it gives the length
@@ -64,7 +67,7 @@ comm <- acast(na.omit(dat02[,c(5,8,17)]), community~animal, value.var="relative.
 comm[comm=="NaN"] <- 0
 
 
-
+}
 
 ########### Analyses for morphological data ##############
 ##########################################################
@@ -72,7 +75,6 @@ comm[comm=="NaN"] <- 0
 
 ## Functional data preparation
 
-#func<-read.table("/Users/d.sol/Google Drive/sDivUrbBirds/Data/DataForAnalysis/morphological.axes.txt", header=TRUE)
 func<-read.table(paste0(workingData,"/morphological.axes.txt"),header=TRUE)
 names(func)
 
@@ -150,14 +152,14 @@ phydisH <- phydisH/max(phydisH)
   # Community uniqueness: Q/D
   # Community redundancy (CR = 1-uniqueness)
 
-all.morph <- uniqueness(comm, distallmorphology, abundance = TRUE)
-PCA3 <- uniqueness(comm, distallmorphology3PCAs, abundance = TRUE)
-beak <- uniqueness(comm, distbeak, abundance = TRUE)
-locom <- uniqueness(comm, distlocom, abundance = TRUE)
-size <- uniqueness(comm, distsize, abundance = TRUE)
-winghand <- uniqueness(comm, distwinghand, abundance = TRUE)
-phyE <- uniqueness(comm.Eric, dis = phydisE, abundance = TRUE)
-phyH <- uniqueness(comm.Hack, dis = phydisH, abundance = TRUE)
+all.morph <- uniqueness(comm, distallmorphology)
+PCA3 <- uniqueness(comm, distallmorphology3PCAs)
+beak <- uniqueness(comm, distbeak)
+locom <- uniqueness(comm, distlocom)
+size <- uniqueness(comm, distsize)
+winghand <- uniqueness(comm, distwinghand)
+phyE <- uniqueness(comm.Eric, dis = phydisE)
+phyH <- uniqueness(comm.Hack, dis = phydisH)
 
 
 ## We will next use the function QEpart.R to estimate:
@@ -192,7 +194,7 @@ tmp2 <- merge(FDmorphology,tmp, by="community")
 write.table(tmp2, paste0(workingData,"/Morphological diversity metrics for communities.txt"))
 # write.table(tmp2, paste0(workingData,"/Morphological diversity metrics for communities natives.txt"))
 # write.table(tmp2, paste0(workingData,"/Morphological diversity metrics for communities ocurrences.txt"))
-
+# write.table(tmp2, paste0(workingData,"/Morphological diversity metrics for communities ocurrences natives.txt"))
 
 
 
@@ -210,15 +212,10 @@ diet <-read.table(paste0(workingData,"/Diet urban birds 28 April 2018 for R.txt"
 
 names(diet)
 diet <- diet[order(diet$animal),] # wee need to order the species
-
-diet<-diet[,c(5,7:16)]
-
-
+diet<-diet[,c(5,6:16)]
 names(diet)
 rownames(diet) <- diet$animal
-diet <- diet[,-1]
-
-diet <- merge(diet,)
+diet <- diet[,-c(1:2)]
 
 
 ## Estimation of distances
@@ -251,26 +248,28 @@ tmp <- ddply(dat, c("country", "city", "community", "habitat", "used.urban.nonur
 
 tmp2 <- merge(FDdiet,tmp, by="community")
 
-write.table(tmp2, paste0(workingData,"/Diet diversity metrics for communities.txt"))
-# write.table(tmp2, paste0(workingData,"/Diet diversity metrics for communities natives.txt"))
+# write.table(tmp2, paste0(workingData,"/Diet diversity metrics for communities.txt"))
+write.table(tmp2, paste0(workingData,"/Diet diversity metrics for communities natives.txt"))
 # write.table(tmp2, paste0(workingData,"/Diet diversity metrics for communities ocurrences.txt"))
+# write.table(tmp2, paste0(workingData,"/Diet diversity metrics for communities ocurrences natives.txt"))
 
 
 
 
 
 
-################ Analyses for morphology by diet  ####################
-######################################################################
+################ Analyses for morphology by diet for natives ####################
+#################################################################################
 
 
 ### We will examine FD for all traits, subsetted by insectivory, nectarivory, ...
 
-## Need to estimate first "comm" running the firts part of this code
+## We need to estimate first comm for natives running the beginning of the code
+
 
 diet <-read.table(paste0(workingData,"/Diet urban birds 28 April 2018 for R.txt"), header=TRUE)
 names(diet)
-diet<-diet[,c(5,7:16)]
+diet<-diet[,c(5,6:16)]
 
 func<-read.table(paste0(workingData,"/morphological.axes.txt"),header=TRUE)
 names(func)
@@ -281,40 +280,33 @@ diet.morph <- merge(diet,all, by="animal")
 diet.morph <- diet.morph[order(diet.morph$animal),] # wee need to order the species
 names(diet.morph)
 rownames(diet.morph) <- diet.morph$animal
-diet.morph <- diet.morph[,-1]
+diet.morph <- diet.morph[,-c(1,2)]
+
+diet.morph <- na.omit(diet.morph[labels(comm[1,]),])  # we take only species in communities
+
+
+## Insectivorous, insects > 30% in diet
+
+insect.50 <- diet.morph[diet.morph$Diet.Inv>50,]
+comm.insect.50 <- comm[,rownames(insect.50)]
+
+distinsect.50 <- distance(insect.50[,c(11:14,15,16,17)], "euclidean")   # all 8 traits
 
 
 
-
-
-
-
-
-
-
-
-## Estimation of distances
-
-dietdat <- na.omit(diet[labels(comm[1,]),])  # we take only species in communities
-
-comm1 <- comm[,rownames(dietdat)]  # as one species is missing, we need to update community
-
-distdiet<- distance(dietdat, "euclidean") 
-distdiet <- distdiet/max(distdiet) 
-
-all.diet <- QEpart(comm1, distdiet)
+morph.insect.50 <- QEpart(comm.insect.50, distinsect.50)
 
 # redundancies are estimated as 1-QE/Simpson (Ricotta et al. 2016)
 
-redundancy <- 1-(all.diet$QE/all.diet$Simpson)
+morph.insect.50.redundancy <- 1-(morph.insect.50$QE/morph.insect.50$Simpson)
 
 
 
 ## Preparing data for subsequent analyses
 
-FDdiet <-as.data.frame(cbind(labels(comm1[,2]), all.diet$QE, all.diet$meanD, all.diet$Balance, redundancy))
+FD.morphol.diet <-as.data.frame(cbind(labels(comm.insect.50[,2]), morph.insect.50$QE, morph.insect.50$meanD, morph.insect.50$Balance, morph.insect.50.redundancy))
 
-colnames(FDdiet)<-c("community","QE.diet","diet.meanD","diet.Balance","CR.diet")
+colnames(FD.morphol.diet)<-c("community","QE.insectiv","insectiv.meanD","insectiv.Balance","CR.insectiv")
 
 
 
@@ -323,11 +315,9 @@ colnames(FDdiet)<-c("community","QE.diet","diet.meanD","diet.Balance","CR.diet")
 tmp <- ddply(dat, c("country", "city", "community", "habitat", "used.urban.nonurban"), summarise,
              Regional.spp.richness = length(relative.abundance))
 
-tmp2 <- merge(FDdiet,tmp, by="community")
+tmp2 <- merge(FD.morphol.diet,tmp, by="community")
 
-write.table(tmp2, paste0(workingData,"/Diet diversity metrics for communities.txt"))
-# write.table(tmp2, paste0(workingData,"/Diet diversity metrics for communities natives.txt"))
-# write.table(tmp2, paste0(workingData,"/Diet diversity metrics for communities ocurrences.txt"))
+write.table(tmp2, paste0(workingData,"/Morphology-Diet diversity metrics for communities natives.txt"))
 
 
 
