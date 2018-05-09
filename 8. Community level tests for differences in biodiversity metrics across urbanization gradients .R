@@ -84,11 +84,36 @@ x <- cbind(x,habitat.ordered)
 
 spp.richness = lme(Species.richness ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(spp.richness)
+r2<- rsquared(spp.richness)  #  marginal R^2 (based on fixed effects only) and conditional R^2 (based on fixed and random effects, if present)
 testInteractions(spp.richness, pairwise="habitat.ordered")
 plot(spp.richness)
 qqnorm(spp.richness)
 spp.richness.I <- interactionMeans(spp.richness) # effect plots
 plot(spp.richness.I, errorbar="ci95")
+hist(residuals(spp.richness))
+
+# the same with lme4
+
+library(lme4)
+library(lmerTest)
+library(piecewiseSEM)
+
+m <- lmer(Species.richness ~ habitat.ordered + (1 | country/city), data = x)
+summary(m)
+anova(m) # with p-values from F-tests using Satterthwaite's denominator df
+testInteractions(m, pairwise="habitat.ordered")
+(lsm <- ls_means(m))
+library(effects)
+ef <- effect("habitat.ordered", m)
+plot(ef)
+y <- as.data.frame(ef)
+coef(m) #intercept for each level in Batch 
+
+# including spatial analyses
+library(geoR)
+spp.richness.ratio.geo<-update(spp.richness, correlation = corRatio(0.01, form= ~ east + south), method="ML") #east and south are variables in the dataset for latitude and longitude 
+anova(spp.richness, spp.richness.ratio.geo) #Spatial autocorrelation was included in the final models if the model including spatial #autocorrelation had a significantly better fit to the data than the model with no spatial effect.
+
 
 
 # Simpson's index

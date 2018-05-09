@@ -26,6 +26,10 @@ library(easyGgplot2)
 library(iNEXT)
 library(BAT)
 library(MCMCglmm)
+library(geoR) # for spatial analyses
+library(piecewiseSEM)  # rsquared for mixed models
+library(lmerTest)  # estimates probabilities for lme4 models
+
 
 # set wd path for each user
 # wd is the file path to the google drive
