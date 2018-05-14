@@ -29,7 +29,7 @@ library(MCMCglmm)
 library(geoR) # for spatial analyses
 library(piecewiseSEM)  # rsquared for mixed models
 library(lmerTest)  # estimates probabilities for lme4 models
-
+library(ade4)
 
 # set wd path for each user
 # wd is the file path to the google drive
@@ -89,6 +89,9 @@ if(Sys.info()['user']=='d.sol') {
 
 source(paste0(wd,"/Data/Sources/utils.R"))  # function to draw figures in PCAs
 source(paste0(wd,"/Data/Sources/QEpart.R"))  # function to decomponse Quadratic entropy
+source(paste0(wd,"//Data/Sources/quality_funct_space_fromdist.R"))  # function to describe Kernells
+source(paste0(wd,"//Data/Sources/dist.ktab.R"))  # function to examine PCoA
+source(paste0(wd,"//Data/Sources/betaQmult.R"))
 
 
 

@@ -69,10 +69,11 @@ comm[comm=="NaN"] <- 0
 
 }
 
+
 ########### Analyses for morphological data ##############
 ##########################################################
 
-
+{
 ## Functional data preparation
 
 func<-read.table(paste0(workingData,"/morphological.axes.txt"),header=TRUE)
@@ -105,9 +106,6 @@ rownames(all) <- rownames(funcdat)
 
 distallmorphology <- distance(all, "euclidean")   # all 8 traits
 distallmorphology <- distallmorphology/max(distallmorphology)  # we standardize to 0-1 range
-
-distallmorphology3PCAs <- distance(funcdat, "euclidean")   # all three PCAs
-distallmorphology3PCAs <- distallmorphology3PCAs/max(distallmorphology3PCAs)  
 
 distbeak <- distance(beakshape, "euclidean")    # beak shape
 distbeak <- distbeak/max(distbeak)   
@@ -197,7 +195,7 @@ write.table(tmp2, paste0(workingData,"/Morphological diversity metrics for commu
 # write.table(tmp2, paste0(workingData,"/Morphological diversity metrics for communities ocurrences natives.txt"))
 
 
-
+}
 
 ################ Analyses for diet  ######################
 ##########################################################
@@ -222,9 +220,9 @@ diet <- diet[,-c(1:2)]
 
 dietdat <- na.omit(diet[labels(comm[1,]),])  # we take only species in communities
 
-comm1 <- comm[,rownames(dietdat)]  # as one species is missing, we need to update community
+comm1 <- comm[,rownames(dietdat)]  # as one species is missing in diet, we need to update community
 
-distdiet<- distance(dietdat, "euclidean") 
+distdiet<- dist.prop(dietdat, method = 1) # method 1 is Manly
 distdiet <- distdiet/max(distdiet) 
 
 all.diet <- QEpart(comm1, distdiet)
@@ -233,11 +231,43 @@ all.diet <- QEpart(comm1, distdiet)
 
 redundancy <- 1-(all.diet$QE/all.diet$Simpson)
 
+
+
+## Diet axes separately
+
+diet.axes <-read.table(paste0(workingData,"/diet.axes.txt"), header=TRUE)
+
+diet.axes <- na.omit(diet.axes[labels(comm[1,]),])  # we take only species in communities
+
+comm1 <- comm[,rownames(diet.axes)]  # as one species is missing in diet, we need to update community
+
+Inv_SeedFruit <- as.data.frame(diet.axes$Inv_SeedFruit)
+rownames(Inv_SeedFruit) <- rownames(diet.axes)
+Inv_SeedFruit <- distance(Inv_SeedFruit, "euclidean")   
+Inv_SeedFruit <- Inv_SeedFruit/max(Inv_SeedFruit)
+Inv_SeedFruit.diet <- QEpart(comm1, Inv_SeedFruit)
+Inv_SeedFruit.redundancy <- 1-(Inv_SeedFruit.diet$QE/Inv_SeedFruit.diet$Simpson)
+
+Inv_Seed <- as.data.frame(diet.axes$Inv_Seed)
+rownames(Inv_Seed) <- rownames(diet.axes)
+Inv_Seed <- distance(Inv_Seed, "euclidean")   
+Inv_Seed <- Inv_Seed/max(Inv_Seed)
+Inv_Seed.diet <- QEpart(comm1, Inv_Seed)
+Inv_Seed.redundancy <- 1-(Inv_Seed.diet$QE/Inv_Seed.diet$Simpson)
+
+Seed <- as.data.frame(diet.axes$Seed)
+rownames(Seed) <- rownames(diet.axes)
+Seed <- distance(Seed, "euclidean")   
+Seed <- Seed/max(Seed)
+Seed.diet <- QEpart(comm1, Seed)
+Seed.redundancy <- 1-(Seed.diet$QE/Seed.diet$Simpson)
+
+
 ## Preparing data for subsequent analyses
 
-FDdiet <-as.data.frame(cbind(labels(comm1[,2]), all.diet$QE, all.diet$meanD, all.diet$Balance, redundancy))
+FDdiet <-as.data.frame(cbind(labels(comm1[,2]), all.diet$QE, all.diet$meanD, all.diet$Balance, redundancy, Inv_SeedFruit.diet$QE, Inv_SeedFruit.diet$meanD, Inv_SeedFruit.diet$Balance, Inv_SeedFruit.redundancy, Inv_Seed.diet$QE, Inv_Seed.diet$meanD, Inv_Seed.diet$Balance, Inv_Seed.redundancy, Seed.diet$QE, Seed.diet$meanD, Seed.diet$Balance, Seed.redundancy))
 
-colnames(FDdiet)<-c("community","QE.diet","diet.meanD","diet.Balance","CR.diet")
+colnames(FDdiet)<-c("community","QE.diet","diet.meanD","diet.Balance","CR.diet","QE.PCoA1","PCoA1.meanD","PCoA1.Balance","CR.PCoA1","QE.PCoA2","PCoA2.meanD","PCoA2.Balance","CR.PCoA2","QE.PCoA3","PCoA3.meanD","PCoA3.Balance","CR.PCoA3")
 
 
 
@@ -261,7 +291,7 @@ write.table(tmp2, paste0(workingData,"/Diet diversity metrics for communities na
 ################ Analyses for morphology by diet for natives ####################
 #################################################################################
 
-
+{
 ### We will examine FD for all traits, subsetted by insectivory, nectarivory, ...
 
 ## We need to estimate first comm for natives running the beginning of the code
@@ -285,28 +315,40 @@ diet.morph <- diet.morph[,-c(1,2)]
 diet.morph <- na.omit(diet.morph[labels(comm[1,]),])  # we take only species in communities
 
 
-## Insectivorous, insects > 30% in diet
+## Insectivorous, insects >= 50% in diet
 
-insect.50 <- diet.morph[diet.morph$Diet.Inv>50,]
+insect.50 <- diet.morph[diet.morph$Diet.Inv>40,]
 comm.insect.50 <- comm[,rownames(insect.50)]
-
 distinsect.50 <- distance(insect.50[,c(11:14,15,16,17)], "euclidean")   # all 8 traits
-
-
-
 morph.insect.50 <- QEpart(comm.insect.50, distinsect.50)
-
-# redundancies are estimated as 1-QE/Simpson (Ricotta et al. 2016)
-
 morph.insect.50.redundancy <- 1-(morph.insect.50$QE/morph.insect.50$Simpson)
+
+
+## Granivorous, seeds >= 50% in diet
+
+seed.50 <- diet.morph[diet.morph$Diet.Seed>40,]
+comm.seed.50 <- comm[,rownames(seed.50)]
+distseed.50 <- distance(seed.50[,c(11:14,15,16,17)], "euclidean")   # all 8 traits
+morph.seed.50 <- QEpart(comm.seed.50, distseed.50)
+morph.seed.50.redundancy <- 1-(morph.seed.50$QE/morph.seed.50$Simpson)
+
+
+## Frugivorous, fruits >= 50% in diet
+
+fruit.50 <- diet.morph[diet.morph$Diet.Fruit>40,]
+comm.fruit.50 <- comm[,rownames(fruit.50)]
+distfruit.50 <- distance(fruit.50[,c(11:14,15,16,17)], "euclidean")   # all 8 traits
+morph.fruit.50 <- QEpart(comm.fruit.50, distfruit.50)
+morph.fruit.50.redundancy <- 1-(morph.fruit.50$QE/morph.fruit.50$Simpson)
+
 
 
 
 ## Preparing data for subsequent analyses
 
-FD.morphol.diet <-as.data.frame(cbind(labels(comm.insect.50[,2]), morph.insect.50$QE, morph.insect.50$meanD, morph.insect.50$Balance, morph.insect.50.redundancy))
+FD.morphol.diet <-as.data.frame(cbind(labels(comm.insect.50[,2]), morph.insect.50$QE, morph.insect.50$meanD, morph.insect.50$Balance, morph.insect.50.redundancy, morph.seed.50$QE, morph.seed.50$meanD, morph.seed.50$Balance, morph.seed.50.redundancy, morph.fruit.50$QE, morph.fruit.50$meanD, morph.fruit.50$Balance, morph.fruit.50.redundancy))
 
-colnames(FD.morphol.diet)<-c("community","QE.insectiv","insectiv.meanD","insectiv.Balance","CR.insectiv")
+colnames(FD.morphol.diet)<-c("community","QE.insectiv","insectiv.meanD","insectiv.Balance","CR.insectiv","QE.seeds","seeds.meanD","seeds.Balance","CR.seeds","QE.fruits","fruits.meanD","fruits.Balance","CR.fruits")
 
 
 
@@ -319,5 +361,5 @@ tmp2 <- merge(FD.morphol.diet,tmp, by="community")
 
 write.table(tmp2, paste0(workingData,"/Morphology-Diet diversity metrics for communities natives.txt"))
 
-
+}
 
