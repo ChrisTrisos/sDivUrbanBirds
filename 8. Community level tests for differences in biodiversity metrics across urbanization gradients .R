@@ -244,78 +244,6 @@ ggplot2.multiplot(a,b,c,d)
 dev.off()
 
 
-# All three PCAs (body size, size shape and locomotory shape)
-
-QE.PCA3 = lme(QE.PCA3 ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
-summary(QE.PCA3)
-testInteractions(QE.PCA3, pairwise="habitat.ordered")
-plot(QE.PCA3)
-qqnorm(QE.PCA3)
-QE.PCA3.I <- interactionMeans(QE.PCA3) # effect plots
-plot(QE.PCA3.I, errorbar="ci95")
-
-CR.PCA3 = lme(CR.PCA3 ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
-summary(CR.PCA3)  
-testInteractions(CR.PCA3, pairwise="habitat.ordered")
-plot(CR.PCA3)
-qqnorm(CR.PCA3)
-CR.PCA3.I <- interactionMeans(CR.PCA3) # effect plots
-plot(CR.PCA3.I, errorbar="ci95")
-
-meanD.PCA3 = lme(PCA3.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
-summary(meanD.PCA3)  
-testInteractions(meanD.PCA3, pairwise="habitat.ordered")
-plot(meanD.PCA3)
-qqnorm(meanD.PCA3)
-meanD.PCA3.I <- interactionMeans(meanD.PCA3) # effect plots
-plot(meanD.PCA3.I, errorbar="ci95")
-
-Balance.PCA3 = lme(PCA3.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
-summary(Balance.PCA3)  
-testInteractions(Balance.PCA3, pairwise="habitat.ordered")
-plot(Balance.PCA3)
-qqnorm(Balance.PCA3)
-Balance.PCA3.I <- interactionMeans(Balance.PCA3) # effect plots
-plot(Balance.PCA3.I, errorbar="ci95")
-
-
-# Final figure (effect +/- standard error)
-
-a <- ggplot(QE.PCA3.I, aes(x= habitat.ordered, y=QE.PCA3.I[,2])) + 
-  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
-  geom_errorbar(aes(ymin=QE.PCA3.I[,2]-QE.PCA3.I[,3], ymax=QE.PCA3.I[,2]+QE.PCA3.I[,3]), width=.2) +
-  geom_point(data=QE.PCA3.I, mapping=aes(x=habitat.ordered, y=QE.PCA3.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "Functional diversity (QE), PCA3", cex=16) +
-  geom_text(aes(label= c("a","b","ab","b","b")))
-
-b <- ggplot(CR.PCA3.I, aes(x= habitat.ordered, y=CR.PCA3.I[,2])) + 
-  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
-  geom_errorbar(aes(ymin=CR.PCA3.I[,2]-CR.PCA3.I[,3], ymax=CR.PCA3.I[,2]+CR.PCA3.I[,3]), width=.2) +
-  geom_point(data=CR.PCA3.I, mapping=aes(x=habitat.ordered, y=CR.PCA3.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "Functional redundancies, PCA3", cex=16) +
-  geom_text(aes(label= c("ab","a","ab","ab","b")))
-
-c <- ggplot(meanD.PCA3.I, aes(x= habitat.ordered, y=meanD.PCA3.I[,2])) + 
-  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
-  geom_errorbar(aes(ymin=meanD.PCA3.I[,2]-meanD.PCA3.I[,3], ymax=meanD.PCA3.I[,2]+meanD.PCA3.I[,3]), width=.2) +
-  geom_point(data=meanD.PCA3.I, mapping=aes(x=habitat.ordered, y=meanD.PCA3.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "Average species dissimilarity, PCA3", cex=16) +
-  geom_text(aes(label= c("a","b","ab","ab","a")))
-
-d <- ggplot(Balance.PCA3.I, aes(x= habitat.ordered, y=Balance.PCA3.I[,2])) + 
-  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
-  geom_errorbar(aes(ymin=Balance.PCA3.I[,2]-Balance.PCA3.I[,3], ymax=Balance.PCA3.I[,2]+Balance.PCA3.I[,3]), width=.2) +
-  geom_point(data=Balance.PCA3.I, mapping=aes(x=habitat.ordered, y=Balance.PCA3.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "Balance component, PCA3", cex=16) +
-  geom_text(aes(label= c("a","a","a","a","a")))
-
-tiff(paste0(GoogleFigs,"/plot_FD_PCA3.tiff"), width = 11, height = 8, units = 'in', res = 200)
-ggplot2.multiplot(a,b,c,d)
-dev.off()
-
-
-
-
 
 # beak shape
 
@@ -2021,17 +1949,14 @@ dev.off()
   
   
   
-  ## Tests of the effect of urbanization on biodiversity*
-  ################################################################
+  ## Insectivory ##
+  #################
   
-  # * Note that the best random structure has been previously evaluated with the method=REML
-  # * We need to include confounds (city age, human density, coordinates)
+    # 8 morphology diversity within insectivorous (>=40% diet insects) 
   
+  x1 <- subset(x,QE.insectiv>0)
   
-  
-   # 8 morphology diversity within insectivorous (>70% diet insects) 
-  
-  QE.insectiv = lme(QE.insectiv ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
+  QE.insectiv = lme(QE.insectiv ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x1), method="ML")
   summary(QE.insectiv)
   testInteractions(QE.insectiv, pairwise="habitat.ordered")
   plot(QE.insectiv)
@@ -2039,7 +1964,7 @@ dev.off()
   QE.insectiv.I <- interactionMeans(QE.insectiv) # effect plots
   plot(QE.insectiv.I, errorbar="ci95")
   
-  CR.insectiv = lme(CR.insectiv ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
+  CR.insectiv = lme(CR.insectiv ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x1), method="ML")
   summary(CR.insectiv)  
   testInteractions(CR.insectiv, pairwise="habitat.ordered")
   plot(CR.insectiv)
@@ -2047,7 +1972,7 @@ dev.off()
   CR.insectiv.I <- interactionMeans(CR.insectiv) # effect plots
   plot(CR.insectiv.I, errorbar="ci95")
   
-  meanD.insectiv = lme(insectiv.meanD ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
+  meanD.insectiv = lme(insectiv.meanD ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x1), method="ML")
   summary(meanD.insectiv)  
   testInteractions(meanD.insectiv, pairwise="habitat.ordered")
   plot(meanD.insectiv)
@@ -2055,7 +1980,7 @@ dev.off()
   meanD.insectiv.I <- interactionMeans(meanD.insectiv) # effect plots
   plot(meanD.insectiv.I, errorbar="ci95")
   
-  Balance.insectiv = lme(insectiv.Balance ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")  # if the most abundant species tended to be dissimilar = positive Balance component
+  Balance.insectiv = lme(insectiv.Balance ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x1), method="ML")  # if the most abundant species tended to be dissimilar = positive Balance component
   summary(Balance.insectiv)  
   testInteractions(Balance.insectiv, pairwise="habitat.ordered")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
   plot(Balance.insectiv)
@@ -2097,3 +2022,417 @@ dev.off()
   ggplot2.multiplot(a,b,c,d)
   dev.off()
  
+  
+  
+  
+  ## Granivory ##
+  #################
+  
+  x2 <- subset(x,QE.seeds>0)
+  
+  # 8 morphology diversity within seedorous (>=40% diet insects) 
+  
+  QE.seeds = lme(QE.seeds ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x2), method="ML")
+  summary(QE.seeds)
+  testInteractions(QE.seeds, pairwise="habitat.ordered")
+  plot(QE.seeds)
+  qqnorm(QE.seeds)
+  QE.seeds.I <- interactionMeans(QE.seeds) # effect plots
+  plot(QE.seeds.I, errorbar="ci95")
+  
+  CR.seeds = lme(CR.seeds ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x2), method="ML")
+  summary(CR.seeds)  
+  testInteractions(CR.seeds, pairwise="habitat.ordered")
+  plot(CR.seeds)
+  qqnorm(CR.seeds)
+  CR.seeds.I <- interactionMeans(CR.seeds) # effect plots
+  plot(CR.seeds.I, errorbar="ci95")
+  
+  meanD.seeds = lme(seeds.meanD ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x2), method="ML")
+  summary(meanD.seeds)  
+  testInteractions(meanD.seeds, pairwise="habitat.ordered")
+  plot(meanD.seeds)
+  qqnorm(meanD.seeds)
+  meanD.seeds.I <- interactionMeans(meanD.seeds) # effect plots
+  plot(meanD.seeds.I, errorbar="ci95")
+  
+  Balance.seeds = lme(seeds.Balance ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x2), method="ML")  # if the most abundant species tended to be dissimilar = positive Balance component
+  summary(Balance.seeds)  
+  testInteractions(Balance.seeds, pairwise="habitat.ordered")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
+  plot(Balance.seeds)
+  qqnorm(Balance.seeds)
+  Balance.seeds.I <- interactionMeans(Balance.seeds) # effect plots
+  plot(Balance.seeds.I, errorbar="ci95")
+  
+  
+  
+  a <- ggplot(QE.seeds.I, aes(x= habitat.ordered, y=QE.seeds.I[,2])) + 
+    theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+    geom_errorbar(aes(ymin=QE.seeds.I[,2]-QE.seeds.I[,3], ymax=QE.seeds.I[,2]+QE.seeds.I[,3]), width=.2) +
+    geom_point(data=QE.seeds.I, mapping=aes(x=habitat.ordered, y=QE.seeds.I[,2]), size=8, shape=21, fill="white") +
+    labs(x = "", y = "QE morphology within granivorous", cex=16) +
+    geom_text(aes(label= c("a","a","a","a","b")))
+  
+  b <- ggplot(CR.seeds.I , aes(x= habitat.ordered, y=CR.seeds.I [,2])) + 
+    theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+    geom_errorbar(aes(ymin=CR.seeds.I [,2]-CR.seeds.I [,3], ymax=CR.seeds.I [,2]+CR.seeds.I [,3]), width=.2) +
+    geom_point(data=CR.seeds.I , mapping=aes(x=habitat.ordered, y=CR.seeds.I [,2]), size=8, shape=21, fill="white") +
+    labs(x = "", y = "Functional redundancies, morphology within granivorous ", cex=16) +
+    geom_text(aes(label= c("a","a","a","a","a")))
+  
+  c <- ggplot(meanD.seeds.I, aes(x= habitat.ordered, y=meanD.seeds.I [,2])) + 
+    theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+    geom_errorbar(aes(ymin=meanD.seeds.I [,2]-meanD.seeds.I [,3], ymax=meanD.seeds.I [,2]+meanD.seeds.I [,3]), width=.2) +
+    geom_point(data=meanD.seeds.I , mapping=aes(x=habitat.ordered, y=meanD.seeds.I [,2]), size=8, shape=21, fill="white") +
+    labs(x = "", y = "Average species dissimilarity, morphology within granivorous ", cex=16) +
+    geom_text(aes(label= c("a","ab","ab","ab","b")))
+  
+  d <- ggplot(Balance.seeds.I , aes(x= habitat.ordered, y=Balance.seeds.I [,2])) + 
+    theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+    geom_errorbar(aes(ymin=Balance.seeds.I [,2]-Balance.seeds.I [,3], ymax=Balance.seeds.I [,2]+Balance.seeds.I [,3]), width=.2) +
+    geom_point(data=Balance.seeds.I , mapping=aes(x=habitat.ordered, y=Balance.seeds.I [,2]), size=8, shape=21, fill="white") +
+    labs(x = "", y = "Balance component, morphology within granivorous ", cex=16) +
+    geom_text(aes(label= c("ab","ab","ab","a","b")))
+  
+  tiff(paste0(GoogleFigs,"/plot_FD_morphology_seeds_natives.tiff"), width = 11, height = 8, units = 'in', res = 200)
+  ggplot2.multiplot(a,b,c,d)
+  dev.off()
+  
+  
+  
+  
+  
+  
+  ## Frugivory ##
+  #################
+  
+  x3 <- subset(x,QE.fruits>0)
+  
+  # 8 morphology diversity within seedorous (>=40% diet insects) 
+  
+  QE.fruits = lme(QE.fruits ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x2), method="ML")
+  summary(QE.fruits)
+  testInteractions(QE.fruits, pairwise="habitat.ordered")
+  plot(QE.fruits)
+  qqnorm(QE.fruits)
+  QE.fruits.I <- interactionMeans(QE.fruits) # effect plots
+  plot(QE.fruits.I, errorbar="ci95")
+  
+  CR.fruits = lme(CR.fruits ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x2), method="ML")
+  summary(CR.fruits)  
+  testInteractions(CR.fruits, pairwise="habitat.ordered")
+  plot(CR.fruits)
+  qqnorm(CR.fruits)
+  CR.fruits.I <- interactionMeans(CR.fruits) # effect plots
+  plot(CR.fruits.I, errorbar="ci95")
+  
+  meanD.fruits = lme(fruits.meanD ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x2), method="ML")
+  summary(meanD.fruits)  
+  testInteractions(meanD.fruits, pairwise="habitat.ordered")
+  plot(meanD.fruits)
+  qqnorm(meanD.fruits)
+  meanD.fruits.I <- interactionMeans(meanD.fruits) # effect plots
+  plot(meanD.fruits.I, errorbar="ci95")
+  
+  Balance.fruits = lme(fruits.Balance ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x2), method="ML")  # if the most abundant species tended to be dissimilar = positive Balance component
+  summary(Balance.fruits)  
+  testInteractions(Balance.fruits, pairwise="habitat.ordered")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
+  plot(Balance.fruits)
+  qqnorm(Balance.fruits)
+  Balance.fruits.I <- interactionMeans(Balance.fruits) # effect plots
+  plot(Balance.fruits.I, errorbar="ci95")
+  
+  
+  
+  a <- ggplot(QE.fruits.I, aes(x= habitat.ordered, y=QE.fruits.I[,2])) + 
+    theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+    geom_errorbar(aes(ymin=QE.fruits.I[,2]-QE.fruits.I[,3], ymax=QE.fruits.I[,2]+QE.fruits.I[,3]), width=.2) +
+    geom_point(data=QE.fruits.I, mapping=aes(x=habitat.ordered, y=QE.fruits.I[,2]), size=8, shape=21, fill="white") +
+    labs(x = "", y = "QE morphology within granivorous", cex=16) +
+    geom_text(aes(label= c("a","a","a","a","b")))
+  
+  b <- ggplot(CR.fruits.I , aes(x= habitat.ordered, y=CR.fruits.I [,2])) + 
+    theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+    geom_errorbar(aes(ymin=CR.fruits.I [,2]-CR.fruits.I [,3], ymax=CR.fruits.I [,2]+CR.fruits.I [,3]), width=.2) +
+    geom_point(data=CR.fruits.I , mapping=aes(x=habitat.ordered, y=CR.fruits.I [,2]), size=8, shape=21, fill="white") +
+    labs(x = "", y = "Functional redundancies, morphology within granivorous ", cex=16) +
+    geom_text(aes(label= c("a","a","a","a","a")))
+  
+  c <- ggplot(meanD.fruits.I, aes(x= habitat.ordered, y=meanD.fruits.I [,2])) + 
+    theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+    geom_errorbar(aes(ymin=meanD.fruits.I [,2]-meanD.fruits.I [,3], ymax=meanD.fruits.I [,2]+meanD.fruits.I [,3]), width=.2) +
+    geom_point(data=meanD.fruits.I , mapping=aes(x=habitat.ordered, y=meanD.fruits.I [,2]), size=8, shape=21, fill="white") +
+    labs(x = "", y = "Average species dissimilarity, morphology within granivorous ", cex=16) +
+    geom_text(aes(label= c("a","ab","ab","ab","b")))
+  
+  d <- ggplot(Balance.fruits.I , aes(x= habitat.ordered, y=Balance.fruits.I [,2])) + 
+    theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+    geom_errorbar(aes(ymin=Balance.fruits.I [,2]-Balance.fruits.I [,3], ymax=Balance.fruits.I [,2]+Balance.fruits.I [,3]), width=.2) +
+    geom_point(data=Balance.fruits.I , mapping=aes(x=habitat.ordered, y=Balance.fruits.I [,2]), size=8, shape=21, fill="white") +
+    labs(x = "", y = "Balance component, morphology within granivorous ", cex=16) +
+    geom_text(aes(label= c("ab","ab","ab","a","b")))
+  
+  tiff(paste0(GoogleFigs,"/plot_FD_morphology_fruits_natives.tiff"), width = 11, height = 8, units = 'in', res = 200)
+  ggplot2.multiplot(a,b,c,d)
+  dev.off()
+  
+  
+}
+
+
+
+
+############# 9. Analyses for diet axes diversity, only natives ######
+############################################################################
+
+{## Import biodiversity metrics for communities
+  
+  x<-read.table(paste0(workingData,"/Diet diversity metrics for communities natives.txt"))
+  
+  # We restrict the analyses to studies where there is information inside and outside the city
+  x <- subset(x, used.urban.nonurban=="yes")
+  x[] <- lapply(x, function(x) if(is.factor(x)) factor(x) else x)
+  
+  
+  # Three ways to code habitats
+  
+  # 1. All habitats separated
+  # levels(x$habitat) <- c("closed_wild", "Urban_Park", "little_urbanised", "open_wild", "pasture", "plantation", "rural", "rural_wild", "sub", "urb", "urban_mosaic", "wild_mosaic")
+  
+  # 2. All urban habitats separated, all non-urban habitat together
+  levels(x$habitat) <- c("Wildland",       "Urban_Park",     "Wildland",     "Wildland", "Rural",   "Rural",  "Rural",   "Rural", "Suburban", "Urban", "Suburban", "Wildland")
+  habitat.ordered  = factor(x$habitat, levels=c("Wildland","Rural","Urban_Park","Suburban","Urban"))
+  x <- cbind(x,habitat.ordered)
+  
+  # 3. All urban and non-urban habitats pooled together
+  # levels(habitat.city) <- c("Wildland",       "Urban",     "Wildland",     "Wildland", "Rural",   "Rural",  "Rural",   "Rural", "Urban", "Urban", "Urban", "Wildland")
+  
+  
+  
+  ## PCoA 1: Insectivory vs frugiv/granivourous ##
+  ################################################
+  
+  {
+  #  The first PCoA is negative for insectivorous and positive for graniv/frugiv
+  
+  QE.PCoA1 = lme(QE.PCoA1 ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
+  summary(QE.PCoA1)
+  testInteractions(QE.PCoA1, pairwise="habitat.ordered")
+  plot(QE.PCoA1)
+  qqnorm(QE.PCoA1)
+  QE.PCoA1.I <- interactionMeans(QE.PCoA1) # effect plots
+  plot(QE.PCoA1.I, errorbar="ci95")
+  
+  CR.PCoA1 = lme(CR.PCoA1 ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
+  summary(CR.PCoA1)  
+  testInteractions(CR.PCoA1, pairwise="habitat.ordered")
+  plot(CR.PCoA1)
+  qqnorm(CR.PCoA1)
+  CR.PCoA1.I <- interactionMeans(CR.PCoA1) # effect plots
+  plot(CR.PCoA1.I, errorbar="ci95")
+  
+  meanD.PCoA1 = lme(PCoA1.meanD ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
+  summary(meanD.PCoA1)  
+  testInteractions(meanD.PCoA1, pairwise="habitat.ordered")
+  plot(meanD.PCoA1)
+  qqnorm(meanD.PCoA1)
+  meanD.PCoA1.I <- interactionMeans(meanD.PCoA1) # effect plots
+  plot(meanD.PCoA1.I, errorbar="ci95")
+  
+  Balance.PCoA1 = lme(PCoA1.Balance ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")  # if the most abundant species tended to be dissimilar = positive Balance component
+  summary(Balance.PCoA1)  
+  testInteractions(Balance.PCoA1, pairwise="habitat.ordered")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
+  plot(Balance.PCoA1)
+  qqnorm(Balance.PCoA1)
+  Balance.PCoA1.I <- interactionMeans(Balance.PCoA1) # effect plots
+  plot(Balance.PCoA1.I, errorbar="ci95")
+  
+  
+  a <- ggplot(QE.PCoA1.I, aes(x= habitat.ordered, y=QE.PCoA1.I[,2])) + 
+    theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+    geom_errorbar(aes(ymin=QE.PCoA1.I[,2]-QE.PCoA1.I[,3], ymax=QE.PCoA1.I[,2]+QE.PCoA1.I[,3]), width=.2) +
+    geom_point(data=QE.PCoA1.I, mapping=aes(x=habitat.ordered, y=QE.PCoA1.I[,2]), size=8, shape=21, fill="white") +
+    labs(x = "", y = "QE diet PCoA1", cex=16) +
+    geom_text(aes(label= c("a","a","a","a","b")))
+  
+  b <- ggplot(CR.PCoA1.I , aes(x= habitat.ordered, y=CR.PCoA1.I [,2])) + 
+    theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+    geom_errorbar(aes(ymin=CR.PCoA1.I [,2]-CR.PCoA1.I [,3], ymax=CR.PCoA1.I [,2]+CR.PCoA1.I [,3]), width=.2) +
+    geom_point(data=CR.PCoA1.I , mapping=aes(x=habitat.ordered, y=CR.PCoA1.I [,2]), size=8, shape=21, fill="white") +
+    labs(x = "", y = "Functional redundancies, diet PCoA1 ", cex=16) +
+    geom_text(aes(label= c("a","a","a","a","a")))
+  
+  c <- ggplot(meanD.PCoA1.I, aes(x= habitat.ordered, y=meanD.PCoA1.I [,2])) + 
+    theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+    geom_errorbar(aes(ymin=meanD.PCoA1.I [,2]-meanD.PCoA1.I [,3], ymax=meanD.PCoA1.I [,2]+meanD.PCoA1.I [,3]), width=.2) +
+    geom_point(data=meanD.PCoA1.I , mapping=aes(x=habitat.ordered, y=meanD.PCoA1.I [,2]), size=8, shape=21, fill="white") +
+    labs(x = "", y = "Average species dissimilarity, diet PCoA1", cex=16) +
+    geom_text(aes(label= c("a","ab","ab","ab","b")))
+  
+  d <- ggplot(Balance.PCoA1.I , aes(x= habitat.ordered, y=Balance.PCoA1.I [,2])) + 
+    theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+    geom_errorbar(aes(ymin=Balance.PCoA1.I [,2]-Balance.PCoA1.I [,3], ymax=Balance.PCoA1.I [,2]+Balance.PCoA1.I [,3]), width=.2) +
+    geom_point(data=Balance.PCoA1.I , mapping=aes(x=habitat.ordered, y=Balance.PCoA1.I [,2]), size=8, shape=21, fill="white") +
+    labs(x = "", y = "Balance component, diet PCoA1", cex=16) +
+    geom_text(aes(label= c("ab","ab","ab","a","b")))
+  
+  tiff(paste0(GoogleFigs,"/plot_FD_morphology_PCoA1_natives.tiff"), width = 11, height = 8, units = 'in', res = 200)
+  ggplot2.multiplot(a,b,c,d)
+  dev.off()
+  
+  }
+  
+  
+
+  ## PCoA 2: Insectivory vs granivourous ##
+  #########################################
+  
+  {
+    #  The first PCoA is negative for insectivorous and positive for graniv/frugiv
+    
+    QE.PCoA2 = lme(QE.PCoA2 ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
+    summary(QE.PCoA2)
+    testInteractions(QE.PCoA2, pairwise="habitat.ordered")
+    plot(QE.PCoA2)
+    qqnorm(QE.PCoA2)
+    QE.PCoA2.I <- interactionMeans(QE.PCoA2) # effect plots
+    plot(QE.PCoA2.I, errorbar="ci95")
+    
+    CR.PCoA2 = lme(CR.PCoA2 ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
+    summary(CR.PCoA2)  
+    testInteractions(CR.PCoA2, pairwise="habitat.ordered")
+    plot(CR.PCoA2)
+    qqnorm(CR.PCoA2)
+    CR.PCoA2.I <- interactionMeans(CR.PCoA2) # effect plots
+    plot(CR.PCoA2.I, errorbar="ci95")
+    
+    meanD.PCoA2 = lme(PCoA2.meanD ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
+    summary(meanD.PCoA2)  
+    testInteractions(meanD.PCoA2, pairwise="habitat.ordered")
+    plot(meanD.PCoA2)
+    qqnorm(meanD.PCoA2)
+    meanD.PCoA2.I <- interactionMeans(meanD.PCoA2) # effect plots
+    plot(meanD.PCoA2.I, errorbar="ci95")
+    
+    Balance.PCoA2 = lme(PCoA2.Balance ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")  # if the most abundant species tended to be dissimilar = positive Balance component
+    summary(Balance.PCoA2)  
+    testInteractions(Balance.PCoA2, pairwise="habitat.ordered")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
+    plot(Balance.PCoA2)
+    qqnorm(Balance.PCoA2)
+    Balance.PCoA2.I <- interactionMeans(Balance.PCoA2) # effect plots
+    plot(Balance.PCoA2.I, errorbar="ci95")
+    
+    
+    a <- ggplot(QE.PCoA2.I, aes(x= habitat.ordered, y=QE.PCoA2.I[,2])) + 
+      theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+      geom_errorbar(aes(ymin=QE.PCoA2.I[,2]-QE.PCoA2.I[,3], ymax=QE.PCoA2.I[,2]+QE.PCoA2.I[,3]), width=.2) +
+      geom_point(data=QE.PCoA2.I, mapping=aes(x=habitat.ordered, y=QE.PCoA2.I[,2]), size=8, shape=21, fill="white") +
+      labs(x = "", y = "QE diet PCoA2", cex=16) +
+      geom_text(aes(label= c("a","a","a","a","b")))
+    
+    b <- ggplot(CR.PCoA2.I , aes(x= habitat.ordered, y=CR.PCoA2.I [,2])) + 
+      theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+      geom_errorbar(aes(ymin=CR.PCoA2.I [,2]-CR.PCoA2.I [,3], ymax=CR.PCoA2.I [,2]+CR.PCoA2.I [,3]), width=.2) +
+      geom_point(data=CR.PCoA2.I , mapping=aes(x=habitat.ordered, y=CR.PCoA2.I [,2]), size=8, shape=21, fill="white") +
+      labs(x = "", y = "Functional redundancies, diet PCoA2 ", cex=16) +
+      geom_text(aes(label= c("a","a","a","a","a")))
+    
+    c <- ggplot(meanD.PCoA2.I, aes(x= habitat.ordered, y=meanD.PCoA2.I [,2])) + 
+      theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+      geom_errorbar(aes(ymin=meanD.PCoA2.I [,2]-meanD.PCoA2.I [,3], ymax=meanD.PCoA2.I [,2]+meanD.PCoA2.I [,3]), width=.2) +
+      geom_point(data=meanD.PCoA2.I , mapping=aes(x=habitat.ordered, y=meanD.PCoA2.I [,2]), size=8, shape=21, fill="white") +
+      labs(x = "", y = "Average species dissimilarity, diet PCoA2", cex=16) +
+      geom_text(aes(label= c("a","ab","ab","ab","b")))
+    
+    d <- ggplot(Balance.PCoA2.I , aes(x= habitat.ordered, y=Balance.PCoA2.I [,2])) + 
+      theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+      geom_errorbar(aes(ymin=Balance.PCoA2.I [,2]-Balance.PCoA2.I [,3], ymax=Balance.PCoA2.I [,2]+Balance.PCoA2.I [,3]), width=.2) +
+      geom_point(data=Balance.PCoA2.I , mapping=aes(x=habitat.ordered, y=Balance.PCoA2.I [,2]), size=8, shape=21, fill="white") +
+      labs(x = "", y = "Balance component, diet PCoA2", cex=16) +
+      geom_text(aes(label= c("ab","ab","ab","a","b")))
+    
+    tiff(paste0(GoogleFigs,"/plot_FD_morphology_PCoA2_natives.tiff"), width = 11, height = 8, units = 'in', res = 200)
+    ggplot2.multiplot(a,b,c,d)
+    dev.off()
+    
+  }
+  
+
+  
+  ## PCoA 3: granivourous ##
+  ##########################
+  
+  {
+    #  The first PCoA is negative for insectivorous and positive for graniv/frugiv
+    
+    QE.PCoA3 = lme(QE.PCoA3 ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
+    summary(QE.PCoA3)
+    testInteractions(QE.PCoA3, pairwise="habitat.ordered")
+    plot(QE.PCoA3)
+    qqnorm(QE.PCoA3)
+    QE.PCoA3.I <- interactionMeans(QE.PCoA3) # effect plots
+    plot(QE.PCoA3.I, errorbar="ci95")
+    
+    CR.PCoA3 = lme(CR.PCoA3 ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
+    summary(CR.PCoA3)  
+    testInteractions(CR.PCoA3, pairwise="habitat.ordered")
+    plot(CR.PCoA3)
+    qqnorm(CR.PCoA3)
+    CR.PCoA3.I <- interactionMeans(CR.PCoA3) # effect plots
+    plot(CR.PCoA3.I, errorbar="ci95")
+    
+    meanD.PCoA3 = lme(PCoA3.meanD ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
+    summary(meanD.PCoA3)  
+    testInteractions(meanD.PCoA3, pairwise="habitat.ordered")
+    plot(meanD.PCoA3)
+    qqnorm(meanD.PCoA3)
+    meanD.PCoA3.I <- interactionMeans(meanD.PCoA3) # effect plots
+    plot(meanD.PCoA3.I, errorbar="ci95")
+    
+    Balance.PCoA3 = lme(PCoA3.Balance ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")  # if the most abundant species tended to be dissimilar = positive Balance component
+    summary(Balance.PCoA3)  
+    testInteractions(Balance.PCoA3, pairwise="habitat.ordered")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
+    plot(Balance.PCoA3)
+    qqnorm(Balance.PCoA3)
+    Balance.PCoA3.I <- interactionMeans(Balance.PCoA3) # effect plots
+    plot(Balance.PCoA3.I, errorbar="ci95")
+    
+    
+    a <- ggplot(QE.PCoA3.I, aes(x= habitat.ordered, y=QE.PCoA3.I[,2])) + 
+      theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+      geom_errorbar(aes(ymin=QE.PCoA3.I[,2]-QE.PCoA3.I[,3], ymax=QE.PCoA3.I[,2]+QE.PCoA3.I[,3]), width=.2) +
+      geom_point(data=QE.PCoA3.I, mapping=aes(x=habitat.ordered, y=QE.PCoA3.I[,2]), size=8, shape=21, fill="white") +
+      labs(x = "", y = "QE diet PCoA3", cex=16) +
+      geom_text(aes(label= c("a","a","a","a","b")))
+    
+    b <- ggplot(CR.PCoA3.I , aes(x= habitat.ordered, y=CR.PCoA3.I [,2])) + 
+      theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+      geom_errorbar(aes(ymin=CR.PCoA3.I [,2]-CR.PCoA3.I [,3], ymax=CR.PCoA3.I [,2]+CR.PCoA3.I [,3]), width=.2) +
+      geom_point(data=CR.PCoA3.I , mapping=aes(x=habitat.ordered, y=CR.PCoA3.I [,2]), size=8, shape=21, fill="white") +
+      labs(x = "", y = "Functional redundancies, diet PCoA3 ", cex=16) +
+      geom_text(aes(label= c("a","a","a","a","a")))
+    
+    c <- ggplot(meanD.PCoA3.I, aes(x= habitat.ordered, y=meanD.PCoA3.I [,2])) + 
+      theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+      geom_errorbar(aes(ymin=meanD.PCoA3.I [,2]-meanD.PCoA3.I [,3], ymax=meanD.PCoA3.I [,2]+meanD.PCoA3.I [,3]), width=.2) +
+      geom_point(data=meanD.PCoA3.I , mapping=aes(x=habitat.ordered, y=meanD.PCoA3.I [,2]), size=8, shape=21, fill="white") +
+      labs(x = "", y = "Average species dissimilarity, diet PCoA3", cex=16) +
+      geom_text(aes(label= c("a","ab","ab","ab","b")))
+    
+    d <- ggplot(Balance.PCoA3.I , aes(x= habitat.ordered, y=Balance.PCoA3.I [,2])) + 
+      theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+      geom_errorbar(aes(ymin=Balance.PCoA3.I [,2]-Balance.PCoA3.I [,3], ymax=Balance.PCoA3.I [,2]+Balance.PCoA3.I [,3]), width=.2) +
+      geom_point(data=Balance.PCoA3.I , mapping=aes(x=habitat.ordered, y=Balance.PCoA3.I [,2]), size=8, shape=21, fill="white") +
+      labs(x = "", y = "Balance component, diet PCoA3", cex=16) +
+      geom_text(aes(label= c("ab","ab","ab","a","b")))
+    
+    tiff(paste0(GoogleFigs,"/plot_FD_morphology_PCoA3_natives.tiff"), width = 11, height = 8, units = 'in', res = 200)
+    ggplot2.multiplot(a,b,c,d)
+    dev.off()
+    
+  }
+  
+  
+  
+  
+}
