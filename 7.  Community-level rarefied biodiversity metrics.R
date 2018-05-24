@@ -126,7 +126,7 @@ dev.off()
 #### 2. Rarefied estimations of species richness  ###
 #####################################################
 
-
+{
 
 ctree1 <- read.nexus(paste0(workingData,"/AllBirdsEricson1_summary.tre"))    # This is Ericson concensus tree
 ctree2 <- read.nexus(paste0(workingData,"/AllBirdsHackett1_summary.tre"))    # This is Hackett concensus tree
@@ -175,14 +175,14 @@ write.table(merge(raref,cdata, by="community"), paste0(workingData,"/Rarefied.co
 
 
 
-
+}
 
 
 
 #### Tests for differences across habitats ###
 ##############################################
 
-
+{
 dat<-read.table(paste0(workingData,"/Rarefied.communities.txt"), header=TRUE)
 levels(dat$habitat) <- c("Wildland",       "Urban_Park",     "Wildland",     "Wildland", "Rural",   "Rural",  "Rural",   "Rural", "Suburban", "Urban", "Suburban", "Wildland")
 habitat.ordered  = factor(dat$habitat, levels=c("Wildland","Rural","Urban_Park","Suburban","Urban"))
@@ -238,7 +238,7 @@ dev.off()
 
 
 
-
+}
 
 
 

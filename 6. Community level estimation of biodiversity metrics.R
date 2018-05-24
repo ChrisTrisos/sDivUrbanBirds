@@ -45,6 +45,13 @@
 ### ANALYSES START HERE ### 
 
 
+## There are some incompatibatilities among packages (adivd vs BAT) so we will download only the essential libraries (or unclick BAT)
+
+library(reshape2)
+library(adiv)
+library(plyr)
+library(ecodist)
+
 ## Community data preparation (if you run this part, you get communities*species abundances of natives)
 
 {
@@ -121,6 +128,8 @@ distwinghand<- distwinghand/max(distwinghand)
 
 
 ## estimation of phylogenetic distances among species
+library(ape)
+library(picante)
 
 ctree1 <- read.nexus(paste0(workingData,"/AllBirdsEricson1_summary.tre"))    # This is Ericson concensus tree
 ctree2 <- read.nexus(paste0(workingData,"/AllBirdsHackett1_summary.tre"))    # This is Hackett concensus tree
@@ -151,7 +160,6 @@ phydisH <- phydisH/max(phydisH)
   # Community redundancy (CR = 1-uniqueness)
 
 all.morph <- uniqueness(comm, distallmorphology)
-PCA3 <- uniqueness(comm, distallmorphology3PCAs)
 beak <- uniqueness(comm, distbeak)
 locom <- uniqueness(comm, distlocom)
 size <- uniqueness(comm, distsize)
@@ -166,7 +174,6 @@ phyH <- uniqueness(comm.Hack, dis = phydisH)
   # The balance factor
 
 all.morph.2 <- QEpart(comm, distallmorphology)
-PCA3.2 <- QEpart(comm, distallmorphology3PCAs)
 beak.2 <- QEpart(comm, distbeak)
 locom.2 <- QEpart(comm, distlocom)
 size.2 <- QEpart(comm, distsize)
@@ -175,11 +182,21 @@ phyE.2 <- QEpart(comm.Eric, dis = phydisE)
 phyH.2 <- QEpart(comm.Hack, dis = phydisH)
 
 
+## we will estimate community-weighted mean traits 
+
+library(FD)
+
+Wbeak <- dbFD(beakshape, comm, calc.CWM=TRUE)
+Wlocomshape <- dbFD(locomshape, comm, calc.CWM=TRUE)
+Wbodysize <- dbFD(bodysize, comm, calc.CWM=TRUE)
+Whand.wing <- dbFD(hand.wing, comm, calc.CWM=TRUE)
+
+
 ## Preparing data for subsequent analyses
 
-FDmorphology<-as.data.frame(cbind(labels(comm[,2]),all.morph$red$N,all.morph$red$D,all.morph$red$Q,all.morph$red$U,1-all.morph$red$U,PCA3$red$Q,PCA3$red$U,1-PCA3$red$U,beak$red$Q,beak$red$U,1-beak$red$U,locom$red$Q,locom$red$U,1-locom$red$U,size$red$Q,size$red$U,1-size$red$U,winghand$red$Q,winghand$red$U,1-winghand$red$U,phyE$red$Q,phyE$red$U,1-phyE$red$U,phyH$red$Q,phyH$red$U,1-phyH$red$U,all.morph.2$meanD,PCA3.2$meanD,beak.2$meanD,locom.2$meanD,size.2$meanD,winghand.2$meanD,phyE.2$meanD,phyH.2$meanD,all.morph.2$Balance,PCA3.2$Balance,beak.2$Balance,locom.2$Balance,size.2$Balance,winghand.2$Balance,phyE.2$Balance,phyH.2$Balance))
+FDmorphology<-as.data.frame(cbind(labels(comm[,2]),all.morph$red$N,all.morph$red$D,all.morph$red$Q,all.morph$red$U,1-all.morph$red$U,beak$red$Q,beak$red$U,1-beak$red$U,locom$red$Q,locom$red$U,1-locom$red$U,size$red$Q,size$red$U,1-size$red$U,winghand$red$Q,winghand$red$U,1-winghand$red$U,phyE$red$Q,phyE$red$U,1-phyE$red$U,phyH$red$Q,phyH$red$U,1-phyH$red$U,all.morph.2$meanD,beak.2$meanD,locom.2$meanD,size.2$meanD,winghand.2$meanD,phyE.2$meanD,phyH.2$meanD,all.morph.2$Balance,beak.2$Balance,locom.2$Balance,size.2$Balance,winghand.2$Balance,phyE.2$Balance,phyH.2$Balance,Wbeak$CWM, Wlocomshape$CWM, Wbodysize$CWM, Whand.wing$CWM))
 
-colnames(FDmorphology)<-c("community","Species.richness","QE.taxonomy","QE.all.morph","Uniqueness.all.morph","CR.all.morph","QE.PCA3","Uniqueness.PCA3","CR.PCA3","QE.beak","Uniqueness.beak","CR.beak","QE.locom","Uniqueness.locom","CR.locom","QE.size","Uniqueness.size","CR.size","QE.winghand","Uniqueness.winghand","CR.winghand","QE.phyE","Uniqueness.phyE","CR.phyE","QE.phyH","Uniqueness.phyH","CR.phyH","all.morph.meanD","PCA3.meanD","beak.meanD","locom.meanD","size.meanD","winghand.meanD","phyE.meanD","phyH.meanD","all.morph.Balance","PCA3.Balance","beak.Balance","locom.Balance","size.Balance","winghand.Balance","phyE.Balance","phyH.Balance")
+colnames(FDmorphology)<-c("community","Species.richness","QE.taxonomy","QE.all.morph","Uniqueness.all.morph","CR.all.morph","QE.beak","Uniqueness.beak","CR.beak","QE.locom","Uniqueness.locom","CR.locom","QE.size","Uniqueness.size","CR.size","QE.winghand","Uniqueness.winghand","CR.winghand","QE.phyE","Uniqueness.phyE","CR.phyE","QE.phyH","Uniqueness.phyH","CR.phyH","all.morph.meanD","beak.meanD","locom.meanD","size.meanD","winghand.meanD","phyE.meanD","phyH.meanD","all.morph.Balance","beak.Balance","locom.Balance","size.Balance","winghand.Balance","phyE.Balance","phyH.Balance","CWM.beak.shape","CWM.locom.shape","CWM.body.size","CWM.hand.wing")
 
 
 # We add habitat and study site information
@@ -189,8 +206,8 @@ tmp <- ddply(dat, c("country", "city", "community", "habitat", "used.urban.nonur
 
 tmp2 <- merge(FDmorphology,tmp, by="community")
       
-write.table(tmp2, paste0(workingData,"/Morphological diversity metrics for communities.txt"))
-# write.table(tmp2, paste0(workingData,"/Morphological diversity metrics for communities natives.txt"))
+# write.table(tmp2, paste0(workingData,"/Morphological diversity metrics for communities.txt"))
+write.table(tmp2, paste0(workingData,"/Morphological diversity metrics for communities natives.txt"))
 # write.table(tmp2, paste0(workingData,"/Morphological diversity metrics for communities ocurrences.txt"))
 # write.table(tmp2, paste0(workingData,"/Morphological diversity metrics for communities ocurrences natives.txt"))
 
@@ -200,7 +217,7 @@ write.table(tmp2, paste0(workingData,"/Morphological diversity metrics for commu
 ################ Analyses for diet  ######################
 ##########################################################
 
-
+{
 ### Functional diet data
 
 ## Need to estimate first "comm" running the firts part of this code
@@ -226,6 +243,7 @@ distdiet<- dist.prop(dietdat, method = 1) # method 1 is Manly
 distdiet <- distdiet/max(distdiet) 
 
 all.diet <- QEpart(comm1, distdiet)
+all.diet1 <- uniqueness(comm1, distdiet)
 
 # redundancies are estimated as 1-QE/Simpson (Ricotta et al. 2016)
 
@@ -243,31 +261,37 @@ comm1 <- comm[,rownames(diet.axes)]  # as one species is missing in diet, we nee
 
 Inv_SeedFruit <- as.data.frame(diet.axes$Inv_SeedFruit)
 rownames(Inv_SeedFruit) <- rownames(diet.axes)
-Inv_SeedFruit <- distance(Inv_SeedFruit, "euclidean")   
-Inv_SeedFruit <- Inv_SeedFruit/max(Inv_SeedFruit)
-Inv_SeedFruit.diet <- QEpart(comm1, Inv_SeedFruit)
+DInv_SeedFruit <- distance(Inv_SeedFruit, "euclidean")   
+DInv_SeedFruit <- DInv_SeedFruit/max(DInv_SeedFruit)
+Inv_SeedFruit.diet <- QEpart(comm1, DInv_SeedFruit)
 Inv_SeedFruit.redundancy <- 1-(Inv_SeedFruit.diet$QE/Inv_SeedFruit.diet$Simpson)
+CWMInv_SeedFruit <- dbFD(Inv_SeedFruit, comm1, calc.CWM=TRUE)
+
 
 Inv_Seed <- as.data.frame(diet.axes$Inv_Seed)
 rownames(Inv_Seed) <- rownames(diet.axes)
-Inv_Seed <- distance(Inv_Seed, "euclidean")   
-Inv_Seed <- Inv_Seed/max(Inv_Seed)
-Inv_Seed.diet <- QEpart(comm1, Inv_Seed)
+DInv_Seed <- distance(Inv_Seed, "euclidean")   
+DInv_Seed <- DInv_Seed/max(DInv_Seed)
+Inv_Seed.diet <- QEpart(comm1, DInv_Seed)
 Inv_Seed.redundancy <- 1-(Inv_Seed.diet$QE/Inv_Seed.diet$Simpson)
+CWMInv_Seed <- dbFD(Inv_Seed, comm1, calc.CWM=TRUE)
+
 
 Seed <- as.data.frame(diet.axes$Seed)
 rownames(Seed) <- rownames(diet.axes)
-Seed <- distance(Seed, "euclidean")   
-Seed <- Seed/max(Seed)
-Seed.diet <- QEpart(comm1, Seed)
+DSeed <- distance(Seed, "euclidean")   
+DSeed <- DSeed/max(DSeed)
+Seed.diet <- QEpart(comm1, DSeed)
 Seed.redundancy <- 1-(Seed.diet$QE/Seed.diet$Simpson)
+CWMSeed <- dbFD(Seed, comm1, calc.CWM=TRUE)
+
 
 
 ## Preparing data for subsequent analyses
 
-FDdiet <-as.data.frame(cbind(labels(comm1[,2]), all.diet$QE, all.diet$meanD, all.diet$Balance, redundancy, Inv_SeedFruit.diet$QE, Inv_SeedFruit.diet$meanD, Inv_SeedFruit.diet$Balance, Inv_SeedFruit.redundancy, Inv_Seed.diet$QE, Inv_Seed.diet$meanD, Inv_Seed.diet$Balance, Inv_Seed.redundancy, Seed.diet$QE, Seed.diet$meanD, Seed.diet$Balance, Seed.redundancy))
+FDdiet <-as.data.frame(cbind(labels(comm1[,2]), all.diet$QE, all.diet$meanD, all.diet$Balance, redundancy, Inv_SeedFruit.diet$QE, Inv_SeedFruit.diet$meanD, Inv_SeedFruit.diet$Balance, Inv_SeedFruit.redundancy, Inv_Seed.diet$QE, Inv_Seed.diet$meanD, Inv_Seed.diet$Balance, Inv_Seed.redundancy, Seed.diet$QE, Seed.diet$meanD, Seed.diet$Balance, Seed.redundancy, CWMInv_SeedFruit$CWM, CWMInv_Seed$CWM,CWMSeed$CWM))
 
-colnames(FDdiet)<-c("community","QE.diet","diet.meanD","diet.Balance","CR.diet","QE.PCoA1","PCoA1.meanD","PCoA1.Balance","CR.PCoA1","QE.PCoA2","PCoA2.meanD","PCoA2.Balance","CR.PCoA2","QE.PCoA3","PCoA3.meanD","PCoA3.Balance","CR.PCoA3")
+colnames(FDdiet)<-c("community","QE.diet","diet.meanD","diet.Balance","CR.diet","QE.PCoA1","PCoA1.meanD","PCoA1.Balance","CR.PCoA1","QE.PCoA2","PCoA2.meanD","PCoA2.Balance","CR.PCoA2","QE.PCoA3","PCoA3.meanD","PCoA3.Balance","CR.PCoA3","CWMInv_SeedFruit", "CWMInv_Seed", "CWMSeed")
 
 
 
@@ -283,10 +307,65 @@ write.table(tmp2, paste0(workingData,"/Diet diversity metrics for communities na
 # write.table(tmp2, paste0(workingData,"/Diet diversity metrics for communities ocurrences.txt"))
 # write.table(tmp2, paste0(workingData,"/Diet diversity metrics for communities ocurrences natives.txt"))
 
+}
 
 
+################ Species-level uniqueness and vulnerability ####################
+################################################################################
+
+{## Extracted from adiv results above
+
+## Morphology
+
+# Kbar is the mean functional dissimilarity of each species from the rest of species from the assemblage
+all.morph$Kbar[1:10,1:10]
+length(all.morph$Kbar[,1])
+Kbar<- as.data.frame(t(all.morph$Kbar))
+Kbar[1:10,1:10]
+Kbar$community <- rownames(Kbar)
+Kbar$community <- as.factor(Kbar$community)
+res.Kbar <- melt(Kbar,id.bars="Kbar$community")
+
+# Vulnerability (V) is a function of species functional relevance and its extinction risk
+all.morph$V[1:10,1:10]
+length(all.morph$V[,1])
+V<- as.data.frame(t(all.morph$V))
+V[1:10,1:10]
+V$community <- rownames(V)
+V$community <- as.factor(V$community)
+res.V <- melt(Kbar,id.bars="Kbar$community")
+
+res <- na.omit(cbind(res.Kbar, res.V))
+res <- res[,-c(4,5)]
+colnames(res) <- c("community", "animal", "Kbar.morphology", "V.morphology")
+write.table(res,paste0(workingData,"/vulnerability_species_morphology_natives.txt"))
 
 
+## Diet
+
+# Kbar is the mean functional dissimilarity of each species from the rest of species from the assemblage
+all.diet1$Kbar[1:10,1:10]
+length(all.diet1$Kbar[,1])
+Kbar<- as.data.frame(t(all.diet1$Kbar))
+Kbar[1:10,1:10]
+Kbar$community <- rownames(Kbar)
+Kbar$community <- as.factor(Kbar$community)
+res.Kbar <- melt(Kbar,id.bars="Kbar$community")
+
+# Vulnerability (V) is a function of species functional relevance and its extinction risk
+all.diet1$V[1:10,1:10]
+length(all.diet1$V[,1])
+V<- as.data.frame(t(all.diet1$V))
+V[1:10,1:10]
+V$community <- rownames(V)
+V$community <- as.factor(V$community)
+res.V <- melt(Kbar,id.bars="Kbar$community")
+
+res <- na.omit(cbind(res.Kbar, res.V))
+res <- res[,-c(4,5)]
+colnames(res) <- c("community", "animal", "Kbar.diet", "V.diet")
+write.table(res,paste0(workingData,"/vulnerability_species_diet_natives.txt"))
+}
 
 ################ Analyses for morphology by diet for natives ####################
 #################################################################################
@@ -362,4 +441,7 @@ tmp2 <- merge(FD.morphol.diet,tmp, by="community")
 write.table(tmp2, paste0(workingData,"/Morphology-Diet diversity metrics for communities natives.txt"))
 
 }
+
+
+
 

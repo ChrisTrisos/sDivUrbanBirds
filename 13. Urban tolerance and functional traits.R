@@ -112,7 +112,7 @@ plot(m1$Sol)
 ### 2.  Estimate urban tolerance ###
 ####################################
 
-#### Warning: To avoid conflicts, dowload plyr first !!!#### 
+#### Warning: To avoid conflicts, download plyr first !!!#### 
 
 library(plyr) 
 library(tidyverse)

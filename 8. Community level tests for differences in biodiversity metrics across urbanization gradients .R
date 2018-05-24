@@ -42,7 +42,7 @@
 ## 7. Analyses for diet diversity, with occurrence data natives
 ## 8. Analyses for morphological diversity natives, with occurrence data
 ## 9. Analyses for morphology-diet diversity, only natives
-
+# 10. Analyses for diet axes diversity, only natives
 
 
 ########### 1. Analyses for morphological diversity ##############
@@ -85,7 +85,7 @@ x <- cbind(x,habitat.ordered)
 spp.richness = lme(Species.richness ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(spp.richness)
 r2<- rsquared(spp.richness)  #  marginal R^2 (based on fixed effects only) and conditional R^2 (based on fixed and random effects, if present)
-testInteractions(spp.richness, pairwise="habitat.ordered")
+testInteractions(spp.richness, pairwise="habitat.ordered", adjustment="BH")
 plot(spp.richness)
 qqnorm(spp.richness)
 spp.richness.I <- interactionMeans(spp.richness) # effect plots
@@ -101,7 +101,7 @@ library(piecewiseSEM)
 m <- lmer(Species.richness ~ habitat.ordered + (1 | country/city), data = x)
 summary(m)
 anova(m) # with p-values from F-tests using Satterthwaite's denominator df
-testInteractions(m, pairwise="habitat.ordered")
+testInteractions(m, pairwise="habitat.ordered", adjustment="BH")
 (lsm <- ls_means(m))
 library(effects)
 ef <- effect("habitat.ordered", m)
@@ -120,7 +120,7 @@ anova(spp.richness, spp.richness.ratio.geo) #Spatial autocorrelation was include
 
 QE.taxonomy = lme(QE.taxonomy ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(QE.taxonomy)
-testInteractions(QE.taxonomy, pairwise="habitat.ordered")
+testInteractions(QE.taxonomy, pairwise="habitat.ordered", adjustment="BH")
 plot(QE.taxonomy)
 qqnorm(QE.taxonomy)
 QE.taxonomy.I <- interactionMeans(QE.taxonomy) # effect plots
@@ -134,7 +134,7 @@ x <- cbind(x,Abundance.Eveness)
   
 AEveness = lme(Abundance.Eveness ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(AEveness)
-testInteractions(AEveness, pairwise="habitat.ordered")
+testInteractions(AEveness, pairwise="habitat.ordered", adjustment="BH")
 plot(AEveness)
 qqnorm(AEveness)
 AEveness.I <- interactionMeans(AEveness) # effect plots
@@ -145,21 +145,21 @@ plot(AEveness.I, errorbar="ci95")
 
 # Final figure (effect +/- standard error)
 
-a <- ggplot(spp.richness.I, aes(x= habitat.ordered, y=spp.richness.I[,2])) + 
+a1 <- ggplot(spp.richness.I, aes(x= habitat.ordered, y=spp.richness.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=spp.richness.I[,2]-spp.richness.I[,3], ymax=spp.richness.I[,2]+spp.richness.I[,3]), width=.2) +
   geom_point(data=spp.richness.I, mapping=aes(x=habitat.ordered, y=spp.richness.I[,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Species richness", cex=16) +
   geom_text(aes(label= c("a","a","a","a","b")))
 
-b <- ggplot(QE.taxonomy.I, aes(x= habitat.ordered, y=QE.taxonomy.I[,2])) + 
+b1 <- ggplot(QE.taxonomy.I, aes(x= habitat.ordered, y=QE.taxonomy.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=QE.taxonomy.I[,2]-QE.taxonomy.I[,3], ymax=QE.taxonomy.I[,2]+QE.taxonomy.I[,3]), width=.2) +
   geom_point(data=QE.taxonomy.I, mapping=aes(x=habitat.ordered, y=QE.taxonomy.I[,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Simpson's index", cex=16) +
   geom_text(aes(label= c("a","a","ab","b","c")))
 
-c <- ggplot(AEveness.I, aes(x= habitat.ordered, y=AEveness.I[,2])) + 
+c1 <- ggplot(AEveness.I, aes(x= habitat.ordered, y=AEveness.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=AEveness.I[,2]-AEveness.I[,3], ymax=AEveness.I[,2]+AEveness.I[,3]), width=.2) +
   geom_point(data=AEveness.I, mapping=aes(x=habitat.ordered, y=AEveness.I[,2]), size=8, shape=21, fill="white") +
@@ -167,7 +167,7 @@ c <- ggplot(AEveness.I, aes(x= habitat.ordered, y=AEveness.I[,2])) +
   geom_text(aes(label= c("a","a","a","b","c")))
 
 tiff(paste0(GoogleFigs,"/plot_taxonomic_diversity.tiff"), width = 9, height = 11, units = 'in', res = 200)
-ggplot2.multiplot(a,b,c, cols=1)
+ggplot2.multiplot(a1,b1,c1, cols=1)
 dev.off()
 
 
@@ -178,7 +178,7 @@ dev.off()
 
 QE.all.morph = lme(QE.all.morph ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(QE.all.morph)
-testInteractions(QE.all.morph, pairwise="habitat.ordered")
+testInteractions(QE.all.morph, pairwise="habitat.ordered", adjustment="BH")
 plot(QE.all.morph)
 qqnorm(QE.all.morph)
 QE.all.morph.I <- interactionMeans(QE.all.morph) # effect plots
@@ -186,7 +186,7 @@ plot(QE.all.morph.I, errorbar="ci95")
 
 CR.all.morph = lme(CR.all.morph ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(CR.all.morph)  
-testInteractions(CR.all.morph, pairwise="habitat.ordered")
+testInteractions(CR.all.morph, pairwise="habitat.ordered", adjustment="BH")
 plot(CR.all.morph)
 qqnorm(CR.all.morph)
 CR.all.morph.I <- interactionMeans(CR.all.morph) # effect plots
@@ -194,7 +194,7 @@ plot(CR.all.morph.I, errorbar="ci95")
 
 meanD.all.morph = lme(all.morph.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(meanD.all.morph)  
-testInteractions(meanD.all.morph, pairwise="habitat.ordered")
+testInteractions(meanD.all.morph, pairwise="habitat.ordered", adjustment="BH")
 plot(meanD.all.morph)
 qqnorm(meanD.all.morph)
 meanD.all.morph.I <- interactionMeans(meanD.all.morph) # effect plots
@@ -202,7 +202,7 @@ plot(meanD.all.morph.I, errorbar="ci95")
 
 Balance.all.morph = lme(all.morph.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(Balance.all.morph)  
-testInteractions(Balance.all.morph, pairwise="habitat.ordered")
+testInteractions(Balance.all.morph, pairwise="habitat.ordered", adjustment="BH")
 plot(Balance.all.morph)
 qqnorm(Balance.all.morph)
 Balance.all.morph.I <- interactionMeans(Balance.all.morph) # effect plots
@@ -211,28 +211,28 @@ plot(Balance.all.morph.I, errorbar="ci95")
 
 # Final figure (effect +/- standard error)
 
-a <- ggplot(QE.all.morph.I, aes(x= habitat.ordered, y=QE.all.morph.I[,2])) + 
+a2 <- ggplot(QE.all.morph.I, aes(x= habitat.ordered, y=QE.all.morph.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=QE.all.morph.I[,2]-QE.all.morph.I[,3], ymax=QE.all.morph.I[,2]+QE.all.morph.I[,3]), width=.2) +
   geom_point(data=QE.all.morph.I, mapping=aes(x=habitat.ordered, y=QE.all.morph.I[,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Functional diversity (QE), all traits", cex=16) +
   geom_text(aes(label= c("a","b","ab","b","b")))
 
-b <- ggplot(CR.all.morph.I, aes(x= habitat.ordered, y=CR.all.morph.I[,2])) + 
+b2 <- ggplot(CR.all.morph.I, aes(x= habitat.ordered, y=CR.all.morph.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=CR.all.morph.I[,2]-CR.all.morph.I[,3], ymax=CR.all.morph.I[,2]+CR.all.morph.I[,3]), width=.2) +
   geom_point(data=CR.all.morph.I, mapping=aes(x=habitat.ordered, y=CR.all.morph.I[,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Functional redundancies, all traits", cex=16) +
   geom_text(aes(label= c("ab","c","abc","ac","b")))
 
-c <- ggplot(meanD.all.morph.I, aes(x= habitat.ordered, y=meanD.all.morph.I[,2])) + 
+c2 <- ggplot(meanD.all.morph.I, aes(x= habitat.ordered, y=meanD.all.morph.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=meanD.all.morph.I[,2]-meanD.all.morph.I[,3], ymax=meanD.all.morph.I[,2]+meanD.all.morph.I[,3]), width=.2) +
   geom_point(data=meanD.all.morph.I, mapping=aes(x=habitat.ordered, y=meanD.all.morph.I[,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Average species dissimilarity, all traits", cex=16) +
   geom_text(aes(label= c("a","b","ab","ab","a")))
   
-d <- ggplot(Balance.all.morph.I, aes(x= habitat.ordered, y=Balance.all.morph.I[,2])) + 
+d2 <- ggplot(Balance.all.morph.I, aes(x= habitat.ordered, y=Balance.all.morph.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=Balance.all.morph.I[,2]-Balance.all.morph.I[,3], ymax=Balance.all.morph.I[,2]+Balance.all.morph.I[,3]), width=.2) +
   geom_point(data=Balance.all.morph.I, mapping=aes(x=habitat.ordered, y=Balance.all.morph.I[,2]), size=8, shape=21, fill="white") +
@@ -240,7 +240,7 @@ d <- ggplot(Balance.all.morph.I, aes(x= habitat.ordered, y=Balance.all.morph.I[,
   geom_text(aes(label= c("a","a","a","a","a")))
 
 tiff(paste0(GoogleFigs,"/plot_FD_all_traits.tiff"), width = 11, height = 8, units = 'in', res = 200)
-ggplot2.multiplot(a,b,c,d)
+ggplot2.multiplot(a2,b2,c2,d2)
 dev.off()
 
 
@@ -249,7 +249,7 @@ dev.off()
 
 QE.beak = lme(QE.beak ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(QE.beak)
-testInteractions(QE.beak, pairwise="habitat.ordered")
+testInteractions(QE.beak, pairwise="habitat.ordered", adjustment="BH")
 plot(QE.beak)
 qqnorm(QE.beak)
 QE.beak.I <- interactionMeans(QE.beak) # effect plots
@@ -257,7 +257,7 @@ plot(QE.beak.I, errorbar="ci95")
 
 CR.beak = lme(CR.beak ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(CR.beak)  
-testInteractions(CR.beak, pairwise="habitat.ordered")
+testInteractions(CR.beak, pairwise="habitat.ordered", adjustment="BH")
 plot(CR.beak)
 qqnorm(CR.beak)
 CR.beak.I <- interactionMeans(CR.beak) # effect plots
@@ -265,7 +265,7 @@ plot(CR.beak.I, errorbar="ci95")
 
 meanD.beak = lme(beak.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(meanD.beak)  
-testInteractions(meanD.beak, pairwise="habitat.ordered")
+testInteractions(meanD.beak, pairwise="habitat.ordered", adjustment="BH")
 plot(meanD.beak)
 qqnorm(meanD.beak)
 meanD.beak.I <- interactionMeans(meanD.beak) # effect plots
@@ -273,7 +273,7 @@ plot(meanD.beak.I, errorbar="ci95")
 
 Balance.beak = lme(beak.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(Balance.beak)  
-testInteractions(Balance.beak, pairwise="habitat.ordered")
+testInteractions(Balance.beak, pairwise="habitat.ordered", adjustment="BH")
 plot(Balance.beak)
 qqnorm(Balance.beak)
 Balance.beak.I <- interactionMeans(Balance.beak) # effect plots
@@ -281,28 +281,28 @@ plot(Balance.beak.I, errorbar="ci95")
 
 # Final figure (effect +/- standard error)
 
-a <- ggplot(QE.beak.I, aes(x= habitat.ordered, y=QE.beak.I[,2])) + 
+a3 <- ggplot(QE.beak.I, aes(x= habitat.ordered, y=QE.beak.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=QE.beak.I[,2]-QE.beak.I[,3], ymax=QE.beak.I[,2]+QE.beak.I[,3]), width=.2) +
   geom_point(data=QE.beak.I, mapping=aes(x=habitat.ordered, y=QE.beak.I[,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Functional diversity (QE), beak", cex=16) +
   geom_text(aes(label= c("a","a","ab","b","b")))
 
-b <- ggplot(CR.beak.I, aes(x= habitat.ordered, y=CR.beak.I[,2])) + 
+b3 <- ggplot(CR.beak.I, aes(x= habitat.ordered, y=CR.beak.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=CR.beak.I[,2]-CR.beak.I[,3], ymax=CR.beak.I[,2]+CR.beak.I[,3]), width=.2) +
   geom_point(data=CR.beak.I, mapping=aes(x=habitat.ordered, y=CR.beak.I[,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Functional redundancies, beak", cex=16) +
   geom_text(aes(label= c("a","a","a","b","b")))
 
-c <- ggplot(meanD.beak.I, aes(x= habitat.ordered, y=meanD.beak.I[,2])) + 
+c3 <- ggplot(meanD.beak.I, aes(x= habitat.ordered, y=meanD.beak.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=meanD.beak.I[,2]-meanD.beak.I[,3], ymax=meanD.beak.I[,2]+meanD.beak.I[,3]), width=.2) +
   geom_point(data=meanD.beak.I, mapping=aes(x=habitat.ordered, y=meanD.beak.I[,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Average species dissimilarity, beak", cex=16) +
   geom_text(aes(label= c("a","a","ab","b","c")))
 
-d <- ggplot(Balance.beak.I, aes(x= habitat.ordered, y=Balance.beak.I[,2])) + 
+d3 <- ggplot(Balance.beak.I, aes(x= habitat.ordered, y=Balance.beak.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=Balance.beak.I[,2]-Balance.beak.I[,3], ymax=Balance.beak.I[,2]+Balance.beak.I[,3]), width=.2) +
   geom_point(data=Balance.beak.I, mapping=aes(x=habitat.ordered, y=Balance.beak.I[,2]), size=8, shape=21, fill="white") +
@@ -310,7 +310,7 @@ d <- ggplot(Balance.beak.I, aes(x= habitat.ordered, y=Balance.beak.I[,2])) +
   geom_text(aes(label= c("a","a","a","b","b")))
 
 tiff(paste0(GoogleFigs,"/plot_FD_beak.tiff"), width = 11, height = 8, units = 'in', res = 200)
-ggplot2.multiplot(a,b,c,d)
+ggplot2.multiplot(a3,b3,c3,d3)
 dev.off()
 
 
@@ -318,7 +318,7 @@ dev.off()
 
 QE.locom = lme(QE.locom ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(QE.locom)
-testInteractions(QE.locom, pairwise="habitat.ordered")
+testInteractions(QE.locom, pairwise="habitat.ordered", adjustment="BH")
 plot(QE.locom)
 qqnorm(QE.locom)
 QE.locom.I <- interactionMeans(QE.locom) # effect plots
@@ -326,7 +326,7 @@ plot(QE.locom.I, errorbar="ci95")
 
 CR.locom = lme(CR.locom ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(CR.locom)  
-testInteractions(CR.locom, pairwise="habitat.ordered")
+testInteractions(CR.locom, pairwise="habitat.ordered", adjustment="BH")
 plot(CR.locom)
 qqnorm(CR.locom)
 CR.locom.I <- interactionMeans(CR.locom) # effect plots
@@ -334,7 +334,7 @@ plot(CR.locom.I, errorbar="ci95")
 
 meanD.locom = lme(locom.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(meanD.locom)  
-testInteractions(meanD.locom, pairwise="habitat.ordered")
+testInteractions(meanD.locom, pairwise="habitat.ordered", adjustment="BH")
 plot(meanD.locom)
 qqnorm(meanD.locom)
 meanD.locom.I <- interactionMeans(meanD.locom) # effect plots
@@ -342,7 +342,7 @@ plot(meanD.locom.I, errorbar="ci95")
 
 Balance.locom = lme(locom.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(Balance.locom)  
-testInteractions(Balance.locom, pairwise="habitat.ordered")
+testInteractions(Balance.locom, pairwise="habitat.ordered", adjustment="BH")
 plot(Balance.locom)
 qqnorm(Balance.locom)
 Balance.locom.I <- interactionMeans(Balance.locom) # effect plots
@@ -351,28 +351,28 @@ plot(Balance.locom.I, errorbar="ci95")
 
 # Final figure (effect +/- standard error)
 
-a <- ggplot(QE.locom.I , aes(x= habitat.ordered, y=QE.locom.I [,2])) + 
+a4 <- ggplot(QE.locom.I , aes(x= habitat.ordered, y=QE.locom.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=QE.locom.I [,2]-QE.locom.I [,3], ymax=QE.locom.I [,2]+QE.locom.I [,3]), width=.2) +
   geom_point(data=QE.locom.I , mapping=aes(x=habitat.ordered, y=QE.locom.I [,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Functional diversity (QE), locomotory system", cex=16) +
   geom_text(aes(label= c("a","ab","ab","ab","b")))
 
-b <- ggplot(CR.locom.I , aes(x= habitat.ordered, y=CR.locom.I [,2])) + 
+b4 <- ggplot(CR.locom.I , aes(x= habitat.ordered, y=CR.locom.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=CR.locom.I [,2]-CR.locom.I [,3], ymax=CR.locom.I [,2]+CR.locom.I [,3]), width=.2) +
   geom_point(data=CR.locom.I , mapping=aes(x=habitat.ordered, y=CR.locom.I [,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Functional redundancies, locomotory system", cex=16) +
   geom_text(aes(label= c("a","a","a","a","a")))
 
-c <- ggplot(meanD.locom.I , aes(x= habitat.ordered, y=meanD.locom.I [,2])) + 
+c4 <- ggplot(meanD.locom.I , aes(x= habitat.ordered, y=meanD.locom.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=meanD.locom.I [,2]-meanD.locom.I [,3], ymax=meanD.locom.I [,2]+meanD.locom.I [,3]), width=.2) +
   geom_point(data=meanD.locom.I , mapping=aes(x=habitat.ordered, y=meanD.locom.I [,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Average species dissimilarity, locomotory system", cex=16) +
   geom_text(aes(label= c("ab","ab","a","b","b")))
 
-d <- ggplot(Balance.locom.I , aes(x= habitat.ordered, y=Balance.locom.I [,2])) + 
+d4 <- ggplot(Balance.locom.I , aes(x= habitat.ordered, y=Balance.locom.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=Balance.locom.I [,2]-Balance.locom.I [,3], ymax=Balance.locom.I [,2]+Balance.locom.I [,3]), width=.2) +
   geom_point(data=Balance.locom.I , mapping=aes(x=habitat.ordered, y=Balance.locom.I [,2]), size=8, shape=21, fill="white") +
@@ -380,7 +380,7 @@ d <- ggplot(Balance.locom.I , aes(x= habitat.ordered, y=Balance.locom.I [,2])) +
   geom_text(aes(label= c("ab","ab","a","ab","b")))
 
 tiff(paste0(GoogleFigs,"/plot_FD_Locomotory.tiff"), width = 11, height = 8, units = 'in', res = 200)
-ggplot2.multiplot(a,b,c,d)
+ggplot2.multiplot(a4,b4,c4,d4)
 dev.off()
 
 
@@ -389,7 +389,7 @@ dev.off()
 
 QE.size = lme(QE.size ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(QE.size)
-testInteractions(QE.size, pairwise="habitat.ordered")
+testInteractions(QE.size, pairwise="habitat.ordered", adjustment="BH")
 plot(QE.size)
 qqnorm(QE.size)
 QE.size.I <- interactionMeans(QE.size) # effect plots
@@ -397,7 +397,7 @@ plot(QE.size.I, errorbar="ci95")
 
 CR.size = lme(CR.size ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(CR.size)  
-testInteractions(CR.size, pairwise="habitat.ordered")
+testInteractions(CR.size, pairwise="habitat.ordered", adjustment="BH")
 plot(CR.size)
 qqnorm(CR.size)
 CR.size.I <- interactionMeans(CR.size) # effect plots
@@ -405,7 +405,7 @@ plot(CR.size.I, errorbar="ci95")
 
 meanD.size = lme(size.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(meanD.size)  
-testInteractions(meanD.size, pairwise="habitat.ordered")
+testInteractions(meanD.size, pairwise="habitat.ordered", adjustment="BH")
 plot(meanD.size)
 qqnorm(meanD.size)
 meanD.size.I <- interactionMeans(meanD.size) # effect plots
@@ -413,7 +413,7 @@ plot(meanD.size.I, errorbar="ci95")
 
 Balance.size = lme(size.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(Balance.size)  
-testInteractions(Balance.size, pairwise="habitat.ordered")
+testInteractions(Balance.size, pairwise="habitat.ordered", adjustment="BH")
 plot(Balance.size)
 qqnorm(Balance.size)
 Balance.size.I <- interactionMeans(Balance.size) # effect plots
@@ -421,28 +421,28 @@ plot(Balance.size.I, errorbar="ci95")
 
 # Final figure (effect +/- standard error)
 
-a <- ggplot(QE.size.I , aes(x= habitat.ordered, y=QE.size.I [,2])) + 
+a5 <- ggplot(QE.size.I , aes(x= habitat.ordered, y=QE.size.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=QE.size.I [,2]-QE.size.I [,3], ymax=QE.size.I [,2]+QE.size.I [,3]), width=.2) +
   geom_point(data=QE.size.I , mapping=aes(x=habitat.ordered, y=QE.size.I [,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Functional diversity (QE), body size", cex=16) +
   geom_text(aes(label= c("a","b","a","b","b")))
 
-b <- ggplot(CR.size.I , aes(x= habitat.ordered, y=CR.size.I [,2])) + 
+b5 <- ggplot(CR.size.I , aes(x= habitat.ordered, y=CR.size.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=CR.size.I [,2]-CR.size.I [,3], ymax=CR.size.I [,2]+CR.size.I [,3]), width=.2) +
   geom_point(data=CR.size.I , mapping=aes(x=habitat.ordered, y=CR.size.I [,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Functional redundancies, body size", cex=16) +
   geom_text(aes(label= c("a","b","ab","b","a")))
 
-c <- ggplot(meanD.size.I , aes(x= habitat.ordered, y=meanD.size.I [,2])) + 
+c5 <- ggplot(meanD.size.I , aes(x= habitat.ordered, y=meanD.size.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=meanD.size.I [,2]-meanD.size.I [,3], ymax=meanD.size.I [,2]+meanD.size.I [,3]), width=.2) +
   geom_point(data=meanD.size.I , mapping=aes(x=habitat.ordered, y=meanD.size.I [,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Average species dissimilarity, body size", cex=16) +
   geom_text(aes(label= c("a","b","abc","abc","ac")))
 
-d <- ggplot(Balance.size.I , aes(x= habitat.ordered, y=Balance.size.I [,2])) + 
+d5 <- ggplot(Balance.size.I , aes(x= habitat.ordered, y=Balance.size.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=Balance.size.I [,2]-Balance.size.I [,3], ymax=Balance.size.I [,2]+Balance.size.I [,3]), width=.2) +
   geom_point(data=Balance.size.I , mapping=aes(x=habitat.ordered, y=Balance.size.I [,2]), size=8, shape=21, fill="white") +
@@ -450,7 +450,7 @@ d <- ggplot(Balance.size.I , aes(x= habitat.ordered, y=Balance.size.I [,2])) +
   geom_text(aes(label= c("a","a","a","a","a")))
 
 tiff(paste0(GoogleFigs,"/plot_FD_Body_size.tiff"), width = 11, height = 8, units = 'in', res = 200)
-ggplot2.multiplot(a,b,c,d)
+ggplot2.multiplot(a5,b5,c5,d5)
 dev.off()
 
 
@@ -459,7 +459,7 @@ dev.off()
 
 QE.winghand = lme(QE.winghand ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(QE.winghand)
-testInteractions(QE.winghand, pairwise="habitat.ordered")
+testInteractions(QE.winghand, pairwise="habitat.ordered", adjustment="BH")
 plot(QE.winghand)
 qqnorm(QE.winghand)
 QE.winghand.I <- interactionMeans(QE.winghand) # effect plots
@@ -467,7 +467,7 @@ plot(QE.winghand.I, errorbar="ci95")
 
 CR.winghand = lme(CR.winghand ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(CR.winghand)  
-testInteractions(CR.winghand, pairwise="habitat.ordered")
+testInteractions(CR.winghand, pairwise="habitat.ordered", adjustment="BH")
 plot(CR.winghand)
 qqnorm(CR.winghand)
 CR.winghand.I <- interactionMeans(CR.winghand) # effect plots
@@ -475,7 +475,7 @@ plot(CR.winghand.I, errorbar="ci95")
 
 meanD.winghand = lme(winghand.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(meanD.winghand)  
-testInteractions(meanD.winghand, pairwise="habitat.ordered")
+testInteractions(meanD.winghand, pairwise="habitat.ordered", adjustment="BH")
 plot(meanD.winghand)
 qqnorm(meanD.winghand)
 meanD.winghand.I <- interactionMeans(meanD.winghand) # effect plots
@@ -483,7 +483,7 @@ plot(meanD.winghand.I, errorbar="ci95")
 
 Balance.winghand = lme(winghand.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(Balance.winghand)  
-testInteractions(Balance.winghand, pairwise="habitat.ordered")
+testInteractions(Balance.winghand, pairwise="habitat.ordered", adjustment="BH")
 plot(Balance.winghand)
 qqnorm(Balance.winghand)
 Balance.winghand.I <- interactionMeans(Balance.winghand) # effect plots
@@ -492,28 +492,28 @@ plot(Balance.winghand.I, errorbar="ci95")
 
 # Final figure (effect +/- standard error)
 
-a <- ggplot(QE.winghand.I , aes(x= habitat.ordered, y=QE.winghand.I [,2])) + 
+a6 <- ggplot(QE.winghand.I , aes(x= habitat.ordered, y=QE.winghand.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=QE.winghand.I [,2]-QE.winghand.I [,3], ymax=QE.winghand.I [,2]+QE.winghand.I [,3]), width=.2) +
   geom_point(data=QE.winghand.I , mapping=aes(x=habitat.ordered, y=QE.winghand.I [,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Functional diversity (QE), wing hand", cex=16) +
   geom_text(aes(label= c("a","ab","ab","ab","b")))
 
-b <- ggplot(CR.winghand.I , aes(x= habitat.ordered, y=CR.winghand.I [,2])) + 
+b6 <- ggplot(CR.winghand.I , aes(x= habitat.ordered, y=CR.winghand.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=CR.winghand.I [,2]-CR.winghand.I [,3], ymax=CR.winghand.I [,2]+CR.winghand.I [,3]), width=.2) +
   geom_point(data=CR.winghand.I , mapping=aes(x=habitat.ordered, y=CR.winghand.I [,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Functional redundancies, wing hand ", cex=16) +
   geom_text(aes(label= c("a","a","a","a","a")))
 
-c <- ggplot(meanD.winghand.I , aes(x= habitat.ordered, y=meanD.winghand.I [,2])) + 
+c6 <- ggplot(meanD.winghand.I , aes(x= habitat.ordered, y=meanD.winghand.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=meanD.winghand.I [,2]-meanD.winghand.I [,3], ymax=meanD.winghand.I [,2]+meanD.winghand.I [,3]), width=.2) +
   geom_point(data=meanD.winghand.I , mapping=aes(x=habitat.ordered, y=meanD.winghand.I [,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Average species dissimilarity, wing hand ", cex=16) +
   geom_text(aes(label= c("a","a","a","a","a")))
 
-d <- ggplot(Balance.winghand.I , aes(x= habitat.ordered, y=Balance.winghand.I [,2])) + 
+d6 <- ggplot(Balance.winghand.I , aes(x= habitat.ordered, y=Balance.winghand.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=Balance.winghand.I [,2]-Balance.winghand.I [,3], ymax=Balance.winghand.I [,2]+Balance.winghand.I [,3]), width=.2) +
   geom_point(data=Balance.winghand.I , mapping=aes(x=habitat.ordered, y=Balance.winghand.I [,2]), size=8, shape=21, fill="white") +
@@ -521,7 +521,7 @@ d <- ggplot(Balance.winghand.I , aes(x= habitat.ordered, y=Balance.winghand.I [,
   geom_text(aes(label= c("a","a","a","a","a")))
 
 tiff(paste0(GoogleFigs,"/plot_FD_wing_hand.tiff"), width = 11, height = 8, units = 'in', res = 200)
-ggplot2.multiplot(a,b,c,d)
+ggplot2.multiplot(a6,b6,c6,d6)
 dev.off()
 
 
@@ -530,7 +530,7 @@ dev.off()
 
 QE.phyE = lme(QE.phyE ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(QE.phyE)
-testInteractions(QE.phyE, pairwise="habitat.ordered")
+testInteractions(QE.phyE, pairwise="habitat.ordered", adjustment="BH")
 plot(QE.phyE)
 qqnorm(QE.phyE)
 QE.phyE.I <- interactionMeans(QE.phyE) # effect plots
@@ -538,7 +538,7 @@ plot(QE.phyE.I, errorbar="ci95")
 
 CR.phyE = lme(CR.phyE ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(CR.phyE)  
-testInteractions(CR.phyE, pairwise="habitat.ordered")
+testInteractions(CR.phyE, pairwise="habitat.ordered", adjustment="BH")
 plot(CR.phyE)
 qqnorm(CR.phyE)
 CR.phyE.I <- interactionMeans(CR.phyE) # effect plots
@@ -546,7 +546,7 @@ plot(CR.phyE.I, errorbar="ci95")
 
 meanD.phyE = lme(phyE.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(meanD.phyE)  
-testInteractions(meanD.phyE, pairwise="habitat.ordered")
+testInteractions(meanD.phyE, pairwise="habitat.ordered", adjustment="BH")
 plot(meanD.phyE)
 qqnorm(meanD.phyE)
 meanD.phyE.I <- interactionMeans(meanD.phyE) # effect plots
@@ -554,7 +554,7 @@ plot(meanD.phyE.I, errorbar="ci95")
 
 Balance.phyE = lme(phyE.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(Balance.phyE)  
-testInteractions(Balance.phyE, pairwise="habitat.ordered")
+testInteractions(Balance.phyE, pairwise="habitat.ordered", adjustment="BH")
 plot(Balance.phyE)
 qqnorm(Balance.phyE)
 Balance.phyE.I <- interactionMeans(Balance.phyE) # effect plots
@@ -562,28 +562,28 @@ plot(Balance.phyE.I, errorbar="ci95")
 
 # Final figure (effect +/- standard error)
 
-a <- ggplot(QE.phyE.I , aes(x= habitat.ordered, y=QE.phyE.I [,2])) + 
+a7 <- ggplot(QE.phyE.I , aes(x= habitat.ordered, y=QE.phyE.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=QE.phyE.I [,2]-QE.phyE.I [,3], ymax=QE.phyE.I [,2]+QE.phyE.I [,3]), width=.2) +
   geom_point(data=QE.phyE.I , mapping=aes(x=habitat.ordered, y=QE.phyE.I [,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Phylogenetic diversity (QE), Erickson’s phylogeny", cex=16) +
   geom_text(aes(label= c("ac","b","ac","abc","bc")))
 
-b <- ggplot(CR.phyE.I , aes(x= habitat.ordered, y=CR.phyE.I [,2])) + 
+b7 <- ggplot(CR.phyE.I , aes(x= habitat.ordered, y=CR.phyE.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=CR.phyE.I [,2]-CR.phyE.I [,3], ymax=CR.phyE.I [,2]+CR.phyE.I [,3]), width=.2) +
   geom_point(data=CR.phyE.I , mapping=aes(x=habitat.ordered, y=CR.phyE.I [,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Functional redundancies, Erickson’s phylogeny ", cex=16) +
   geom_text(aes(label= c("ab","a","bc","bc","c")))
 
-c <- ggplot(meanD.phyE.I , aes(x= habitat.ordered, y=meanD.phyE.I [,2])) + 
+c7 <- ggplot(meanD.phyE.I , aes(x= habitat.ordered, y=meanD.phyE.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=meanD.phyE.I [,2]-meanD.phyE.I [,3], ymax=meanD.phyE.I [,2]+meanD.phyE.I [,3]), width=.2) +
   geom_point(data=meanD.phyE.I , mapping=aes(x=habitat.ordered, y=meanD.phyE.I [,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Average species dissimilarity, Erickson’s phylogeny ", cex=16) +
   geom_text(aes(label= c("ab","a","b","ab","ab")))
 
-d <- ggplot(Balance.phyE.I , aes(x= habitat.ordered, y=Balance.phyE.I [,2])) + 
+d7 <- ggplot(Balance.phyE.I , aes(x= habitat.ordered, y=Balance.phyE.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=Balance.phyE.I [,2]-Balance.phyE.I [,3], ymax=Balance.phyE.I [,2]+Balance.phyE.I [,3]), width=.2) +
   geom_point(data=Balance.phyE.I , mapping=aes(x=habitat.ordered, y=Balance.phyE.I [,2]), size=8, shape=21, fill="white") +
@@ -591,7 +591,7 @@ d <- ggplot(Balance.phyE.I , aes(x= habitat.ordered, y=Balance.phyE.I [,2])) +
   geom_text(aes(label= c("a","a","a","b","b")))
 
 tiff(paste0(GoogleFigs,"/plot_FD_Erickson_phylogeny.tiff"), width = 11, height = 8, units = 'in', res = 200)
-ggplot2.multiplot(a,b,c,d)
+ggplot2.multiplot(a7,b7,c7,d7)
 dev.off()
 
 
@@ -601,7 +601,7 @@ dev.off()
 
 QE.phyH = lme(QE.phyH ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(QE.phyH)
-testInteractions(QE.phyH, pairwise="habitat.ordered")
+testInteractions(QE.phyH, pairwise="habitat.ordered", adjustment="BH")
 plot(QE.phyH)
 qqnorm(QE.phyH)
 QE.phyH.I <- interactionMeans(QE.phyH) # effect plots
@@ -609,7 +609,7 @@ plot(QE.phyH.I, errorbar="ci95")
 
 CR.phyH = lme(CR.phyH ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(CR.phyH)  
-testInteractions(CR.phyH, pairwise="habitat.ordered")
+testInteractions(CR.phyH, pairwise="habitat.ordered", adjustment="BH")
 plot(CR.phyH)
 qqnorm(CR.phyH)
 CR.phyH.I <- interactionMeans(CR.phyH) # effect plots
@@ -617,7 +617,7 @@ plot(CR.phyH.I, errorbar="ci95")
 
 meanD.phyH = lme(phyH.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(meanD.phyH)  
-testInteractions(meanD.phyH, pairwise="habitat.ordered")
+testInteractions(meanD.phyH, pairwise="habitat.ordered", adjustment="BH")
 plot(meanD.phyH)
 qqnorm(meanD.phyH)
 meanD.phyH.I <- interactionMeans(meanD.phyH) # effect plots
@@ -625,7 +625,7 @@ plot(meanD.phyH.I, errorbar="ci95")
 
 Balance.phyH = lme(phyH.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(Balance.phyH)  
-testInteractions(Balance.phyH, pairwise="habitat.ordered")
+testInteractions(Balance.phyH, pairwise="habitat.ordered", adjustment="BH")
 plot(Balance.phyH)
 qqnorm(Balance.phyH)
 Balance.phyH.I <- interactionMeans(Balance.phyH) # effect plots
@@ -633,28 +633,28 @@ plot(Balance.phyH.I, errorbar="ci95")
 
 # Final figure (effect +/- standard error)
 
-a <- ggplot(QE.phyH.I , aes(x= habitat.ordered, y=QE.phyH.I [,2])) + 
+a8 <- ggplot(QE.phyH.I , aes(x= habitat.ordered, y=QE.phyH.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=QE.phyH.I [,2]-QE.phyH.I [,3], ymax=QE.phyH.I [,2]+QE.phyH.I [,3]), width=.2) +
   geom_point(data=QE.phyH.I , mapping=aes(x=habitat.ordered, y=QE.phyH.I [,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Phylogenetic diversity (QE), Hackett’s phylogeny", cex=16) +
   geom_text(aes(label= c("a","b","ac","abc","b")))
 
-b <- ggplot(CR.phyH.I , aes(x= habitat.ordered, y=CR.phyH.I [,2])) + 
+b8 <- ggplot(CR.phyH.I , aes(x= habitat.ordered, y=CR.phyH.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=CR.phyH.I [,2]-CR.phyH.I [,3], ymax=CR.phyH.I [,2]+CR.phyH.I [,3]), width=.2) +
   geom_point(data=CR.phyH.I , mapping=aes(x=habitat.ordered, y=CR.phyH.I [,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Functional redundancies, Hackett’s phylogeny ", cex=16) +
   geom_text(aes(label= c("a","b","ac","abc","c")))
 
-c <- ggplot(meanD.phyH.I, aes(x= habitat.ordered, y=meanD.phyH.I [,2])) + 
+c8 <- ggplot(meanD.phyH.I, aes(x= habitat.ordered, y=meanD.phyH.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=meanD.phyH.I [,2]-meanD.phyH.I [,3], ymax=meanD.phyH.I [,2]+meanD.phyH.I [,3]), width=.2) +
   geom_point(data=meanD.phyH.I , mapping=aes(x=habitat.ordered, y=meanD.phyH.I [,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Average species dissimilarity, Hackett’s phylogeny ", cex=16) +
   geom_text(aes(label= c("abc","b","c","abc","abc")))
 
-d <- ggplot(Balance.phyH.I , aes(x= habitat.ordered, y=Balance.phyH.I [,2])) + 
+d8 <- ggplot(Balance.phyH.I , aes(x= habitat.ordered, y=Balance.phyH.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=Balance.phyH.I [,2]-Balance.phyH.I [,3], ymax=Balance.phyH.I [,2]+Balance.phyH.I [,3]), width=.2) +
   geom_point(data=Balance.phyH.I , mapping=aes(x=habitat.ordered, y=Balance.phyH.I [,2]), size=8, shape=21, fill="white") +
@@ -662,7 +662,7 @@ d <- ggplot(Balance.phyH.I , aes(x= habitat.ordered, y=Balance.phyH.I [,2])) +
   geom_text(aes(label= c("a","a","ab","bc","c")))
 
 tiff(paste0(GoogleFigs,"/plot_FD_Hackett_phylogeny.tiff"), width = 11, height = 8, units = 'in', res = 200)
-ggplot2.multiplot(a,b,c,d)
+ggplot2.multiplot(a8,b8,c8,d8)
 dev.off()
 }
 
@@ -709,7 +709,7 @@ dev.off()
   
   spp.richness = lme(Species.richness ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(spp.richness)
-  testInteractions(spp.richness, pairwise="habitat.ordered")
+  testInteractions(spp.richness, pairwise="habitat.ordered", adjustment="BH")
   plot(spp.richness)
   qqnorm(spp.richness)
   spp.richness.I <- interactionMeans(spp.richness) # effect plots
@@ -720,7 +720,7 @@ dev.off()
   
   QE.taxonomy = lme(QE.taxonomy ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(QE.taxonomy)
-  testInteractions(QE.taxonomy, pairwise="habitat.ordered")
+  testInteractions(QE.taxonomy, pairwise="habitat.ordered", adjustment="BH")
   plot(QE.taxonomy)
   qqnorm(QE.taxonomy)
   QE.taxonomy.I <- interactionMeans(QE.taxonomy) # effect plots
@@ -734,7 +734,7 @@ dev.off()
   
   AEveness = lme(Abundance.Eveness ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(AEveness)
-  testInteractions(AEveness, pairwise="habitat.ordered")
+  testInteractions(AEveness, pairwise="habitat.ordered", adjustment="BH")
   plot(AEveness)
   qqnorm(AEveness)
   AEveness.I <- interactionMeans(AEveness) # effect plots
@@ -781,7 +781,7 @@ dev.off()
   
   QE.all.morph = lme(QE.all.morph ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(QE.all.morph)
-  testInteractions(QE.all.morph, pairwise="habitat.ordered")
+  testInteractions(QE.all.morph, pairwise="habitat.ordered", adjustment="BH")
   plot(QE.all.morph)
   qqnorm(QE.all.morph)
   QE.all.morph.I <- interactionMeans(QE.all.morph) # effect plots
@@ -789,7 +789,7 @@ dev.off()
   
   CR.all.morph = lme(CR.all.morph ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(CR.all.morph)  
-  testInteractions(CR.all.morph, pairwise="habitat.ordered")
+  testInteractions(CR.all.morph, pairwise="habitat.ordered", adjustment="BH")
   plot(CR.all.morph)
   qqnorm(CR.all.morph)
   CR.all.morph.I <- interactionMeans(CR.all.morph) # effect plots
@@ -797,7 +797,7 @@ dev.off()
   
   meanD.all.morph = lme(all.morph.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(meanD.all.morph)  
-  testInteractions(meanD.all.morph, pairwise="habitat.ordered")
+  testInteractions(meanD.all.morph, pairwise="habitat.ordered", adjustment="BH")
   plot(meanD.all.morph)
   qqnorm(meanD.all.morph)
   meanD.all.morph.I <- interactionMeans(meanD.all.morph) # effect plots
@@ -805,7 +805,7 @@ dev.off()
   
   Balance.all.morph = lme(all.morph.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(Balance.all.morph)  
-  testInteractions(Balance.all.morph, pairwise="habitat.ordered")
+  testInteractions(Balance.all.morph, pairwise="habitat.ordered", adjustment="BH")
   plot(Balance.all.morph)
   qqnorm(Balance.all.morph)
   Balance.all.morph.I <- interactionMeans(Balance.all.morph) # effect plots
@@ -851,7 +851,7 @@ dev.off()
   
   QE.PCA3 = lme(QE.PCA3 ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(QE.PCA3)
-  testInteractions(QE.PCA3, pairwise="habitat.ordered")
+  testInteractions(QE.PCA3, pairwise="habitat.ordered", adjustment="BH")
   plot(QE.PCA3)
   qqnorm(QE.PCA3)
   QE.PCA3.I <- interactionMeans(QE.PCA3) # effect plots
@@ -859,7 +859,7 @@ dev.off()
   
   CR.PCA3 = lme(CR.PCA3 ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(CR.PCA3)  
-  testInteractions(CR.PCA3, pairwise="habitat.ordered")
+  testInteractions(CR.PCA3, pairwise="habitat.ordered", adjustment="BH")
   plot(CR.PCA3)
   qqnorm(CR.PCA3)
   CR.PCA3.I <- interactionMeans(CR.PCA3) # effect plots
@@ -867,7 +867,7 @@ dev.off()
   
   meanD.PCA3 = lme(PCA3.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(meanD.PCA3)  
-  testInteractions(meanD.PCA3, pairwise="habitat.ordered")
+  testInteractions(meanD.PCA3, pairwise="habitat.ordered", adjustment="BH")
   plot(meanD.PCA3)
   qqnorm(meanD.PCA3)
   meanD.PCA3.I <- interactionMeans(meanD.PCA3) # effect plots
@@ -875,7 +875,7 @@ dev.off()
   
   Balance.PCA3 = lme(PCA3.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(Balance.PCA3)  
-  testInteractions(Balance.PCA3, pairwise="habitat.ordered")
+  testInteractions(Balance.PCA3, pairwise="habitat.ordered", adjustment="BH")
   plot(Balance.PCA3)
   qqnorm(Balance.PCA3)
   Balance.PCA3.I <- interactionMeans(Balance.PCA3) # effect plots
@@ -923,7 +923,7 @@ dev.off()
   
   QE.beak = lme(QE.beak ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(QE.beak)
-  testInteractions(QE.beak, pairwise="habitat.ordered")
+  testInteractions(QE.beak, pairwise="habitat.ordered", adjustment="BH")
   plot(QE.beak)
   qqnorm(QE.beak)
   QE.beak.I <- interactionMeans(QE.beak) # effect plots
@@ -931,7 +931,7 @@ dev.off()
   
   CR.beak = lme(CR.beak ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(CR.beak)  
-  testInteractions(CR.beak, pairwise="habitat.ordered")
+  testInteractions(CR.beak, pairwise="habitat.ordered", adjustment="BH")
   plot(CR.beak)
   qqnorm(CR.beak)
   CR.beak.I <- interactionMeans(CR.beak) # effect plots
@@ -939,7 +939,7 @@ dev.off()
   
   meanD.beak = lme(beak.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(meanD.beak)  
-  testInteractions(meanD.beak, pairwise="habitat.ordered")
+  testInteractions(meanD.beak, pairwise="habitat.ordered", adjustment="BH")
   plot(meanD.beak)
   qqnorm(meanD.beak)
   meanD.beak.I <- interactionMeans(meanD.beak) # effect plots
@@ -947,7 +947,7 @@ dev.off()
   
   Balance.beak = lme(beak.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(Balance.beak)  
-  testInteractions(Balance.beak, pairwise="habitat.ordered")
+  testInteractions(Balance.beak, pairwise="habitat.ordered", adjustment="BH")
   plot(Balance.beak)
   qqnorm(Balance.beak)
   Balance.beak.I <- interactionMeans(Balance.beak) # effect plots
@@ -992,7 +992,7 @@ dev.off()
   
   QE.locom = lme(QE.locom ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(QE.locom)
-  testInteractions(QE.locom, pairwise="habitat.ordered")
+  testInteractions(QE.locom, pairwise="habitat.ordered", adjustment="BH")
   plot(QE.locom)
   qqnorm(QE.locom)
   QE.locom.I <- interactionMeans(QE.locom) # effect plots
@@ -1000,7 +1000,7 @@ dev.off()
   
   CR.locom = lme(CR.locom ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(CR.locom)  
-  testInteractions(CR.locom, pairwise="habitat.ordered")
+  testInteractions(CR.locom, pairwise="habitat.ordered", adjustment="BH")
   plot(CR.locom)
   qqnorm(CR.locom)
   CR.locom.I <- interactionMeans(CR.locom) # effect plots
@@ -1008,7 +1008,7 @@ dev.off()
   
   meanD.locom = lme(locom.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(meanD.locom)  
-  testInteractions(meanD.locom, pairwise="habitat.ordered")
+  testInteractions(meanD.locom, pairwise="habitat.ordered", adjustment="BH")
   plot(meanD.locom)
   qqnorm(meanD.locom)
   meanD.locom.I <- interactionMeans(meanD.locom) # effect plots
@@ -1016,7 +1016,7 @@ dev.off()
   
   Balance.locom = lme(locom.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(Balance.locom)  
-  testInteractions(Balance.locom, pairwise="habitat.ordered")
+  testInteractions(Balance.locom, pairwise="habitat.ordered", adjustment="BH")
   plot(Balance.locom)
   qqnorm(Balance.locom)
   Balance.locom.I <- interactionMeans(Balance.locom) # effect plots
@@ -1063,7 +1063,7 @@ dev.off()
   
   QE.size = lme(QE.size ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(QE.size)
-  testInteractions(QE.size, pairwise="habitat.ordered")
+  testInteractions(QE.size, pairwise="habitat.ordered", adjustment="BH")
   plot(QE.size)
   qqnorm(QE.size)
   QE.size.I <- interactionMeans(QE.size) # effect plots
@@ -1071,7 +1071,7 @@ dev.off()
   
   CR.size = lme(CR.size ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(CR.size)  
-  testInteractions(CR.size, pairwise="habitat.ordered")
+  testInteractions(CR.size, pairwise="habitat.ordered", adjustment="BH")
   plot(CR.size)
   qqnorm(CR.size)
   CR.size.I <- interactionMeans(CR.size) # effect plots
@@ -1079,7 +1079,7 @@ dev.off()
   
   meanD.size = lme(size.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(meanD.size)  
-  testInteractions(meanD.size, pairwise="habitat.ordered")
+  testInteractions(meanD.size, pairwise="habitat.ordered", adjustment="BH")
   plot(meanD.size)
   qqnorm(meanD.size)
   meanD.size.I <- interactionMeans(meanD.size) # effect plots
@@ -1087,7 +1087,7 @@ dev.off()
   
   Balance.size = lme(size.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(Balance.size)  
-  testInteractions(Balance.size, pairwise="habitat.ordered")
+  testInteractions(Balance.size, pairwise="habitat.ordered", adjustment="BH")
   plot(Balance.size)
   qqnorm(Balance.size)
   Balance.size.I <- interactionMeans(Balance.size) # effect plots
@@ -1133,7 +1133,7 @@ dev.off()
   
   QE.winghand = lme(QE.winghand ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(QE.winghand)
-  testInteractions(QE.winghand, pairwise="habitat.ordered")
+  testInteractions(QE.winghand, pairwise="habitat.ordered", adjustment="BH")
   plot(QE.winghand)
   qqnorm(QE.winghand)
   QE.winghand.I <- interactionMeans(QE.winghand) # effect plots
@@ -1141,7 +1141,7 @@ dev.off()
   
   CR.winghand = lme(CR.winghand ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(CR.winghand)  
-  testInteractions(CR.winghand, pairwise="habitat.ordered")
+  testInteractions(CR.winghand, pairwise="habitat.ordered", adjustment="BH")
   plot(CR.winghand)
   qqnorm(CR.winghand)
   CR.winghand.I <- interactionMeans(CR.winghand) # effect plots
@@ -1149,7 +1149,7 @@ dev.off()
   
   meanD.winghand = lme(winghand.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(meanD.winghand)  
-  testInteractions(meanD.winghand, pairwise="habitat.ordered")
+  testInteractions(meanD.winghand, pairwise="habitat.ordered", adjustment="BH")
   plot(meanD.winghand)
   qqnorm(meanD.winghand)
   meanD.winghand.I <- interactionMeans(meanD.winghand) # effect plots
@@ -1157,7 +1157,7 @@ dev.off()
   
   Balance.winghand = lme(winghand.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(Balance.winghand)  
-  testInteractions(Balance.winghand, pairwise="habitat.ordered")
+  testInteractions(Balance.winghand, pairwise="habitat.ordered", adjustment="BH")
   plot(Balance.winghand)
   qqnorm(Balance.winghand)
   Balance.winghand.I <- interactionMeans(Balance.winghand) # effect plots
@@ -1204,7 +1204,7 @@ dev.off()
   
   QE.phyE = lme(QE.phyE ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(QE.phyE)
-  testInteractions(QE.phyE, pairwise="habitat.ordered")
+  testInteractions(QE.phyE, pairwise="habitat.ordered", adjustment="BH")
   plot(QE.phyE)
   qqnorm(QE.phyE)
   QE.phyE.I <- interactionMeans(QE.phyE) # effect plots
@@ -1212,7 +1212,7 @@ dev.off()
   
   CR.phyE = lme(CR.phyE ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(CR.phyE)  
-  testInteractions(CR.phyE, pairwise="habitat.ordered")
+  testInteractions(CR.phyE, pairwise="habitat.ordered", adjustment="BH")
   plot(CR.phyE)
   qqnorm(CR.phyE)
   CR.phyE.I <- interactionMeans(CR.phyE) # effect plots
@@ -1220,7 +1220,7 @@ dev.off()
   
   meanD.phyE = lme(phyE.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(meanD.phyE)  
-  testInteractions(meanD.phyE, pairwise="habitat.ordered")
+  testInteractions(meanD.phyE, pairwise="habitat.ordered", adjustment="BH")
   plot(meanD.phyE)
   qqnorm(meanD.phyE)
   meanD.phyE.I <- interactionMeans(meanD.phyE) # effect plots
@@ -1228,7 +1228,7 @@ dev.off()
   
   Balance.phyE = lme(phyE.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(Balance.phyE)  
-  testInteractions(Balance.phyE, pairwise="habitat.ordered")
+  testInteractions(Balance.phyE, pairwise="habitat.ordered", adjustment="BH")
   plot(Balance.phyE)
   qqnorm(Balance.phyE)
   Balance.phyE.I <- interactionMeans(Balance.phyE) # effect plots
@@ -1275,7 +1275,7 @@ dev.off()
   
   QE.phyH = lme(QE.phyH ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(QE.phyH)
-  testInteractions(QE.phyH, pairwise="habitat.ordered")
+  testInteractions(QE.phyH, pairwise="habitat.ordered", adjustment="BH")
   plot(QE.phyH)
   qqnorm(QE.phyH)
   QE.phyH.I <- interactionMeans(QE.phyH) # effect plots
@@ -1283,7 +1283,7 @@ dev.off()
   
   CR.phyH = lme(CR.phyH ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(CR.phyH)  
-  testInteractions(CR.phyH, pairwise="habitat.ordered")
+  testInteractions(CR.phyH, pairwise="habitat.ordered", adjustment="BH")
   plot(CR.phyH)
   qqnorm(CR.phyH)
   CR.phyH.I <- interactionMeans(CR.phyH) # effect plots
@@ -1291,7 +1291,7 @@ dev.off()
   
   meanD.phyH = lme(phyH.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(meanD.phyH)  
-  testInteractions(meanD.phyH, pairwise="habitat.ordered")
+  testInteractions(meanD.phyH, pairwise="habitat.ordered", adjustment="BH")
   plot(meanD.phyH)
   qqnorm(meanD.phyH)
   meanD.phyH.I <- interactionMeans(meanD.phyH) # effect plots
@@ -1299,7 +1299,7 @@ dev.off()
   
   Balance.phyH = lme(phyH.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(Balance.phyH)  
-  testInteractions(Balance.phyH, pairwise="habitat.ordered")
+  testInteractions(Balance.phyH, pairwise="habitat.ordered", adjustment="BH")
   plot(Balance.phyH)
   qqnorm(Balance.phyH)
   Balance.phyH.I <- interactionMeans(Balance.phyH) # effect plots
@@ -1385,7 +1385,7 @@ dev.off()
   
   spp.richness = lme(Species.richness ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(spp.richness)
-  testInteractions(spp.richness, pairwise="habitat.ordered")
+  testInteractions(spp.richness, pairwise="habitat.ordered", adjustment="BH")
   plot(spp.richness)
   qqnorm(spp.richness)
   spp.richness.I <- interactionMeans(spp.richness) # effect plots
@@ -1397,7 +1397,7 @@ dev.off()
   
   QE.all.morph = lme(QE.all.morph ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(QE.all.morph)
-  testInteractions(QE.all.morph, pairwise="habitat.ordered")
+  testInteractions(QE.all.morph, pairwise="habitat.ordered", adjustment="BH")
   plot(QE.all.morph)
   qqnorm(QE.all.morph)
   QE.all.morph.I <- interactionMeans(QE.all.morph) # effect plots
@@ -1462,7 +1462,7 @@ x <- cbind(x,habitat.ordered)
 
 QE.diet = lme(QE.diet ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(QE.diet)
-testInteractions(QE.diet, pairwise="habitat.ordered")
+testInteractions(QE.diet, pairwise="habitat.ordered", adjustment="BH")
 plot(QE.diet)
 qqnorm(QE.diet)
 QE.diet.I <- interactionMeans(QE.diet) # effect plots
@@ -1470,7 +1470,7 @@ plot(QE.diet.I, errorbar="ci95")
 
 CR.diet = lme(CR.diet ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(CR.diet)  
-testInteractions(CR.diet, pairwise="habitat.ordered")
+testInteractions(CR.diet, pairwise="habitat.ordered", adjustment="BH")
 plot(CR.diet)
 qqnorm(CR.diet)
 CR.diet.I <- interactionMeans(CR.diet) # effect plots
@@ -1478,7 +1478,7 @@ plot(CR.diet.I, errorbar="ci95")
 
 meanD.diet = lme(diet.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(meanD.diet)  
-testInteractions(meanD.diet, pairwise="habitat.ordered")
+testInteractions(meanD.diet, pairwise="habitat.ordered", adjustment="BH")
 plot(meanD.diet)
 qqnorm(meanD.diet)
 meanD.diet.I <- interactionMeans(meanD.diet) # effect plots
@@ -1486,7 +1486,7 @@ plot(meanD.diet.I, errorbar="ci95")
 
 Balance.diet = lme(diet.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")  # if the most abundant species tended to be dissimilar = positive Balance component
 summary(Balance.diet)  
-testInteractions(Balance.diet, pairwise="habitat.ordered")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
+testInteractions(Balance.diet, pairwise="habitat.ordered", adjustment="BH")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
 plot(Balance.diet)
 qqnorm(Balance.diet)
 Balance.diet.I <- interactionMeans(Balance.diet) # effect plots
@@ -1565,7 +1565,7 @@ x <- cbind(x,habitat.ordered)
 
 QE.diet = lme(QE.diet ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(QE.diet)
-testInteractions(QE.diet, pairwise="habitat.ordered")
+testInteractions(QE.diet, pairwise="habitat.ordered", adjustment="BH")
 plot(QE.diet)
 qqnorm(QE.diet)
 QE.diet.I <- interactionMeans(QE.diet) # effect plots
@@ -1573,7 +1573,7 @@ plot(QE.diet.I, errorbar="ci95")
 
 CR.diet = lme(CR.diet ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(CR.diet)  
-testInteractions(CR.diet, pairwise="habitat.ordered")
+testInteractions(CR.diet, pairwise="habitat.ordered", adjustment="BH")
 plot(CR.diet)
 qqnorm(CR.diet)
 CR.diet.I <- interactionMeans(CR.diet) # effect plots
@@ -1581,7 +1581,7 @@ plot(CR.diet.I, errorbar="ci95")
 
 meanD.diet = lme(diet.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(meanD.diet)  
-testInteractions(meanD.diet, pairwise="habitat.ordered")
+testInteractions(meanD.diet, pairwise="habitat.ordered", adjustment="BH")
 plot(meanD.diet)
 qqnorm(meanD.diet)
 meanD.diet.I <- interactionMeans(meanD.diet) # effect plots
@@ -1589,7 +1589,7 @@ plot(meanD.diet.I, errorbar="ci95")
 
 Balance.diet = lme(diet.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")  # if the most abundant species tended to be dissimilar = positive Balance component
 summary(Balance.diet)  
-testInteractions(Balance.diet, pairwise="habitat.ordered")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
+testInteractions(Balance.diet, pairwise="habitat.ordered", adjustment="BH")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
 plot(Balance.diet)
 qqnorm(Balance.diet)
 Balance.diet.I <- interactionMeans(Balance.diet) # effect plots
@@ -1668,7 +1668,7 @@ x <- cbind(x,habitat.ordered)
 
 QE.diet = lme(QE.diet ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(QE.diet)
-testInteractions(QE.diet, pairwise="habitat.ordered")
+testInteractions(QE.diet, pairwise="habitat.ordered", adjustment="BH")
 plot(QE.diet)
 qqnorm(QE.diet)
 QE.diet.I <- interactionMeans(QE.diet) # effect plots
@@ -1676,7 +1676,7 @@ plot(QE.diet.I, errorbar="ci95")
 
 CR.diet = lme(CR.diet ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(CR.diet)  
-testInteractions(CR.diet, pairwise="habitat.ordered")
+testInteractions(CR.diet, pairwise="habitat.ordered", adjustment="BH")
 plot(CR.diet)
 qqnorm(CR.diet)
 CR.diet.I <- interactionMeans(CR.diet) # effect plots
@@ -1684,7 +1684,7 @@ plot(CR.diet.I, errorbar="ci95")
 
 meanD.diet = lme(diet.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(meanD.diet)  
-testInteractions(meanD.diet, pairwise="habitat.ordered")
+testInteractions(meanD.diet, pairwise="habitat.ordered", adjustment="BH")
 plot(meanD.diet)
 qqnorm(meanD.diet)
 meanD.diet.I <- interactionMeans(meanD.diet) # effect plots
@@ -1692,7 +1692,7 @@ plot(meanD.diet.I, errorbar="ci95")
 
 Balance.diet = lme(diet.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")  # if the most abundant species tended to be dissimilar = positive Balance component
 summary(Balance.diet)  
-testInteractions(Balance.diet, pairwise="habitat.ordered")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
+testInteractions(Balance.diet, pairwise="habitat.ordered", adjustment="BH")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
 plot(Balance.diet)
 qqnorm(Balance.diet)
 Balance.diet.I <- interactionMeans(Balance.diet) # effect plots
@@ -1771,7 +1771,7 @@ x <- cbind(x,habitat.ordered)
 
 QE.diet = lme(QE.diet ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(QE.diet)
-testInteractions(QE.diet, pairwise="habitat.ordered")
+testInteractions(QE.diet, pairwise="habitat.ordered", adjustment="BH")
 plot(QE.diet)
 qqnorm(QE.diet)
 QE.diet.I <- interactionMeans(QE.diet) # effect plots
@@ -1779,7 +1779,7 @@ plot(QE.diet.I, errorbar="ci95")
 
 CR.diet = lme(CR.diet ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(CR.diet)  
-testInteractions(CR.diet, pairwise="habitat.ordered")
+testInteractions(CR.diet, pairwise="habitat.ordered", adjustment="BH")
 plot(CR.diet)
 qqnorm(CR.diet)
 CR.diet.I <- interactionMeans(CR.diet) # effect plots
@@ -1787,7 +1787,7 @@ plot(CR.diet.I, errorbar="ci95")
 
 meanD.diet = lme(diet.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
 summary(meanD.diet)  
-testInteractions(meanD.diet, pairwise="habitat.ordered")
+testInteractions(meanD.diet, pairwise="habitat.ordered", adjustment="BH")
 plot(meanD.diet)
 qqnorm(meanD.diet)
 meanD.diet.I <- interactionMeans(meanD.diet) # effect plots
@@ -1795,7 +1795,7 @@ plot(meanD.diet.I, errorbar="ci95")
 
 Balance.diet = lme(diet.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")  # if the most abundant species tended to be dissimilar = positive Balance component
 summary(Balance.diet)  
-testInteractions(Balance.diet, pairwise="habitat.ordered")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
+testInteractions(Balance.diet, pairwise="habitat.ordered", adjustment="BH")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
 plot(Balance.diet)
 qqnorm(Balance.diet)
 Balance.diet.I <- interactionMeans(Balance.diet) # effect plots
@@ -1880,7 +1880,7 @@ dev.off()
   
   spp.richness = lme(Species.richness ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(spp.richness)
-  testInteractions(spp.richness, pairwise="habitat.ordered")
+  testInteractions(spp.richness, pairwise="habitat.ordered", adjustment="BH")
   plot(spp.richness)
   qqnorm(spp.richness)
   spp.richness.I <- interactionMeans(spp.richness) # effect plots
@@ -1892,7 +1892,7 @@ dev.off()
   
   QE.all.morph = lme(QE.all.morph ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(QE.all.morph)
-  testInteractions(QE.all.morph, pairwise="habitat.ordered")
+  testInteractions(QE.all.morph, pairwise="habitat.ordered", adjustment="BH")
   plot(QE.all.morph)
   qqnorm(QE.all.morph)
   QE.all.morph.I <- interactionMeans(QE.all.morph) # effect plots
@@ -1958,7 +1958,7 @@ dev.off()
   
   QE.insectiv = lme(QE.insectiv ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x1), method="ML")
   summary(QE.insectiv)
-  testInteractions(QE.insectiv, pairwise="habitat.ordered")
+  testInteractions(QE.insectiv, pairwise="habitat.ordered", adjustment="BH")
   plot(QE.insectiv)
   qqnorm(QE.insectiv)
   QE.insectiv.I <- interactionMeans(QE.insectiv) # effect plots
@@ -1966,7 +1966,7 @@ dev.off()
   
   CR.insectiv = lme(CR.insectiv ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x1), method="ML")
   summary(CR.insectiv)  
-  testInteractions(CR.insectiv, pairwise="habitat.ordered")
+  testInteractions(CR.insectiv, pairwise="habitat.ordered", adjustment="BH")
   plot(CR.insectiv)
   qqnorm(CR.insectiv)
   CR.insectiv.I <- interactionMeans(CR.insectiv) # effect plots
@@ -1974,7 +1974,7 @@ dev.off()
   
   meanD.insectiv = lme(insectiv.meanD ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x1), method="ML")
   summary(meanD.insectiv)  
-  testInteractions(meanD.insectiv, pairwise="habitat.ordered")
+  testInteractions(meanD.insectiv, pairwise="habitat.ordered", adjustment="BH")
   plot(meanD.insectiv)
   qqnorm(meanD.insectiv)
   meanD.insectiv.I <- interactionMeans(meanD.insectiv) # effect plots
@@ -1982,7 +1982,7 @@ dev.off()
   
   Balance.insectiv = lme(insectiv.Balance ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x1), method="ML")  # if the most abundant species tended to be dissimilar = positive Balance component
   summary(Balance.insectiv)  
-  testInteractions(Balance.insectiv, pairwise="habitat.ordered")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
+  testInteractions(Balance.insectiv, pairwise="habitat.ordered", adjustment="BH")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
   plot(Balance.insectiv)
   qqnorm(Balance.insectiv)
   Balance.insectiv.I <- interactionMeans(Balance.insectiv) # effect plots
@@ -2030,11 +2030,11 @@ dev.off()
   
   x2 <- subset(x,QE.seeds>0)
   
-  # 8 morphology diversity within seedorous (>=40% diet insects) 
+  # 8 morphology diversity within granivorous (>=40% diet insects) 
   
   QE.seeds = lme(QE.seeds ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x2), method="ML")
   summary(QE.seeds)
-  testInteractions(QE.seeds, pairwise="habitat.ordered")
+  testInteractions(QE.seeds, pairwise="habitat.ordered", adjustment="BH")
   plot(QE.seeds)
   qqnorm(QE.seeds)
   QE.seeds.I <- interactionMeans(QE.seeds) # effect plots
@@ -2042,7 +2042,7 @@ dev.off()
   
   CR.seeds = lme(CR.seeds ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x2), method="ML")
   summary(CR.seeds)  
-  testInteractions(CR.seeds, pairwise="habitat.ordered")
+  testInteractions(CR.seeds, pairwise="habitat.ordered", adjustment="BH")
   plot(CR.seeds)
   qqnorm(CR.seeds)
   CR.seeds.I <- interactionMeans(CR.seeds) # effect plots
@@ -2050,7 +2050,7 @@ dev.off()
   
   meanD.seeds = lme(seeds.meanD ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x2), method="ML")
   summary(meanD.seeds)  
-  testInteractions(meanD.seeds, pairwise="habitat.ordered")
+  testInteractions(meanD.seeds, pairwise="habitat.ordered", adjustment="BH")
   plot(meanD.seeds)
   qqnorm(meanD.seeds)
   meanD.seeds.I <- interactionMeans(meanD.seeds) # effect plots
@@ -2058,7 +2058,7 @@ dev.off()
   
   Balance.seeds = lme(seeds.Balance ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x2), method="ML")  # if the most abundant species tended to be dissimilar = positive Balance component
   summary(Balance.seeds)  
-  testInteractions(Balance.seeds, pairwise="habitat.ordered")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
+  testInteractions(Balance.seeds, pairwise="habitat.ordered", adjustment="BH")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
   plot(Balance.seeds)
   qqnorm(Balance.seeds)
   Balance.seeds.I <- interactionMeans(Balance.seeds) # effect plots
@@ -2112,7 +2112,7 @@ dev.off()
   
   QE.fruits = lme(QE.fruits ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x2), method="ML")
   summary(QE.fruits)
-  testInteractions(QE.fruits, pairwise="habitat.ordered")
+  testInteractions(QE.fruits, pairwise="habitat.ordered", adjustment="BH")
   plot(QE.fruits)
   qqnorm(QE.fruits)
   QE.fruits.I <- interactionMeans(QE.fruits) # effect plots
@@ -2120,7 +2120,7 @@ dev.off()
   
   CR.fruits = lme(CR.fruits ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x2), method="ML")
   summary(CR.fruits)  
-  testInteractions(CR.fruits, pairwise="habitat.ordered")
+  testInteractions(CR.fruits, pairwise="habitat.ordered", adjustment="BH")
   plot(CR.fruits)
   qqnorm(CR.fruits)
   CR.fruits.I <- interactionMeans(CR.fruits) # effect plots
@@ -2128,7 +2128,7 @@ dev.off()
   
   meanD.fruits = lme(fruits.meanD ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x2), method="ML")
   summary(meanD.fruits)  
-  testInteractions(meanD.fruits, pairwise="habitat.ordered")
+  testInteractions(meanD.fruits, pairwise="habitat.ordered", adjustment="BH")
   plot(meanD.fruits)
   qqnorm(meanD.fruits)
   meanD.fruits.I <- interactionMeans(meanD.fruits) # effect plots
@@ -2136,7 +2136,7 @@ dev.off()
   
   Balance.fruits = lme(fruits.Balance ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x2), method="ML")  # if the most abundant species tended to be dissimilar = positive Balance component
   summary(Balance.fruits)  
-  testInteractions(Balance.fruits, pairwise="habitat.ordered")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
+  testInteractions(Balance.fruits, pairwise="habitat.ordered", adjustment="BH")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
   plot(Balance.fruits)
   qqnorm(Balance.fruits)
   Balance.fruits.I <- interactionMeans(Balance.fruits) # effect plots
@@ -2182,8 +2182,8 @@ dev.off()
 
 
 
-############# 9. Analyses for diet axes diversity, only natives ######
-############################################################################
+############# 10. Analyses for diet axes diversity, only natives ######
+#######################################################################
 
 {## Import biodiversity metrics for communities
   
@@ -2217,7 +2217,7 @@ dev.off()
   
   QE.PCoA1 = lme(QE.PCoA1 ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
   summary(QE.PCoA1)
-  testInteractions(QE.PCoA1, pairwise="habitat.ordered")
+  testInteractions(QE.PCoA1, pairwise="habitat.ordered", adjustment="BH")
   plot(QE.PCoA1)
   qqnorm(QE.PCoA1)
   QE.PCoA1.I <- interactionMeans(QE.PCoA1) # effect plots
@@ -2225,7 +2225,7 @@ dev.off()
   
   CR.PCoA1 = lme(CR.PCoA1 ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
   summary(CR.PCoA1)  
-  testInteractions(CR.PCoA1, pairwise="habitat.ordered")
+  testInteractions(CR.PCoA1, pairwise="habitat.ordered", adjustment="BH")
   plot(CR.PCoA1)
   qqnorm(CR.PCoA1)
   CR.PCoA1.I <- interactionMeans(CR.PCoA1) # effect plots
@@ -2233,7 +2233,7 @@ dev.off()
   
   meanD.PCoA1 = lme(PCoA1.meanD ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
   summary(meanD.PCoA1)  
-  testInteractions(meanD.PCoA1, pairwise="habitat.ordered")
+  testInteractions(meanD.PCoA1, pairwise="habitat.ordered", adjustment="BH")
   plot(meanD.PCoA1)
   qqnorm(meanD.PCoA1)
   meanD.PCoA1.I <- interactionMeans(meanD.PCoA1) # effect plots
@@ -2241,7 +2241,7 @@ dev.off()
   
   Balance.PCoA1 = lme(PCoA1.Balance ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")  # if the most abundant species tended to be dissimilar = positive Balance component
   summary(Balance.PCoA1)  
-  testInteractions(Balance.PCoA1, pairwise="habitat.ordered")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
+  testInteractions(Balance.PCoA1, pairwise="habitat.ordered", adjustment="BH")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
   plot(Balance.PCoA1)
   qqnorm(Balance.PCoA1)
   Balance.PCoA1.I <- interactionMeans(Balance.PCoA1) # effect plots
@@ -2288,11 +2288,10 @@ dev.off()
   #########################################
   
   {
-    #  The first PCoA is negative for insectivorous and positive for graniv/frugiv
-    
+
     QE.PCoA2 = lme(QE.PCoA2 ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
     summary(QE.PCoA2)
-    testInteractions(QE.PCoA2, pairwise="habitat.ordered")
+    testInteractions(QE.PCoA2, pairwise="habitat.ordered", adjustment="BH")
     plot(QE.PCoA2)
     qqnorm(QE.PCoA2)
     QE.PCoA2.I <- interactionMeans(QE.PCoA2) # effect plots
@@ -2300,7 +2299,7 @@ dev.off()
     
     CR.PCoA2 = lme(CR.PCoA2 ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
     summary(CR.PCoA2)  
-    testInteractions(CR.PCoA2, pairwise="habitat.ordered")
+    testInteractions(CR.PCoA2, pairwise="habitat.ordered", adjustment="BH")
     plot(CR.PCoA2)
     qqnorm(CR.PCoA2)
     CR.PCoA2.I <- interactionMeans(CR.PCoA2) # effect plots
@@ -2308,7 +2307,7 @@ dev.off()
     
     meanD.PCoA2 = lme(PCoA2.meanD ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
     summary(meanD.PCoA2)  
-    testInteractions(meanD.PCoA2, pairwise="habitat.ordered")
+    testInteractions(meanD.PCoA2, pairwise="habitat.ordered", adjustment="BH")
     plot(meanD.PCoA2)
     qqnorm(meanD.PCoA2)
     meanD.PCoA2.I <- interactionMeans(meanD.PCoA2) # effect plots
@@ -2316,7 +2315,7 @@ dev.off()
     
     Balance.PCoA2 = lme(PCoA2.Balance ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")  # if the most abundant species tended to be dissimilar = positive Balance component
     summary(Balance.PCoA2)  
-    testInteractions(Balance.PCoA2, pairwise="habitat.ordered")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
+    testInteractions(Balance.PCoA2, pairwise="habitat.ordered", adjustment="BH")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
     plot(Balance.PCoA2)
     qqnorm(Balance.PCoA2)
     Balance.PCoA2.I <- interactionMeans(Balance.PCoA2) # effect plots
@@ -2363,11 +2362,10 @@ dev.off()
   ##########################
   
   {
-    #  The first PCoA is negative for insectivorous and positive for graniv/frugiv
-    
+ 
     QE.PCoA3 = lme(QE.PCoA3 ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
     summary(QE.PCoA3)
-    testInteractions(QE.PCoA3, pairwise="habitat.ordered")
+    testInteractions(QE.PCoA3, pairwise="habitat.ordered", adjustment="BH")
     plot(QE.PCoA3)
     qqnorm(QE.PCoA3)
     QE.PCoA3.I <- interactionMeans(QE.PCoA3) # effect plots
@@ -2375,7 +2373,7 @@ dev.off()
     
     CR.PCoA3 = lme(CR.PCoA3 ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
     summary(CR.PCoA3)  
-    testInteractions(CR.PCoA3, pairwise="habitat.ordered")
+    testInteractions(CR.PCoA3, pairwise="habitat.ordered", adjustment="BH")
     plot(CR.PCoA3)
     qqnorm(CR.PCoA3)
     CR.PCoA3.I <- interactionMeans(CR.PCoA3) # effect plots
@@ -2383,7 +2381,7 @@ dev.off()
     
     meanD.PCoA3 = lme(PCoA3.meanD ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")
     summary(meanD.PCoA3)  
-    testInteractions(meanD.PCoA3, pairwise="habitat.ordered")
+    testInteractions(meanD.PCoA3, pairwise="habitat.ordered", adjustment="BH")
     plot(meanD.PCoA3)
     qqnorm(meanD.PCoA3)
     meanD.PCoA3.I <- interactionMeans(meanD.PCoA3) # effect plots
@@ -2391,7 +2389,7 @@ dev.off()
     
     Balance.PCoA3 = lme(PCoA3.Balance ~ habitat.ordered, random = ~ 1|country/city, data = na.omit(x), method="ML")  # if the most abundant species tended to be dissimilar = positive Balance component
     summary(Balance.PCoA3)  
-    testInteractions(Balance.PCoA3, pairwise="habitat.ordered")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
+    testInteractions(Balance.PCoA3, pairwise="habitat.ordered", adjustment="BH")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
     plot(Balance.PCoA3)
     qqnorm(Balance.PCoA3)
     Balance.PCoA3.I <- interactionMeans(Balance.PCoA3) # effect plots

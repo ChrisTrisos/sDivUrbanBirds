@@ -31,13 +31,13 @@
 
 {## Import biodiversity metrics for communities
   
-     x<-read.table(paste0(workingData,"/Morphological diversity metrics for communities.txt"))
+     x<-read.table(paste0(workingData,"/Morphological diversity metrics for communities natives.txt"))
      # x <- read.table("Morphological diversity metrics for communities natives.txt")  # metrics estimated excluding exotics
  
   
   ## To compare both FD and S values across studies, diversities of each land use were z-scored within each study site (i.e. subtracting study mean and dividing by the study standard deviation).
   
-  cdata <- ddply(dat0, c("country", "city", "community", "habitat"), summarise,
+  cdata <- ddply(dat, c("country", "city", "community", "habitat"), summarise,
                  N    = length(relative.abundance))
   
   tmp <- ddply(x,"city", summarise,

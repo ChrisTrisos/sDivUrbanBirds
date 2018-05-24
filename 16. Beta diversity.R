@@ -173,15 +173,23 @@ names(Beta_FD)<- names(ml)
 
 res <- do.call(rbind, Beta_FD)
 
-comnames <- unique(dat02[,c(5,5,7,7)])
+
+levels(dat02$habitat) <- c("Wildland",       "Urban_Park",     "Wildland",     "Wildland", "Rural",   "Rural",  "Rural",   "Rural", "Suburban", "Urban", "Suburban", "Wildland")
+habitat.ordered  = factor(dat02$habitat, levels=c("Wildland","Rural","Urban_Park","Suburban","Urban"))
+dat03 <- cbind(dat02,habitat.ordered)
+
+comnames <- unique(dat03[,c(5,5,7,7)])
 colnames(comnames) <- c("comm1","comm2","hab.comm1", "hab.comm2")
 
 tmp3 <- merge(res,comnames[,c(1,3)], by="comm1")
 beta.div.comm <- merge(tmp3,comnames[,c(2,4)], by="comm2")
 beta.div.comm[ is.na(beta.div.comm) ] <- NA
 
+beta.div.comm <- na.omit(transform(beta.div.comm, hab.comp=as.factor(paste(hab.comm1, hab.comm2, sep="_"))))
 
+# "Rural_Rural” , “Rural_Suburban” , “Rural_Urban” , “Rural_Urban_Park"   ,"Rural_Wildland” , “Suburban_Rural” , “Suburban_Suburban” , “Suburban_Urban"       ,"Suburban_Urban_Park” , “Suburban_Wildland” , “Urban_Park_Rural” , “Urban_Park_Suburban" , "Urban_Park_Urban” , “Urban_Park_Urban_Park” , “Urban_Park_Wildland” , “Urban_Rural" , "Urban_Suburban” , “Urban_Urban” , “Urban_Urban_Park” , “Urban_Wildland" , "Wildland_Rural” , “Wildland_Suburban” , “Wildland_Urban” , “Wildland_Urban_Park",  "Wildland_Wildland"
 
+levels(beta.div.comm$hab.comp) <- c("Rural_Rural" , "Suburban_Rural" , "Urban_Rural", "Urban_Park_Rural","Rural_Wildland", "Suburban_Rural", "Suburban_Suburban", "Urban_Suburban", "Suburban_Urban_Park", "Suburban_Wildland", "Urban_Park_Rural", "Suburban_Urban_Park", "Urban_Urban_Park", "Urban_Park_Urban_Park", "Urban_Park_Wildland", "Urban_Rural", "Urban_Suburban", "Urban_Urban", "Urban_Urban_Park", "Urban_Wildland", "Rural_Wildland", "Suburban_Wildland", "Urban_Wildland", "Urban_Park_Wildland",  "Wildland_Wildland")
 
 # write.table(beta.div.comm, paste0(workingData,"/Rao beta diversity.txt"))
 
