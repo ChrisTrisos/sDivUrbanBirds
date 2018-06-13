@@ -5,7 +5,17 @@
 # GOALS: 1) Estimate ecologically meaningful traits based on diet categories by means of PCoA
        # 2) Estimate degree of foraging specialization
 
-# SUMMARY:
+######################
+
+# 1.  Invertivore (In) - invertebrates in air or terrestrial habitats.
+# 2.  Aquatic predator (Aq) - invertebrates and vertebrates in aquatic habitats.
+# 3.  Frugivore (Fr) - fruit.
+# 4.  Nectarivore (Ne) - nectar and plan exudates.
+# 5. Granivore (Gr) - seeds.
+# 6. Herbivore (Pl)  - vegetation (not including seeds, nectar or fruit).
+# 7. Vertivore (Vt) - terrestrial vertebrates.
+# 8. Scavenger (Sc) - carrion and human waste
+
 
 
 #############################################################################################
@@ -16,14 +26,14 @@ library(ks)
 
 #trait data
 
-diet <-read.table(paste0(workingData,"/Diet urban birds 28 April 2018 for R.txt"), header=TRUE)
-# Missing data Thalasseus_eurygnatha, Saxicola_torquatus, already removed from diet
+diet <-read.table(paste0(workingData,"/Foraging Data June 13 2018 for R.txt"), header=TRUE)
+
 names(diet)
 diet <- diet[order(diet$animal),] # wee need to order the species
-diet<-diet[,c(5,6:16)]
+diet<-diet[,c(1,4:11)]
 names(diet)
 rownames(diet) <- diet$animal
-diet <- diet[,-c(1:2)]
+diet <- diet[,-1]
 
 
 ## Estimation of distances
@@ -61,8 +71,9 @@ write.table(pcodisl$li,paste0(workingData,"/diet.axes.txt"))
 
 # pdf("Scatter plot.pdf")
 scatter(pcodisl)
-scatter(pcodisl, clab.row=0, clab.col = 1.5, xax = 1, yax = 2, posieig="topleft")
+scatter(pcodisl, clab.row=0, clab.col = 1.5, xax = 1, yax = 2)
 dev.off()
+
 
 # kernel density estimation on the first two main axes based on Diaz et al 2016
 pc12<-pcodisl$li[,1:2]

@@ -42,6 +42,8 @@ morph$hand_wing <- log(morph$hand_wing)
 morph$tail <- log(morph$tail)
 
 morph <- as.data.frame(scale(morph))   # we scale the data
+# colnames(morph) <- c("Body mass", "Bill length", "Bill width", "Bill depth", "Tarsus length","Second wing length","Wing length","Hand wing index","Tail length")       
+# colnames(morph) <- c("BM", "BL", "BW", "BD", "TS","SW","WL","HWI","TL")       
 
 
 ########################################################################
@@ -49,15 +51,15 @@ morph <- as.data.frame(scale(morph))   # we scale the data
 ########################################################################
 
 
-pca.9 <- dudi.pca(morph[-8], scannf = F, nf = 3)  # We exclude hand_wing index
-scatter(pca.9, clab.row=0, clab.col = 1.5, xax = 1, yax = 2, posieig="bottomright")
+pca.9 <- dudi.pca(morph[,-8], scannf = F, nf = 3)  # We exclude hand_wing index
+scatter(pca.9, clab.row=1, clab.col = 1.5, xax = 1, yax = 2, posieig = "none", ylab="PCA 2", xlab="PCA 1")
 
-pca.9b <- princomp(morph[-8], cor=FALSE)  # as variables are standardised, we can use either the cor or var-covar mattrix
+
+pca.9b <- princomp(morph[-8], cor=FALSE)  # as variables are standardised, we can use either the cor or var-covar matrix
 summary(pca.9b)
 loadings(pca.9b)
 body.size <- -pca.9b$scores[,1]
 plot(body.size,morph$mass)
-
 
 
 
@@ -79,7 +81,7 @@ beak.shape <- pca.beak2$scores[,2]
 plot(beak.shape,body.size)
 
 ############################################################################
-###           PCA TO DESCRIBE HINDLIMB MORPHOLOGY                        ###                 
+###           PCA TO DESCRIBE LOCOMOTORY MORPHOLOGY                        ###                 
 ############################################################################
 
 locom <- morph[,c(5:7,9)]

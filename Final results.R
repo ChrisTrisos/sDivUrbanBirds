@@ -374,7 +374,7 @@ hist(residuals(Kbar.morph.skew))
 }
 
 
-########### 9. Analyses of commuity-weighted mean diet traits ################
+########### 9. Analyses of community-weighted mean diet traits ################
 ##############################################################################
 
 {
@@ -415,6 +415,46 @@ hist(residuals(Kbar.morph.skew))
   }
 
 
+########## 10. Morphological PCAs #########
+###########################################
+
+{
+  
+  morph0<- read.table(paste0(workingData,"/Morphological traits urban birds 24 Feb 2018 for R.txt"), h=TRUE)
+  morph <- morph0[,c(8,10,12:18)] # we exclude redundant traits
+  names(morph) <- c("mass", "bill_length", "bill_width", "bill_depth", "tarsus", "second","wing","hand_wing","tail")
+  
+  # Log10-transformed and standardized to zero mean and unit variance (z-transformation).
+  
+  morph$mass <- log(morph$mass)
+  morph$bill_length <- log(morph$bill_length)
+  morph$bill_width <- log(morph$bill_width)
+  morph$bill_depth <- log(morph$bill_depth)
+  morph$tarsus <- log(morph$tarsus)
+  morph$second <- log(morph$second)
+  morph$wing <- log(morph$wing)
+  morph$hand_wing <- log(morph$hand_wing)
+  morph$tail <- log(morph$tail)
+  
+  morph <- as.data.frame(scale(morph))   # we scale the data
+  # colnames(morph) <- c("Body mass", "Bill length", "Bill width", "Bill depth", "Tarsus length","Second wing length","Wing length","Hand wing index","Tail length")       
+  colnames(morph) <- c("BM", "BL", "BW", "BD", "TS","SW","WL","HWI","TL")       
+
+  
+  pca.9 <- dudi.pca(morph[,-8], scannf = F, nf = 3)  # We exclude hand_wing index
+  Ppca.9 <- scatter(pca.9, clab.row=1, clab.col = 1.5, xax = 1, yax = 2, posieig = "none", ylab="PCA 2", xlab="PCA 1")
+  
+  beak <- morph[,c(2:4)]
+  pca.beak <- dudi.pca(beak, scannf = F, nf = 3)
+  Pbeak <- scatter(pca.beak, clab.row=0, clab.col = 1.5, xax = 1, yax = 2, posieig = "none", ylab="PCA 2", xlab="PCA 1")
+  
+  locom <- morph[,c(5:7,9)]
+  pca.locom <- dudi.pca(locom, scannf = F, nf = 3)
+  Plocom <- scatter(pca.locom, clab.row=0, clab.col = 1.5, xax = 1, yax = 2, posieig = "none", ylab="PCA 2", xlab="PCA 1")
+  
+  
+  
+}
 
 
 
@@ -438,7 +478,7 @@ b <- ggplot(QE.taxonomy.I, aes(x= habitat.ordered, y=QE.taxonomy.I[,2])) +
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=QE.taxonomy.I[,2]-QE.taxonomy.I[,3], ymax=QE.taxonomy.I[,2]+QE.taxonomy.I[,3]), width=.2) +
   geom_point(data=QE.taxonomy.I, mapping=aes(x=habitat.ordered, y=QE.taxonomy.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "Simpson's index", cex=16) +
+  labs(x = "", y = "Gini-Simpson's index", cex=16) +
   geom_text(aes(label= c("a","a","a","b","c")))
 
 
@@ -483,6 +523,27 @@ g <- ggplot(Balance.all.morph.I, aes(x= habitat.ordered, y=Balance.all.morph.I[,
   geom_text(aes(label= c("a","a","a","a","a")))
 
 
+# Figure decomposition Q morphology
+
+QE.taxonomy.I[,4] <- "2:HGS"
+QE.all.morph.I[,4] <- "1:Q"
+meanD.all.morph.I[,4] <- "3:meanD"
+Balance.all.morph.I[,4] <- "4:BC"
+tgc2 <- rbind(QE.taxonomy.I,meanD.all.morph.I,Balance.all.morph.I)
+
+colnames(tgc2) <- c("habitat.ordered","adjusted.mean","std.error","Metric")
+
+
+decomp.morph <- ggplot(tgc2, aes(x=habitat.ordered, y=adjusted.mean, fill=Metric)) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  labs(x = "", y = "Effect size, morphology", cex=16) +
+  geom_bar(position=position_dodge(), stat="identity") +
+  geom_errorbar(aes(ymin=adjusted.mean-std.error, ymax=adjusted.mean+std.error),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9))
+
+
+
 # diet, abundance weighted
 
 h <- ggplot(QE.diet.I , aes(x= habitat.ordered, y=QE.diet.I [,2])) + 
@@ -497,7 +558,7 @@ i <- ggplot(CR.diet.I , aes(x= habitat.ordered, y=CR.diet.I [,2])) +
   geom_errorbar(aes(ymin=CR.diet.I [,2]-CR.diet.I [,3], ymax=CR.diet.I [,2]+CR.diet.I [,3]), width=.2) +
   geom_point(data=CR.diet.I , mapping=aes(x=habitat.ordered, y=CR.diet.I [,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Diet redundancies", cex=16) +
-  geom_text(aes(label= c("a","a","a","a","a")))
+  geom_text(aes(label= c("a","a","ab","bc","c")))
 
 j <- ggplot(meanD.diet.I, aes(x= habitat.ordered, y=meanD.diet.I [,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
@@ -512,6 +573,27 @@ k <- ggplot(Balance.diet.I , aes(x= habitat.ordered, y=Balance.diet.I [,2])) +
   geom_point(data=Balance.diet.I , mapping=aes(x=habitat.ordered, y=Balance.diet.I [,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Diet BC", cex=16) +
   geom_text(aes(label= c("ab","ab","ab","a","b")))
+
+
+
+# Figure decomposition Q diet
+
+QE.taxonomy.I[,4] <- "2:HGS"
+QE.diet.I[,4] <- "1:Q"
+meanD.diet.I[,4] <- "3:meanD"
+Balance.diet.I[,4] <- "4:BC"
+tgc3 <- rbind(QE.taxonomy.I,meanD.diet.I,Balance.diet.I)
+
+colnames(tgc3) <- c("habitat.ordered","adjusted.mean","std.error","Metric")
+
+
+decomp.diet <- ggplot(tgc3, aes(x=habitat.ordered, y=adjusted.mean, fill=Metric)) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  labs(x = "", y = "Effect size, diet", cex=16) +
+  geom_bar(position=position_dodge(), stat="identity") +
+  geom_errorbar(aes(ymin=adjusted.mean-std.error, ymax=adjusted.mean+std.error),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9))
 
 
 
@@ -532,7 +614,7 @@ m <- ggplot(QE.dietO.I, aes(x= habitat.ordered, y=QE.dietO.I[,2])) +
   geom_errorbar(aes(ymin=QE.dietO.I[,2]-QE.dietO.I[,3], ymax=QE.dietO.I[,2]+QE.dietO.I[,3]), width=.2) +
   geom_point(data=QE.dietO.I, mapping=aes(x=habitat.ordered, y=QE.dietO.I[,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Q diet, unweigthed", cex=16) +
-  geom_text(aes(label= c("a","a","a","a","b")))
+  geom_text(aes(label= c("a","ab","ab","ab","b")))
 
 
 # Kbar morphology
@@ -564,6 +646,85 @@ p <- ggplot(spp.richnessR.I, aes(x= habitat.ordered, y=spp.richnessR.I[,2])) +
   geom_text(aes(label= c("a","ab","ab","bc","c")))
 
 
+
+
+# MCWM.beak.shape
+
+q <- ggplot(MCWM.beak.shape.I, aes(x= habitat.ordered, y=MCWM.beak.shape.I[,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=MCWM.beak.shape.I[,2]-MCWM.beak.shape.I[,3], ymax=MCWM.beak.shape.I[,2]+MCWM.beak.shape.I[,3]), width=.2) +
+  geom_point(data=MCWM.beak.shape.I, mapping=aes(x=habitat.ordered, y=MCWM.beak.shape.I[,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "CWM beak shape", cex=16) +
+  geom_text(aes(label= c("a","a","a","a","a")))
+
+
+
+# MCWM.locom.shape
+
+r <- ggplot(MCWM.locom.shape.I, aes(x= habitat.ordered, y=MCWM.locom.shape.I[,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=MCWM.locom.shape.I[,2]-MCWM.locom.shape.I[,3], ymax=MCWM.locom.shape.I[,2]+MCWM.locom.shape.I[,3]), width=.2) +
+  geom_point(data=MCWM.locom.shape.I, mapping=aes(x=habitat.ordered, y=MCWM.locom.shape.I[,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "CWM tarsus-to-tail ratio", cex=16) +
+  geom_text(aes(label= c("a","a","b","b","c")))
+
+
+# MCWM.body.size
+
+s <- ggplot(MCWM.body.size.I, aes(x= habitat.ordered, y=MCWM.body.size.I[,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=MCWM.body.size.I[,2]-MCWM.body.size.I[,3], ymax=MCWM.body.size.I[,2]+MCWM.body.size.I[,3]), width=.2) +
+  geom_point(data=MCWM.body.size.I, mapping=aes(x=habitat.ordered, y=MCWM.body.size.I[,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "CWM body size", cex=16) +
+  geom_text(aes(label= c("a","ab","ab","bc","c")))
+
+
+# MCWM.hand.wing
+
+u <- ggplot(MCWM.hand.wing.I, aes(x= habitat.ordered, y=MCWM.hand.wing.I[,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=MCWM.hand.wing.I[,2]-MCWM.hand.wing.I[,3], ymax=MCWM.hand.wing.I[,2]+MCWM.hand.wing.I[,3]), width=.2) +
+  geom_point(data=MCWM.hand.wing.I, mapping=aes(x=habitat.ordered, y=MCWM.hand.wing.I[,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "CWM hand-wing", cex=16) +
+  geom_text(aes(label= c("a","a","b","b","c")))
+
+
+# MCWMInv_SeedFruit
+
+v <- ggplot(MCWMInv_SeedFruit.I, aes(x= habitat.ordered, y=MCWMInv_SeedFruit.I[,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=MCWMInv_SeedFruit.I[,2]-MCWMInv_SeedFruit.I[,3], ymax=MCWMInv_SeedFruit.I[,2]+MCWMInv_SeedFruit.I[,3]), width=.2) +
+  geom_point(data=MCWMInv_SeedFruit.I, mapping=aes(x=habitat.ordered, y=MCWMInv_SeedFruit.I[,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "CWM diet PCo1", cex=16) +
+  geom_text(aes(label= c("a","a","a","a","a")))
+
+
+# MCWMInv_Seed
+
+w <- ggplot(MCWMInv_Seed.I, aes(x= habitat.ordered, y=MCWMInv_Seed.I[,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=MCWMInv_Seed.I[,2]-MCWMInv_Seed.I[,3], ymax=MCWMInv_Seed.I[,2]+MCWMInv_Seed.I[,3]), width=.2) +
+  geom_point(data=MCWMInv_Seed.I, mapping=aes(x=habitat.ordered, y=MCWMInv_Seed.I[,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "CWM diet PCo2", cex=16) +
+  geom_text(aes(label= c("a","ab","abc","bc","c")))
+
+
+# MCWMSeed
+
+x <- ggplot(MCWMSeed.I, aes(x= habitat.ordered, y=MCWMSeed.I[,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=MCWMSeed.I[,2]-MCWMSeed.I[,3], ymax=MCWMSeed.I[,2]+MCWMSeed.I[,3]), width=.2) +
+  geom_point(data=MCWMSeed.I, mapping=aes(x=habitat.ordered, y=MCWMSeed.I[,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "CWM diet PCo3", cex=16) +
+  geom_text(aes(label= c("a","b","c","b","b")))
+
+
+
+
+
+
+
+
 }
 
 
@@ -572,21 +733,42 @@ p <- ggplot(spp.richnessR.I, aes(x= habitat.ordered, y=spp.richnessR.I[,2])) +
 #######################################
 
 
-tiff(paste0(GoogleFigs,"/Fig. 1.tiff"), width = 11, height = 8, units = 'in', res = 200)
+tiff(paste0(GoogleFigs,"/Fig. 1.tiff"), width = 11, height = 8, units = 'in', res = 50)
 ggplot2.multiplot(d,h,l,m,cols=2)
 dev.off()
 
 
-tiff(paste0(GoogleFigs,"/Fig. 2.tiff"), width = 16, height = 12, units = 'in', res = 200)
-ggplot2.multiplot(e,i,f,j,g,k,n,o, cols=3) 
+
+
+tiff(paste0(GoogleFigs,"/Fig. 2.tiff"), width = 16, height = 8, units = 'in', res = 50)
+ggplot2.multiplot(decomp.morph, decomp.diet, cols=2) 
 dev.off()
 
 
-###########  Extended data Figure 1  ################
+###########  Extended data Figures  #################
 #####################################################
 
 # Species richness
 
-tiff(paste0(GoogleFigs,"/Extended data Fig. 1.tiff"), width = 11, height = 8, units = 'in', res = 200)
+tiff(paste0(GoogleFigs,"/Extended data Fig. 2.tiff"), width = 11, height = 8, units = 'in', res = 100)
 ggplot2.multiplot(a,p,c,b)
+dev.off()
+
+
+
+
+tiff(paste0(GoogleFigs,"/Extended data Fig. 3.tiff"), width = 16, height = 8, units = 'in', res = 50)
+ggplot2.multiplot(e,i,n,o, cols=2) 
+dev.off()
+
+# PCA
+Ppca.9
+Pbeak
+Plocom
+
+
+# Community weighted means
+
+tiff(paste0(GoogleFigs,"/Extended data Fig. 5.tiff"), width = 11, height = 8, units = 'in', res = 100)
+ggplot2.multiplot(s, q,r,u,v,w, cols=3)
 dev.off()

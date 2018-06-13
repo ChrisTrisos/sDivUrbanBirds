@@ -1,5 +1,5 @@
-########### 2. Analyses for morphological diversity, only natives ##############
-################################################################################
+########### Test of Beta diversity, only natives ##############
+###############################################################
 
 {## Import biodiversity metrics for communities
   

@@ -7,13 +7,6 @@
 
 ### GOALS: ### 
 
-# Imagine that structures is a data frame with sites as rows and only one column representing how sites are distributed among regions.  
-    # two levels of beta diversity: 
-            # beta1 diversity represents the (functional or phylogenetic) dissimilarities among sites within regions; 
-            # beta2 diversity represents the (functional or phylogenetic) dissimilarities among regions. If level = 1 then functions rtestEqRS, rtestEqRSintra, rtestEqRao, and rtestwapqe will test for the significance of the dissimilarities among sites within regions (beta1 diversity); in contrast, if level = 2 functions rtestEqRS, rtestEqRSintra, rtestEqRao, and rtestwapqe will test for the significance of the dissimilarities among regions (beta2 diversity). As there is only one column in parameter structures and thus only two levels of diversity, level cannot be higher than 2.
-
-
-# we will use EqRao and rtestEqRao and level = 1 to test for the significance of the dissimilarities among sites within regions. 
 
 
 ####################
@@ -318,7 +311,9 @@ test.pair<-functional.beta.pair(x=comm.test, traits=traits.test, index.family = 
 
 
 
-  
+############################################# 
+###############  not used ###################
+############################################# 
   
   
   
@@ -489,10 +484,13 @@ do.call(rbind, Beta_FD)
 
 
 
-############################################# 
-###############  not used ###################
-############################################# 
+# Imagine that structures is a data frame with sites as rows and only one column representing how sites are distributed among regions.  
+# two levels of beta diversity: 
+# beta1 diversity represents the (functional or phylogenetic) dissimilarities among sites within regions; 
+# beta2 diversity represents the (functional or phylogenetic) dissimilarities among regions. If level = 1 then functions rtestEqRS, rtestEqRSintra, rtestEqRao, and rtestwapqe will test for the significance of the dissimilarities among sites within regions (beta1 diversity); in contrast, if level = 2 functions rtestEqRS, rtestEqRSintra, rtestEqRao, and rtestwapqe will test for the significance of the dissimilarities among regions (beta2 diversity). As there is only one column in parameter structures and thus only two levels of diversity, level cannot be higher than 2.
 
+
+# we will use EqRao and rtestEqRao and level = 1 to test for the significance of the dissimilarities among sites within regions. 
 
 
 ## Estimation of beta diversity with "adiv"
