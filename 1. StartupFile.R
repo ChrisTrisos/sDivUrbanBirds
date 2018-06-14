@@ -92,6 +92,6 @@ source(paste0(wd,"/Data/Sources/QEpart.R"))  # function to decomponse Quadratic 
 source(paste0(wd,"//Data/Sources/quality_funct_space_fromdist.R"))  # function to describe Kernells
 source(paste0(wd,"//Data/Sources/dist.ktab.R"))  # function to examine PCoA
 source(paste0(wd,"//Data/Sources/betaQmult.R"))
-
+source(paste0(wd,"//Data/Sources/QEpartition.R")) # function similar to QEpart but with additional estimations of the balance component
 
 

@@ -38,7 +38,7 @@
 }
 
 
-## Functional data preparation
+## Functional morphological data preparation
 
 {
 func<-read.table(paste0(workingData,"/morphological.axes.txt"),header=TRUE)
@@ -64,29 +64,55 @@ rownames(hand.wing) <- rownames(funcdat)
 
 all <-funcdat[,5:12]  # dataset for all traits when analysed separately
 
-
-
 ## estimation of euclidean distances among morphological traits
 
 distallmorphology <- distance(na.omit(all), "euclidean")   # all 8 traits
 distallmorphology <- distallmorphology/max(distallmorphology)  # we standardize to 0-1 range
 
-distbeak <- distance(beakshape, "euclidean")    # beak shape
-distbeak <- distbeak/max(distbeak)   
-
-distlocom <- distance(locomshape, "euclidean")   # locomotory shape
-distlocom <- distlocom/max(distlocom)
-
-distsize <- distance(bodysize, "euclidean")    # body size PCA all 8 traits
-distsize <- distsize/max(distsize)
-
-distwinghand<- distance(hand.wing, "euclidean")   # wing hand index
-distwinghand<- distwinghand/max(distwinghand)   
+  
 
 }
 
 
-## Functional beta diversity with BetQmult
+## Functional foraging data preparation
+
+{
+forag <-read.table(paste0(workingData,"/Foraging Data June 13 2018 for R.txt"), header=TRUE)
+
+names(forag)
+forag <- forag[order(forag$animal),] # wee need to order the species
+forag<-forag[,c(1,9:41)]
+names(forag)
+rownames(forag) <- forag$animal
+forag <- forag[,-1]
+
+
+
+distforag<- dist.prop(forag, method = 1) # method 1 is Manly
+distforag <- distforag/max(distforag) 
+}
+
+
+## Functional diet data preparation
+
+
+{
+  diet <-read.table(paste0(workingData,"/Foraging Data June 13 2018 for R.txt"), header=TRUE)
+  
+  names(diet)
+  diet <- diet[order(diet$animal),] # wee need to order the species
+  diet<-diet[,c(1,4:11)]
+  names(diet)
+  rownames(diet) <- diet$animal
+  diet <- diet[,-1]
+  
+  
+  ## Estimation of distances
+  
+  distdiet<- dist.prop(diet, method = 1) # method 1 is Manly
+  distdiet <- distdiet/max(distdiet)  
+  
+}
 
 
 ########################################################################################################################################
@@ -112,14 +138,20 @@ distwinghand<- distwinghand/max(distwinghand)
 #####################################################################################################################################
 
 
-## We estimate beta diversity with betaQmult for each each city
+## We estimate morphological beta diversity with betaQmult for each each city
 
 dl<-split(dat02, dat02$city)    # we create a list with all communities of each region
 ml <- lapply(dl, function(x) xtabs(effort.corrected.abundance~community + animal, droplevels(x)))
 
 Beta_FD = list()
 
+#############################
+### CHANGE WHEN NECESSARY ### 
+#############################
+
 dist <- as.matrix(distallmorphology)
+# dist <- as.matrix(distforag)
+# dist <- as.matrix(distdiet)
 
 for (i in 1:length(ml)){
   Xi <- labels(ml[[i]])[2]$animal
@@ -145,7 +177,14 @@ ml <- lapply(dl, function(x) xtabs(effort.corrected.abundance~community + animal
 
 Beta_FD = list()
 
+#############################
+### CHANGE WHEN NECESSARY ### 
+#############################
+
 dist <- as.matrix(distallmorphology)
+# dist <- as.matrix(distforag)
+# dist <- as.matrix(distdiet)
+
 
 for (i in 1:length(ml)){
   Xi <- labels(ml[[i]])[2]$animal
@@ -184,7 +223,9 @@ beta.div.comm <- na.omit(transform(beta.div.comm, hab.comp=as.factor(paste(hab.c
 
 levels(beta.div.comm$hab.comp) <- c("Rural_Rural" , "Suburban_Rural" , "Urban_Rural", "Urban_Park_Rural","Rural_Wildland", "Suburban_Rural", "Suburban_Suburban", "Urban_Suburban", "Suburban_Urban_Park", "Suburban_Wildland", "Urban_Park_Rural", "Suburban_Urban_Park", "Urban_Urban_Park", "Urban_Park_Urban_Park", "Urban_Park_Wildland", "Urban_Rural", "Urban_Suburban", "Urban_Urban", "Urban_Urban_Park", "Urban_Wildland", "Rural_Wildland", "Suburban_Wildland", "Urban_Wildland", "Urban_Park_Wildland",  "Wildland_Wildland")
 
-# write.table(beta.div.comm, paste0(workingData,"/Rao beta diversity.txt"))
+# write.table(beta.div.comm, paste0(workingData,"/Rao beta diversity morphology natives.txt"))
+# write.table(beta.div.comm, paste0(workingData,"/Rao beta diversity foraging natives.txt"))
+# write.table(beta.div.comm, paste0(workingData,"/Rao beta diversity diet natives.txt"))
 
 
 

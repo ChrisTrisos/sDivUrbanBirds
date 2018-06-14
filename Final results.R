@@ -8,6 +8,9 @@
 #########################
 
 
+## All analyses are for native species
+
+
 ########### 1. Analyses of species loss  ##############
 #######################################################
 
@@ -77,8 +80,8 @@ plot(AEveness.I, errorbar="ci95")
 }
 
 
-########### 2. Analyses for morphological diversity, only natives ##############
-################################################################################
+########### 3. Analyses for morphological diversity ##############
+##################################################################
 
 {
 
@@ -118,7 +121,7 @@ plot(AEveness.I, errorbar="ci95")
   meanD.all.morph.I <- interactionMeans(meanD.all.morph) # effect plots
   plot(meanD.all.morph.I, errorbar="ci95")
   
-  Balance.all.morph = lme(all.morph.Balance ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
+  Balance.all.morph = lme(all.morph.Balance.cor ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
   summary(Balance.all.morph)  
   testInteractions(Balance.all.morph, pairwise="habitat.ordered", adjustment="BH")
   plot(Balance.all.morph)
@@ -130,8 +133,8 @@ plot(AEveness.I, errorbar="ci95")
 
 
 
-########### 3. Analyses for diet diversity natives ###############
-##################################################################
+########### 4. Analyses for diet diversity ##########
+#####################################################
 
 {
   x<-read.table(paste0(workingData,"/Diet diversity metrics for communities natives.txt"))
@@ -179,39 +182,11 @@ plot(AEveness.I, errorbar="ci95")
 }
 
 
-
-########### 4. Analyses for morphological diversity natives, ocurrence data ######
-##################################################################################
-
+########### 5. Analyses for foraging diversity #########
+########################################################
 
 {
-  x<-read.table(paste0(workingData,"/Morphological diversity metrics for communities ocurrences natives.txt"))
-  x <- subset(x, used.urban.nonurban=="yes")
-  x[] <- lapply(x, function(x) if(is.factor(x)) factor(x) else x)
-  
-  levels(x$habitat) <- c("Wildland",       "Urban_Park",     "Wildland",     "Wildland", "Rural",   "Rural",  "Rural",   "Rural", "Suburban", "Urban", "Suburban", "Wildland")
-  habitat.ordered  = factor(x$habitat, levels=c("Wildland","Rural","Urban_Park","Suburban","Urban"))
-  x <- cbind(x,habitat.ordered)
-
-  # 8 functional traits 
-  
-  QE.all.morphO = lme(QE.all.morph ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
-  summary(QE.all.morphO)
-  testInteractions(QE.all.morphO, pairwise="habitat.ordered", adjustment="BH")
-  plot(QE.all.morphO)
-  qqnorm(QE.all.morphO)
-  QE.all.morphO.I <- interactionMeans(QE.all.morphO) # effect plots
-  plot(QE.all.morphO.I, errorbar="ci95")
-  
-}
-
-
-
-########### 5. Analyses for diet diversity ocurrence natives ###############
-#############################################################################
-
-{
-  x<-read.table(paste0(workingData,"/Diet diversity metrics for communities ocurrences natives.txt"))
+  x<-read.table(paste0(workingData,"/Forag diversity metrics for communities natives.txt"))
   x <- subset(x, used.urban.nonurban=="yes")
   x[] <- lapply(x, function(x) if(is.factor(x)) factor(x) else x)
   
@@ -219,22 +194,46 @@ plot(AEveness.I, errorbar="ci95")
   habitat.ordered  = factor(x$habitat, levels=c("Wildland","Rural","Urban_Park","Suburban","Urban"))
   x <- cbind(x,habitat.ordered)
   
-
-  QE.dietO = lme(QE.diet ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
-  summary(QE.dietO)
-  testInteractions(QE.dietO, pairwise="habitat.ordered", adjustment="BH")
-  plot(QE.dietO)
-  qqnorm(QE.dietO)
-  QE.dietO.I <- interactionMeans(QE.dietO) # effect plots
-  plot(QE.dietO.I, errorbar="ci95")
   
-
+  QE.forag = lme(QE.forag ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
+  summary(QE.forag)
+  testInteractions(QE.forag, pairwise="habitat.ordered", adjustment="BH")
+  plot(QE.forag)
+  qqnorm(QE.forag)
+  QE.forag.I <- interactionMeans(QE.forag) # effect plots
+  plot(QE.forag.I, errorbar="ci95")
+  
+  CR.forag = lme(CR.forag ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
+  summary(CR.forag)  
+  testInteractions(CR.forag, pairwise="habitat.ordered", adjustment="BH")
+  plot(CR.forag)
+  qqnorm(CR.forag)
+  CR.forag.I <- interactionMeans(CR.forag) # effect plots
+  plot(CR.forag.I, errorbar="ci95")
+  
+  meanD.forag = lme(forag.meanD ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
+  summary(meanD.forag)  
+  testInteractions(meanD.forag, pairwise="habitat.ordered", adjustment="BH")
+  plot(meanD.forag)
+  qqnorm(meanD.forag)
+  meanD.forag.I <- interactionMeans(meanD.forag) # effect plots
+  plot(meanD.forag.I, errorbar="ci95")
+  
+  Balance.forag = lme(forag.Balance.cor ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")  # if the most abundant species tended to be dissimilar = positive Balance component
+  summary(Balance.forag)  
+  testInteractions(Balance.forag, pairwise="habitat.ordered", adjustment="BH")                                            # a lack of association between abundance and dissimilarity = Balance component close to zero
+  plot(Balance.forag)
+  qqnorm(Balance.forag)
+  Balance.forag.I <- interactionMeans(Balance.forag) # effect plots
+  plot(Balance.forag.I, errorbar="ci95")
+  
+  
 }
 
 
 
-########### 6. Analyses for species-level functional uniqueness natives ################
-########################################################################################
+########### 6. Analyses for species-level functional uniqueness ################
+################################################################################
 
 {
 
@@ -244,22 +243,29 @@ dat<-read.table(paste0(workingData,"/Urban global data April 25 2018 for R.txt")
 dat$community <- factor(dat$community)
 diet.Kbar <- read.table(paste0(workingData,"/vulnerability_species_diet_natives.txt"))
 morphology.Kbar <- read.table(paste0(workingData,"/vulnerability_species_morphology_natives.txt"))
+forag.Kbar <- read.table(paste0(workingData,"/vulnerability_species_foraging_natives.txt"))
 
 
 library(moments)
 
-tmp <- ddply(dat, c("country", "city", "community", "habitat", "used.urban.nonurban"), summarise,
-             Regional.Kbar.diet.skew = length(relative.abundance))
+tmp.hab <- ddply(dat, c("country", "city", "community", "habitat", "used.urban.nonurban"), summarise,
+             Regional.richness = length(relative.abundance))
 
 tmp.diet <- ddply(diet.Kbar, c("community"), summarise,
                   Kbar.diet.skew = skewness(Kbar.diet))
 
-tmp2 <- merge(tmp.diet,tmp, by="community")
+tmp2 <- merge(tmp.diet,tmp.hab, by="community")
 
 tmp.morph <- ddply(morphology.Kbar, c("community"), summarise,
                    Kbar.morph.skew = skewness(Kbar.morphology))
 
 x <- merge(tmp.morph,tmp2, by="community")
+
+tmp.forag <- ddply(forag.Kbar, c("community"), summarise,
+                   Kbar.forag.skew = skewness(Kbar.foraging))
+
+x <- merge(tmp.forag,x, by="community")
+
 
 levels(x$habitat) <- c("Wildland",       "Urban_Park",     "Wildland",     "Wildland", "Rural",   "Rural",  "Rural",   "Rural", "Suburban", "Urban", "Suburban", "Wildland")
 habitat.ordered  = factor(x$habitat, levels=c("Wildland","Rural","Urban_Park","Suburban","Urban"))
@@ -291,6 +297,19 @@ Kbar.morph.skew.I <- interactionMeans(Kbar.morph.skew) # effect plots
 plot(Kbar.morph.skew, errorbar="ci95")
 hist(residuals(Kbar.morph.skew))
 
+
+# Foraging
+
+Kbar.forag.skew = lme(Kbar.forag.skew ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
+summary(Kbar.forag.skew)
+r2<- rsquared(Kbar.forag.skew)  #  marginal R^2 (based on fixed effects only) and conditional R^2 (based on fixed and random effects, if present)
+testInteractions(Kbar.forag.skew, pairwise="habitat.ordered", adjustment="BH")
+plot(Kbar.forag.skew)
+qqnorm(Kbar.forag.skew)
+Kbar.forag.skew.I <- interactionMeans(Kbar.forag.skew) # effect plots
+plot(Kbar.forag.skew, errorbar="ci95")
+hist(residuals(Kbar.forag.skew))
+
 }
 
 
@@ -318,7 +337,7 @@ hist(residuals(Kbar.morph.skew))
 
 
 
-########### 8. Analyses of commuity-weighted mean morphological traits ################
+########### 8. Analyses of community-weighted mean morphological traits ################
 #######################################################################################
 
 
@@ -415,7 +434,55 @@ hist(residuals(Kbar.morph.skew))
   }
 
 
-########## 10. Morphological PCAs #########
+########### 10. Analyses of community-weighted mean foraging traits ################
+###################################################################################
+
+{
+  x<-read.table(paste0(workingData,"/Forag diversity metrics for communities natives.txt"))
+  x <- subset(x, used.urban.nonurban=="yes")
+  x[] <- lapply(x, function(x) if(is.factor(x)) factor(x) else x)
+  
+  levels(x$habitat) <- c("Wildland",       "Urban_Park",     "Wildland",     "Wildland", "Rural",   "Rural",  "Rural",   "Rural", "Suburban", "Urban", "Suburban", "Wildland")
+  habitat.ordered  = factor(x$habitat, levels=c("Wildland","Rural","Urban_Park","Suburban","Urban"))
+  x <- cbind(x,habitat.ordered)
+  
+  
+  MCWM_PCo1= lme(CWM_PCo1~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
+  summary(MCWM_PCo1)
+  testInteractions(MCWM_PCo1, pairwise="habitat.ordered", adjustment="BH")
+  plot(MCWM_PCo1)
+  qqnorm(MCWM_PCo1)
+  MCWM_PCo1.I <- interactionMeans(MCWM_PCo1) # effect plots
+  plot(MCWM_PCo1.I, errorbar="ci95")
+  
+  MCWM_PCo2= lme(CWM_PCo2~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
+  summary(MCWM_PCo2)
+  testInteractions(MCWM_PCo2, pairwise="habitat.ordered", adjustment="BH")
+  plot(MCWM_PCo2)
+  qqnorm(MCWM_PCo2)
+  MCWM_PCo2.I <- interactionMeans(MCWM_PCo2) # effect plots
+  plot(MCWM_PCo2.I, errorbar="ci95")
+  
+  MCWM_PCo3= lme(CWM_PCo3~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
+  summary(MCWM_PCo3)
+  testInteractions(MCWM_PCo3, pairwise="habitat.ordered", adjustment="BH")
+  plot(MCWM_PCo3)
+  qqnorm(MCWM_PCo3)
+  MCWM_PCo3.I <- interactionMeans(MCWM_PCo3) # effect plots
+  plot(MCWM_PCo3.I, errorbar="ci95")
+  
+  MCWM_PCo4= lme(CWM_PCo4~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
+  summary(MCWM_PCo4)
+  testInteractions(MCWM_PCo4, pairwise="habitat.ordered", adjustment="BH")
+  plot(MCWM_PCo4)
+  qqnorm(MCWM_PCo4)
+  MCWM_PCo4.I <- interactionMeans(MCWM_PCo4) # effect plots
+  plot(MCWM_PCo4.I, errorbar="ci95")
+  
+}
+
+
+########## 11. Morphological PCAs #########
 ###########################################
 
 {
@@ -456,6 +523,226 @@ hist(residuals(Kbar.morph.skew))
   
 }
 
+
+
+#######################
+#### Other analyses ###
+#######################
+
+### Alpha Q diversity with occurrence data ###
+##############################################
+
+{
+
+########### Analyses for morphological diversity natives, ocurrence data ######
+##################################################################################
+
+
+{
+  x<-read.table(paste0(workingData,"/Morphological diversity metrics for communities ocurrences natives.txt"))
+  x <- subset(x, used.urban.nonurban=="yes")
+  x[] <- lapply(x, function(x) if(is.factor(x)) factor(x) else x)
+  
+  levels(x$habitat) <- c("Wildland",       "Urban_Park",     "Wildland",     "Wildland", "Rural",   "Rural",  "Rural",   "Rural", "Suburban", "Urban", "Suburban", "Wildland")
+  habitat.ordered  = factor(x$habitat, levels=c("Wildland","Rural","Urban_Park","Suburban","Urban"))
+  x <- cbind(x,habitat.ordered)
+  
+  # 8 functional traits 
+  
+  QE.all.morphO = lme(QE.all.morph ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
+  summary(QE.all.morphO)
+  testInteractions(QE.all.morphO, pairwise="habitat.ordered", adjustment="BH")
+  plot(QE.all.morphO)
+  qqnorm(QE.all.morphO)
+  QE.all.morphO.I <- interactionMeans(QE.all.morphO) # effect plots
+  plot(QE.all.morphO.I, errorbar="ci95")
+  
+}
+
+
+
+########### Analyses for diet diversity ocurrence natives ###############
+#############################################################################
+
+{
+  x<-read.table(paste0(workingData,"/Diet diversity metrics for communities ocurrences natives.txt"))
+  x <- subset(x, used.urban.nonurban=="yes")
+  x[] <- lapply(x, function(x) if(is.factor(x)) factor(x) else x)
+  
+  levels(x$habitat) <- c("Wildland",       "Urban_Park",     "Wildland",     "Wildland", "Rural",   "Rural",  "Rural",   "Rural", "Suburban", "Urban", "Suburban", "Wildland")
+  habitat.ordered  = factor(x$habitat, levels=c("Wildland","Rural","Urban_Park","Suburban","Urban"))
+  x <- cbind(x,habitat.ordered)
+  
+  
+  QE.dietO = lme(QE.diet ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
+  summary(QE.dietO)
+  testInteractions(QE.dietO, pairwise="habitat.ordered", adjustment="BH")
+  plot(QE.dietO)
+  qqnorm(QE.dietO)
+  QE.dietO.I <- interactionMeans(QE.dietO) # effect plots
+  plot(QE.dietO.I, errorbar="ci95")
+  
+  
+}
+
+  
+  ########### Analyses for foraging diversity ocurrence natives ###############
+  #############################################################################
+  
+{
+    x<-read.table(paste0(workingData,"/Forag diversity metrics for communities ocurrences natives.txt"))
+    x <- subset(x, used.urban.nonurban=="yes")
+    x[] <- lapply(x, function(x) if(is.factor(x)) factor(x) else x)
+    
+    levels(x$habitat) <- c("Wildland",       "Urban_Park",     "Wildland",     "Wildland", "Rural",   "Rural",  "Rural",   "Rural", "Suburban", "Urban", "Suburban", "Wildland")
+    habitat.ordered  = factor(x$habitat, levels=c("Wildland","Rural","Urban_Park","Suburban","Urban"))
+    x <- cbind(x,habitat.ordered)
+    
+    
+    QE.foragO = lme(QE.forag ~ habitat.ordered, random = ~ 1|country/city, data = x, method="ML")
+    summary(QE.foragO)
+    testInteractions(QE.foragO, pairwise="habitat.ordered", adjustment="BH")
+    plot(QE.foragO)
+    qqnorm(QE.foragO)
+    QE.foragO.I <- interactionMeans(QE.foragO) # effect plots
+    plot(QE.foragO.I, errorbar="ci95")
+    
+    
+  }
+  
+
+}
+
+
+### Beta Q diversity ###
+########################
+
+{
+### Morphological Beta Q test
+
+{## Import biodiversity metrics for communities
+  
+  x<-read.table(paste0(workingData,"/Rao beta diversity morphology natives.txt"))
+  
+  y <- subset(x, hab.comp!="Urban_Urban_Park" & hab.comp!="Urban_Park_Urban_Park" & hab.comp!="Suburban_Urban_Park" & hab.comp!="Urban_Park_Wildland" & hab.comp!="Urban_Park_Rural" & hab.comp!="Suburban_Urban_Park" & hab.comp!="Wildland_Wildland" & hab.comp!="Suburban_Suburban" & hab.comp!="Urban_Urban" & hab.comp!="Rural_Rural")
+  y[] <- lapply(y, function(x) if(is.factor(x)) factor(x) else x)
+  
+  habitat.ordered  = factor(y$hab.comp, levels=c("Rural_Wildland","Suburban_Rural","Suburban_Wildland","Urban_Wildland","Urban_Rural","Urban_Suburban"))
+  y <- cbind(y,habitat.ordered)
+  
+  habitat.ordered  = factor(y$hab.comp, levels=c("Rural_Wildland","Suburban_Rural","Suburban_Wildland","Urban_Wildland","Urban_Rural","Urban_Suburban"))
+  y <- cbind(y,habitat.ordered)
+  
+  
+  
+  ## Tests of the effect of urbanization on beta biodiversity*
+  ################################################################
+  
+  
+  # Changes in functional composition
+  
+  Qbetast.diff.morph = lme(Qbetast ~ habitat.ordered, random = ~ 1|city, data = y, method="ML")
+  summary(Qbetast.diff.morph)
+  testInteractions(Qbetast.diff.morph, pairwise="habitat.ordered")
+  plot(Qbetast.diff.morph)
+  qqnorm(Qbetast.diff.morph)
+  Qbetast.diff.morph.I <- interactionMeans(Qbetast.diff.morph) # effect plots
+  plot(Qbetast.diff.morph.I, errorbar="ci95")
+  
+  
+  
+  # Final figure (effect +/- standard error)
+  
+  ab <- ggplot(Qbetast.diff.morph.I, aes(x= habitat.ordered, y=Qbetast.diff.morph.I[,2])) + 
+    theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+    geom_errorbar(aes(ymin=Qbetast.diff.morph.I[,2]-Qbetast.diff.morph.I[,3], ymax=Qbetast.diff.morph.I[,2]+Qbetast.diff.morph.I[,3]), width=.2) +
+    geom_point(data=Qbetast.diff.morph.I, mapping=aes(x=habitat.ordered, y=Qbetast.diff.morph.I[,2]), size=8, shape=21, fill="white") +
+    labs(x = "", y = "Beta Q morphology", cex=16) +
+    geom_text(aes(label= c("a","a","a","b","b","a")))
+  
+} 
+
+
+### Foraging Beta Q test
+
+{## Import biodiversity metrics for communities
+  
+  x<-read.table(paste0(workingData,"/Rao beta diversity foraging natives.txt"))
+  
+  y <- subset(x, hab.comp!="Urban_Urban_Park" & hab.comp!="Urban_Park_Urban_Park" & hab.comp!="Suburban_Urban_Park" & hab.comp!="Urban_Park_Wildland" & hab.comp!="Urban_Park_Rural" & hab.comp!="Suburban_Urban_Park" & hab.comp!="Wildland_Wildland" & hab.comp!="Suburban_Suburban" & hab.comp!="Urban_Urban" & hab.comp!="Rural_Rural")
+  y[] <- lapply(y, function(x) if(is.factor(x)) factor(x) else x)
+  
+  habitat.ordered  = factor(y$hab.comp, levels=c("Rural_Wildland","Suburban_Rural","Suburban_Wildland","Urban_Wildland","Urban_Rural","Urban_Suburban"))
+  y <- cbind(y,habitat.ordered)
+  
+  ## Tests of the effect of urbanization on beta biodiversity*
+  ################################################################
+  
+  
+  # Changes in functional composition
+  
+  Qbetast.diff.forag = lme(Qbetast ~ habitat.ordered, random = ~ 1|city, data = y, method="ML")
+  summary(Qbetast.diff.forag)
+  testInteractions(Qbetast.diff.forag, pairwise="habitat.ordered")
+  plot(Qbetast.diff.forag)
+  qqnorm(Qbetast.diff.forag)
+  Qbetast.diff.forag.I <- interactionMeans(Qbetast.diff.forag) # effect plots
+  plot(Qbetast.diff.forag.I, errorbar="ci95")
+  
+  
+  
+  # Final figure (effect +/- standard error)
+  
+  bc <- ggplot(Qbetast.diff.forag.I, aes(x= habitat.ordered, y=Qbetast.diff.forag.I[,2])) + 
+    theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+    geom_errorbar(aes(ymin=Qbetast.diff.forag.I[,2]-Qbetast.diff.forag.I[,3], ymax=Qbetast.diff.forag.I[,2]+Qbetast.diff.forag.I[,3]), width=.2) +
+    geom_point(data=Qbetast.diff.forag.I, mapping=aes(x=habitat.ordered, y=Qbetast.diff.forag.I[,2]), size=8, shape=21, fill="white") +
+    labs(x = "", y = "Beta Q foraging", cex=16) +
+    geom_text(aes(label= c("a","a","a","b","b","a")))
+  
+}
+
+
+### Diet Beta Q test
+
+{## Import biodiversity metrics for communities
+  
+  x<-read.table(paste0(workingData,"/Rao beta diversity diet natives.txt"))
+  
+  y <- subset(x, hab.comp!="Urban_Urban_Park" & hab.comp!="Urban_Park_Urban_Park" & hab.comp!="Suburban_Urban_Park" & hab.comp!="Urban_Park_Wildland" & hab.comp!="Urban_Park_Rural" & hab.comp!="Suburban_Urban_Park" & hab.comp!="Wildland_Wildland" & hab.comp!="Suburban_Suburban" & hab.comp!="Urban_Urban" & hab.comp!="Rural_Rural")
+  y[] <- lapply(y, function(x) if(is.factor(x)) factor(x) else x)
+  
+  habitat.ordered  = factor(y$hab.comp, levels=c("Rural_Wildland","Suburban_Rural","Suburban_Wildland","Urban_Wildland","Urban_Rural","Urban_Suburban"))
+  y <- cbind(y,habitat.ordered)
+  
+  ## Tests of the effect of urbanization on beta biodiversity*
+  ################################################################
+  
+  
+  # Changes in functional composition
+  
+  Qbetast.diff.diet = lme(Qbetast ~ habitat.ordered, random = ~ 1|city, data = y, method="ML")
+  summary(Qbetast.diff.diet)
+  testInteractions(Qbetast.diff.diet, pairwise="habitat.ordered")
+  plot(Qbetast.diff.diet)
+  qqnorm(Qbetast.diff.diet)
+  Qbetast.diff.diet.I <- interactionMeans(Qbetast.diff.diet) # effect plots
+  plot(Qbetast.diff.diet.I, errorbar="ci95")
+  
+  
+  
+  # Final figure (effect +/- standard error)
+  
+  cd <- ggplot(Qbetast.diff.diet.I, aes(x= habitat.ordered, y=Qbetast.diff.diet.I[,2])) + 
+    theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+    geom_errorbar(aes(ymin=Qbetast.diff.diet.I[,2]-Qbetast.diff.diet.I[,3], ymax=Qbetast.diff.diet.I[,2]+Qbetast.diff.diet.I[,3]), width=.2) +
+    geom_point(data=Qbetast.diff.diet.I, mapping=aes(x=habitat.ordered, y=Qbetast.diff.diet.I[,2]), size=8, shape=21, fill="white") +
+    labs(x = "", y = "Beta Q diet", cex=16) +
+    geom_text(aes(label= c("a","a","a","b","b","a")))
+  
+}
+
+}
 
 
 ###########  All Figures  ################
@@ -505,7 +792,7 @@ e <- ggplot(CR.all.morph.I, aes(x= habitat.ordered, y=CR.all.morph.I[,2])) +
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=CR.all.morph.I[,2]-CR.all.morph.I[,3], ymax=CR.all.morph.I[,2]+CR.all.morph.I[,3]), width=.2) +
   geom_point(data=CR.all.morph.I, mapping=aes(x=habitat.ordered, y=CR.all.morph.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "Morphological redundancy", cex=16) +
+  labs(x = "", y = "Morphological redundancies", cex=16) +
   geom_text(aes(label= c("ab","a","ab","ab","b")))
 
 f <- ggplot(meanD.all.morph.I, aes(x= habitat.ordered, y=meanD.all.morph.I[,2])) + 
@@ -520,7 +807,7 @@ g <- ggplot(Balance.all.morph.I, aes(x= habitat.ordered, y=Balance.all.morph.I[,
   geom_errorbar(aes(ymin=Balance.all.morph.I[,2]-Balance.all.morph.I[,3], ymax=Balance.all.morph.I[,2]+Balance.all.morph.I[,3]), width=.2) +
   geom_point(data=Balance.all.morph.I, mapping=aes(x=habitat.ordered, y=Balance.all.morph.I[,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "Morphological BC", cex=16) +
-  geom_text(aes(label= c("a","a","a","a","a")))
+  geom_text(aes(label= c("a","a","a","a","b")))
 
 
 # Figure decomposition Q morphology
@@ -597,6 +884,62 @@ decomp.diet <- ggplot(tgc3, aes(x=habitat.ordered, y=adjusted.mean, fill=Metric)
 
 
 
+
+
+# foraging, abundance weighted
+
+h1 <- ggplot(QE.forag.I , aes(x= habitat.ordered, y=QE.forag.I [,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=QE.forag.I [,2]-QE.forag.I [,3], ymax=QE.forag.I [,2]+QE.forag.I [,3]), width=.2) +
+  geom_point(data=QE.forag.I , mapping=aes(x=habitat.ordered, y=QE.forag.I [,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "Q foraging", cex=16) +
+  geom_text(aes(label= c("a","a","b","a","c")))
+
+i1 <- ggplot(CR.forag.I , aes(x= habitat.ordered, y=CR.forag.I [,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=CR.forag.I [,2]-CR.forag.I [,3], ymax=CR.forag.I [,2]+CR.forag.I [,3]), width=.2) +
+  geom_point(data=CR.forag.I , mapping=aes(x=habitat.ordered, y=CR.forag.I [,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "Foraging redundancies", cex=16) +
+  geom_text(aes(label= c("a","a","ab","b","b")))
+
+j1 <- ggplot(meanD.forag.I, aes(x= habitat.ordered, y=meanD.forag.I [,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=meanD.forag.I [,2]-meanD.forag.I [,3], ymax=meanD.forag.I [,2]+meanD.forag.I [,3]), width=.2) +
+  geom_point(data=meanD.forag.I , mapping=aes(x=habitat.ordered, y=meanD.forag.I [,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "Foraging meanD ", cex=16) +
+  geom_text(aes(label= c("ab","a","ab","ab","b")))
+
+k1 <- ggplot(Balance.forag.I , aes(x= habitat.ordered, y=Balance.forag.I [,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=Balance.forag.I [,2]-Balance.forag.I [,3], ymax=Balance.forag.I [,2]+Balance.forag.I [,3]), width=.2) +
+  geom_point(data=Balance.forag.I , mapping=aes(x=habitat.ordered, y=Balance.forag.I [,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "Foraging BC", cex=16) +
+  geom_text(aes(label= c("a","a","ab","b","ab")))
+
+
+
+# Figure decomposition Q forag
+
+QE.taxonomy.I[,4] <- "2:HGS"
+QE.forag.I[,4] <- "1:Q"
+meanD.forag.I[,4] <- "3:meanD"
+Balance.forag.I[,4] <- "4:BC"
+tgc3 <- rbind(QE.taxonomy.I,meanD.forag.I,Balance.forag.I)
+
+colnames(tgc3) <- c("habitat.ordered","adjusted.mean","std.error","Metric")
+
+
+decomp.forag <- ggplot(tgc3, aes(x=habitat.ordered, y=adjusted.mean, fill=Metric)) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  labs(x = "", y = "Effect size, foraging", cex=16) +
+  geom_bar(position=position_dodge(), stat="identity") +
+  geom_errorbar(aes(ymin=adjusted.mean-std.error, ymax=adjusted.mean+std.error),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9))
+
+
+
+
 # Morphology, occurrences
 
 l <- ggplot(QE.all.morphO.I, aes(x= habitat.ordered, y=QE.all.morphO.I[,2])) + 
@@ -617,13 +960,25 @@ m <- ggplot(QE.dietO.I, aes(x= habitat.ordered, y=QE.dietO.I[,2])) +
   geom_text(aes(label= c("a","ab","ab","ab","b")))
 
 
+
+# Foraging, occurrences
+
+m1 <- ggplot(QE.foragO.I, aes(x= habitat.ordered, y=QE.foragO.I[,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=QE.foragO.I[,2]-QE.foragO.I[,3], ymax=QE.foragO.I[,2]+QE.foragO.I[,3]), width=.2) +
+  geom_point(data=QE.foragO.I, mapping=aes(x=habitat.ordered, y=QE.foragO.I[,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "Q foraging, unweigthed", cex=16) +
+  geom_text(aes(label= c("ab","ab","a","b","c")))
+
+
+
 # Kbar morphology
 
 n <- ggplot(Kbar.morph.skew.I, aes(x= habitat.ordered, y=Kbar.morph.skew.I[,2])) + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=Kbar.morph.skew.I[,2]-Kbar.morph.skew.I[,3], ymax=Kbar.morph.skew.I[,2]+Kbar.morph.skew.I[,3]), width=.2) +
   geom_point(data=Kbar.morph.skew.I, mapping=aes(x=habitat.ordered, y=Kbar.morph.skew.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "Kbar skeweness, morphology", cex=16) +
+  labs(x = "", y = "Kbar morphology", cex=16) +
   geom_text(aes(label= c("a","a","ab","a","b")))
 
 # Kbar diet
@@ -632,8 +987,20 @@ o <- ggplot(Kbar.diet.skew.I, aes(x= habitat.ordered, y=Kbar.diet.skew.I[,2])) +
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
   geom_errorbar(aes(ymin=Kbar.diet.skew.I[,2]-Kbar.diet.skew.I[,3], ymax=Kbar.diet.skew.I[,2]+Kbar.diet.skew.I[,3]), width=.2) +
   geom_point(data=Kbar.diet.skew.I, mapping=aes(x=habitat.ordered, y=Kbar.diet.skew.I[,2]), size=8, shape=21, fill="white") +
-  labs(x = "", y = "Kbar skeweness, diet", cex=16) +
+  labs(x = "", y = "Kbar diet", cex=16) +
   geom_text(aes(label= c("a","a","a","b","b")))
+
+
+# Kbar foraging
+
+o1 <- ggplot(Kbar.forag.skew.I, aes(x= habitat.ordered, y=Kbar.forag.skew.I[,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=Kbar.forag.skew.I[,2]-Kbar.forag.skew.I[,3], ymax=Kbar.forag.skew.I[,2]+Kbar.forag.skew.I[,3]), width=.2) +
+  geom_point(data=Kbar.forag.skew.I, mapping=aes(x=habitat.ordered, y=Kbar.forag.skew.I[,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "Kbar foraging", cex=16) +
+  geom_text(aes(label= c("a","a","ab","ab","b")))
+
+
 
 
 # SR rarefied
@@ -676,7 +1043,7 @@ s <- ggplot(MCWM.body.size.I, aes(x= habitat.ordered, y=MCWM.body.size.I[,2])) +
   geom_errorbar(aes(ymin=MCWM.body.size.I[,2]-MCWM.body.size.I[,3], ymax=MCWM.body.size.I[,2]+MCWM.body.size.I[,3]), width=.2) +
   geom_point(data=MCWM.body.size.I, mapping=aes(x=habitat.ordered, y=MCWM.body.size.I[,2]), size=8, shape=21, fill="white") +
   labs(x = "", y = "CWM body size", cex=16) +
-  geom_text(aes(label= c("a","ab","ab","bc","c")))
+  geom_text(aes(label= c("a","a","bc","ab","c")))
 
 
 # MCWM.hand.wing
@@ -719,30 +1086,83 @@ x <- ggplot(MCWMSeed.I, aes(x= habitat.ordered, y=MCWMSeed.I[,2])) +
   geom_text(aes(label= c("a","b","c","b","b")))
 
 
+# Foraging PCo1
+
+x0 <- ggplot(MCWM_PCo1.I, aes(x= habitat.ordered, y=MCWM_PCo1.I[,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=MCWM_PCo1.I[,2]-MCWM_PCo1.I[,3], ymax=MCWM_PCo1.I[,2]+MCWM_PCo1.I[,3]), width=.2) +
+  geom_point(data=MCWM_PCo1.I, mapping=aes(x=habitat.ordered, y=MCWM_PCo1.I[,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "CWM foraging PCo1", cex=16) +
+  geom_text(aes(label= c("a","a","a","a","a")))
 
 
+# Foraging PCo2
+
+x1 <- ggplot(MCWM_PCo2.I, aes(x= habitat.ordered, y=MCWM_PCo2.I[,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=MCWM_PCo2.I[,2]-MCWM_PCo2.I[,3], ymax=MCWM_PCo2.I[,2]+MCWM_PCo2.I[,3]), width=.2) +
+  geom_point(data=MCWM_PCo2.I, mapping=aes(x=habitat.ordered, y=MCWM_PCo2.I[,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "CWM foraging PCo2", cex=16) +
+  geom_text(aes(label= c("a","a","ab","ab","b")))
 
 
+# Foraging PCo3
+
+x2 <- ggplot(MCWM_PCo3.I, aes(x= habitat.ordered, y=MCWM_PCo3.I[,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=MCWM_PCo3.I[,2]-MCWM_PCo3.I[,3], ymax=MCWM_PCo3.I[,2]+MCWM_PCo3.I[,3]), width=.2) +
+  geom_point(data=MCWM_PCo3.I, mapping=aes(x=habitat.ordered, y=MCWM_PCo3.I[,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "CWM foraging PCo3", cex=16) +
+  geom_text(aes(label= c("a","a","a","a","a")))
+
+
+# Foraging PCo4
+
+x3 <- ggplot(MCWM_PCo4.I, aes(x= habitat.ordered, y=MCWM_PCo4.I[,2])) + 
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold")) +
+  geom_errorbar(aes(ymin=MCWM_PCo4.I[,2]-MCWM_PCo4.I[,3], ymax=MCWM_PCo4.I[,2]+MCWM_PCo4.I[,3]), width=.2) +
+  geom_point(data=MCWM_PCo4.I, mapping=aes(x=habitat.ordered, y=MCWM_PCo4.I[,2]), size=8, shape=21, fill="white") +
+  labs(x = "", y = "CWM foraging PCo4", cex=16) +
+  geom_text(aes(label= c("a","a","a","a","a")))
 
 
 }
 
 
 
-###########  Figure 1  ################
-#######################################
+###########  Main Figures  ################
+###########################################
 
+
+
+# Q loss with urbanization
 
 tiff(paste0(GoogleFigs,"/Fig. 1.tiff"), width = 11, height = 8, units = 'in', res = 50)
-ggplot2.multiplot(d,h,l,m,cols=2)
+ggplot2.multiplot(d,h,h1, cols=1)
 dev.off()
 
 
 
+
+# Q decomposition
 
 tiff(paste0(GoogleFigs,"/Fig. 2.tiff"), width = 16, height = 8, units = 'in', res = 50)
-ggplot2.multiplot(decomp.morph, decomp.diet, cols=2) 
+ggplot2.multiplot(decomp.morph, decomp.diet, decomp.forag, cols=1) 
 dev.off()
+
+
+
+# Beta diversity
+
+tiff(paste0(GoogleFigs,"/Fig. 3.tiff"), width = 11, height = 8, units = 'in', res = 100)
+ggplot2.multiplot(ab,  cd, bc, cols=1)
+dev.off()
+
+
+
+
+
+
 
 
 ###########  Extended data Figures  #################
@@ -755,11 +1175,20 @@ ggplot2.multiplot(a,p,c,b)
 dev.off()
 
 
+# Q for occurrence data
 
-
-tiff(paste0(GoogleFigs,"/Extended data Fig. 3.tiff"), width = 16, height = 8, units = 'in', res = 50)
-ggplot2.multiplot(e,i,n,o, cols=2) 
+tiff(paste0(GoogleFigs,"/Extended data Fig. 3.tiff"), width = 11, height = 8, units = 'in', res = 50)
+ggplot2.multiplot(l,m,m1, cols=1)
 dev.off()
+
+
+# Redundancies and Kbar
+
+tiff(paste0(GoogleFigs,"/Extended data Fig. 4.tiff"), width = 16, height = 8, units = 'in', res = 50)
+ggplot2.multiplot(e,i,i1,n,o,o1, cols=3) 
+dev.off()
+
+
 
 # PCA
 Ppca.9
@@ -770,5 +1199,17 @@ Plocom
 # Community weighted means
 
 tiff(paste0(GoogleFigs,"/Extended data Fig. 5.tiff"), width = 11, height = 8, units = 'in', res = 100)
-ggplot2.multiplot(s, q,r,u,v,w, cols=3)
+ggplot2.multiplot(s, q,r,u,v,w,x0,x1,x2, cols=3)
 dev.off()
+
+
+
+
+# details on Q decomposition
+
+tiff(paste0(GoogleFigs,"/Extended data Fig. 5.tiff"), width = 11, height = 8, units = 'in', res = 100)
+ggplot2.multiplot(f,j,j1,g,k,k1, cols=3)
+dev.off()
+
+
+
